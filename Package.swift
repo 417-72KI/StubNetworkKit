@@ -48,7 +48,9 @@ let package = Package(
             name: "StubNetworkingSwift",
             targets: ["StubNetworkingSwift"]),
     ],
-    dependencies: testDependencies,
+    dependencies: [
+        .package(url: "https://github.com/417-72KI/ParameterizedTestUtil.git", .upToNextMajor(from: "1.0.0")),
+    ] + testDependencies,
     targets: [
         .target(
             name: "StubNetworkingSwift",
@@ -56,7 +58,10 @@ let package = Package(
         ),
         .testTarget(
             name: "StubNetworkingSwiftTests",
-            dependencies: ["StubNetworkingSwift"] + testTargetDependencies
+            dependencies: [
+                "StubNetworkingSwift",
+                "ParameterizedTestUtil"
+            ] + testTargetDependencies
         ),
     ]
 )
