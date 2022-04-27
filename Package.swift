@@ -3,27 +3,60 @@
 
 import PackageDescription
 
+let isRelease = false
+
+let isObjcAvailable: Bool = {
+    #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
+        return true
+    #else
+        return false
+    #endif
+}()
+
+let testDependencies: [Package.Dependency] = {
+    if isRelease { return [] }
+    var dependencies: [Package.Dependency] = [
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.6.0"),
+    ]
+    if isObjcAvailable {
+        dependencies += [
+            .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.3.0"),
+            .package(url: "https://github.com/Moya/Moya.git", from: "15.0.0"),
+        ]
+    }
+    return dependencies
+}()
+let testTargetDependencies: [Target.Dependency] = {
+    if isRelease { return [] }
+    var dependencies: [Target.Dependency] = [
+        "Alamofire",
+    ]
+    if isObjcAvailable {
+        dependencies += [
+            "APIKit",
+            "Moya",
+        ]
+    }
+    return dependencies
+}()
+
 let package = Package(
     name: "StubNetworkingSwift",
     platforms: [.macOS(.v11), .iOS(.v14), .watchOS(.v5), .tvOS(.v14)],
     products: [
-        // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "StubNetworkingSwift",
             targets: ["StubNetworkingSwift"]),
     ],
-    dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
-    ],
+    dependencies: testDependencies,
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "StubNetworkingSwift",
-            dependencies: []),
+            dependencies: []
+        ),
         .testTarget(
             name: "StubNetworkingSwiftTests",
-            dependencies: ["StubNetworkingSwift"]),
+            dependencies: ["StubNetworkingSwift"] + testTargetDependencies
+        ),
     ]
 )
