@@ -36,4 +36,19 @@ final class StubConditionTests: XCTestCase {
             expect(actual("foobar://"), is: false)
         )
     }
+
+    func testHost() throws {
+        func actual(_ url: String) -> Bool {
+            let matcher = Host.is("foo")
+            return matcher(URLRequest(url: URL(string: url)!))
+        }
+
+        runAll(
+            expect(actual("foo:"), is: false),
+            expect(actual("foo://"), is: false),
+            expect(actual("foo://bar/baz"), is: false),
+            expect(actual("bar://foo"), is: true),
+            expect(actual("bar://foo/baz"), is: true)
+        )
+    }
 }
