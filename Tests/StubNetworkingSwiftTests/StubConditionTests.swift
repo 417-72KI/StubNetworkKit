@@ -281,4 +281,35 @@ final class StubConditionTests: XCTestCase {
             expect("?lang=ja&flag&empty=&q=1" ==> true)
         }
     }
+
+    func testHeaderContains() throws {
+        func request(_ containsHeader: Bool) -> URLRequest {
+            var req = URLRequest(url: URL(string: "https://foo/bar")!)
+            if containsHeader {
+                req.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            }
+            return req
+        }
+
+        assert(to: Header.contains("Content-Type")) {
+            expect(request(true) ==> true)
+            expect(request(false) ==> false)
+        }
+    }
+
+    func testHeaderContainsWithValue() throws {
+        func request(_ contentType: String?) -> URLRequest {
+            var req = URLRequest(url: URL(string: "https://foo/bar")!)
+            if let contentType = contentType {
+                req.addValue(contentType, forHTTPHeaderField: "Content-Type")
+            }
+            return req
+        }
+
+        assert(to: Header.contains("Content-Type", withValue: "application/json")) {
+            expect(request(nil) ==> false)
+            expect(request("application/json") ==> true)
+            expect(request("application/javascript") ==> false)
+        }
+    }
 }
