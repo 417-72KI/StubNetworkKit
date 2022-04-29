@@ -17,9 +17,15 @@ public func registerStub(to configuration: URLSessionConfiguration) {
 
 /// Handle all requests via `URLSession.shared`
 public func registerStubForSharedSession() {
-    precondition(URLProtocol.registerClass(StubURLProtocol.self))
+    assert(URLProtocol.registerClass(StubURLProtocol.self))
 }
 
 public func unregisterStubForSharedSession() {
     URLProtocol.unregisterClass(StubURLProtocol.self)
+}
+
+// MARK: - stub response
+public func stub(_ condition: @escaping StubCondition,
+                 withResponse stubResponse: @escaping (URLRequest) -> StubResponse) {
+    StubURLProtocol.stubs.append((condition, stubResponse))
 }

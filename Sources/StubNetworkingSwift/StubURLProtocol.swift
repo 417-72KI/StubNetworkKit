@@ -5,9 +5,13 @@ import FoundationNetworking
 
 // based on https://github.com/417-72KI/MultipartFormDataParser/blob/main/Tests/MultipartFormDataParserTests/StubURLProtocol.swift
 final class StubURLProtocol: URLProtocol {
-    typealias RequestHandler = (URLRequest) throws -> (Data?, HTTPURLResponse)
+    typealias Stub = (StubCondition, (URLRequest) -> StubResponse)
 
-    static var requestHandler: RequestHandler?
+    static var stubs: [Stub] = [] {
+        didSet {
+            print(stubs)
+        }
+    }
 
     override class func canInit(with request: URLRequest) -> Bool {
         true
@@ -18,9 +22,16 @@ final class StubURLProtocol: URLProtocol {
     }
 
     override func startLoading() {
-        guard let requestHandler = Self.requestHandler else { return }
         do {
-            let (data, response) = try requestHandler(request)
+            guard let stubResponse = Self.stubs
+                .last(where: { $0.0(request) })?.1(request) else {
+                throw StubError.unexpectedRequest(request)
+            }
+            let data = stubResponse.data
+            guard let response = stubResponse.urlResponse else {
+                throw StubError.unimplemented
+            }
+
             client?.urlProtocol(self,
                                 didReceive: response,
                                 cacheStoragePolicy: .notAllowed)
@@ -36,4 +47,8 @@ final class StubURLProtocol: URLProtocol {
     override func stopLoading() {
         // no-op
     }
+}
+
+extension StubURLProtocol {
+
 }

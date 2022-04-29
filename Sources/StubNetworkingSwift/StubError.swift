@@ -5,4 +5,5 @@ import FoundationNetworking
 
 public enum StubError: Error {
     case unexpectedRequest(URLRequest)
+    case unimplemented
 }
