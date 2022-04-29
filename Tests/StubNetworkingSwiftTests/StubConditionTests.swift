@@ -224,4 +224,61 @@ final class StubConditionTests: XCTestCase {
             expect("scheme://host/foo/bar.txt?q=baz.png" ==> false)
         }
     }
+
+    func testQueryParamsContainsParams() throws {
+        func actual(_ url: String) -> Bool {
+            let matcher = QueryParams.contains(["q": "1",
+                                                "lang": "ja",
+                                                "empty": "",
+                                                "flag": nil])
+            return matcher(URLRequest(url: URL(string: url)!))
+        }
+
+        assert(to: actual(_:)) {
+            expect("foo://bar" ==> false)
+            expect("foo://bar?q=test" ==> false)
+            expect("foo://bar?lang=ja" ==> false)
+            expect("foo://bar#q=1&lang=ja&empty=&flag" ==> false)
+            expect("foo://bar#lang=ja&empty=&flag&q=test" ==> false)
+
+            expect("foo://bar?q=1&lang=ja&empty=&flag" ==> true)
+            expect("foo://bar?q=2&lang=ja&empty=&flag" ==> false)
+            expect("foo://bar?lang=ja&flag&empty=&q=1" ==> true)
+            expect("foo://bar?q=1&lang=ja&empty=&flag#anchor" ==> true)
+            expect("foo://bar?q=1&lang=ja&empty&flag" ==> false)
+            expect("foo://bar?q=1&lang=ja&empty=&flag=" ==> false)
+            expect("foo://bar?q=ja&lang=test&empty=&flag" ==> false)
+            expect("foo://bar?q=1&lang=ja&empty=&flag&&hoge=fuga" ==> true)
+            expect("foo://bar?hoge=fuga&empty=&lang=ja&flag&&q=1" ==> true)
+            expect("?q=1&lang=ja&empty=&flag" ==> true)
+            expect("?lang=ja&flag&empty=&q=1" ==> true)
+        }
+    }
+
+    func testQueryParamsContainsParamNames() throws {
+        func actual(_ url: String) -> Bool {
+            let matcher = QueryParams.contains(["q", "lang", "empty", "flag"])
+            return matcher(URLRequest(url: URL(string: url)!))
+        }
+
+        assert(to: actual(_:)) {
+            expect("foo://bar" ==> false)
+            expect("foo://bar?q=test" ==> false)
+            expect("foo://bar?lang=ja" ==> false)
+            expect("foo://bar#q=1&lang=ja&empty=&flag" ==> false)
+            expect("foo://bar#lang=ja&empty=&flag&q=test" ==> false)
+
+            expect("foo://bar?q=1&lang=ja&empty=&flag" ==> true)
+            expect("foo://bar?q=2&lang=ja&empty=&flag" ==> true)
+            expect("foo://bar?lang=ja&flag&empty=&q=1" ==> true)
+            expect("foo://bar?q=1&lang=ja&empty=&flag#anchor" ==> true)
+            expect("foo://bar?q=1&lang=ja&empty&flag" ==> true)
+            expect("foo://bar?q=1&lang=ja&empty=&flag=" ==> true)
+            expect("foo://bar?q=ja&lang=test&empty=&flag" ==> true)
+            expect("foo://bar?q=1&lang=ja&empty=&flag&&hoge=fuga" ==> true)
+            expect("foo://bar?hoge=fuga&empty=&lang=ja&flag&&q=1" ==> true)
+            expect("?q=1&lang=ja&empty=&flag" ==> true)
+            expect("?lang=ja&flag&empty=&q=1" ==> true)
+        }
+    }
 }
