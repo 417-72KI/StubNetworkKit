@@ -167,9 +167,7 @@ public enum Body {
                 comps.percentEncodedQuery = query
                 return comps.queryItems ?? []
             }()
-            return queryItems.allSatisfy {
-                items.first(forName: $0.name)?.value == $0.value
-            }
+            return queryItems.sorted(by: \.name) == items.sorted(by: \.name)
         }
     }
 
