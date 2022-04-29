@@ -21,52 +21,52 @@ final class StubConditionTests: XCTestCase {
             return req
         }
         assert(to: Method.isGet) {
-            args(createRequest(method: "GET"), expect: true)
-            args(createRequest(method: "POST"), expect: false)
-            args(createRequest(method: "PUT"), expect: false)
-            args(createRequest(method: "PATCH"), expect: false)
-            args(createRequest(method: "DELETE"), expect: false)
-            args(createRequest(method: "HEAD"), expect: false)
+            expect(createRequest(method: "GET") ==> true)
+            expect(createRequest(method: "POST") ==> false)
+            expect(createRequest(method: "PUT") ==> false)
+            expect(createRequest(method: "PATCH") ==> false)
+            expect(createRequest(method: "DELETE") ==> false)
+            expect(createRequest(method: "HEAD") ==> false)
         }
         assert(to: Method.isPost) {
-            args(createRequest(method: "GET"), expect: false)
-            args(createRequest(method: "POST"), expect: true)
-            args(createRequest(method: "PUT"), expect: false)
-            args(createRequest(method: "PATCH"), expect: false)
-            args(createRequest(method: "DELETE"), expect: false)
-            args(createRequest(method: "HEAD"), expect: false)
+            expect(createRequest(method: "GET") ==> false)
+            expect(createRequest(method: "POST") ==> true)
+            expect(createRequest(method: "PUT") ==> false)
+            expect(createRequest(method: "PATCH") ==> false)
+            expect(createRequest(method: "DELETE") ==> false)
+            expect(createRequest(method: "HEAD") ==> false)
         }
         assert(to: Method.isPut) {
-            args(createRequest(method: "GET"), expect: false)
-            args(createRequest(method: "POST"), expect: false)
-            args(createRequest(method: "PUT"), expect: true)
-            args(createRequest(method: "PATCH"), expect: false)
-            args(createRequest(method: "DELETE"), expect: false)
-            args(createRequest(method: "HEAD"), expect: false)
+            expect(createRequest(method: "GET") ==> false)
+            expect(createRequest(method: "POST") ==> false)
+            expect(createRequest(method: "PUT") ==> true)
+            expect(createRequest(method: "PATCH") ==> false)
+            expect(createRequest(method: "DELETE") ==> false)
+            expect(createRequest(method: "HEAD") ==> false)
         }
         assert(to: Method.isPatch) {
-            args(createRequest(method: "GET"), expect: false)
-            args(createRequest(method: "POST"), expect: false)
-            args(createRequest(method: "PUT"), expect: false)
-            args(createRequest(method: "PATCH"), expect: true)
-            args(createRequest(method: "DELETE"), expect: false)
-            args(createRequest(method: "HEAD"), expect: false)
+            expect(createRequest(method: "GET") ==> false)
+            expect(createRequest(method: "POST") ==> false)
+            expect(createRequest(method: "PUT") ==> false)
+            expect(createRequest(method: "PATCH") ==> true)
+            expect(createRequest(method: "DELETE") ==> false)
+            expect(createRequest(method: "HEAD") ==> false)
         }
         assert(to: Method.isDelete) {
-            args(createRequest(method: "GET"), expect: false)
-            args(createRequest(method: "POST"), expect: false)
-            args(createRequest(method: "PUT"), expect: false)
-            args(createRequest(method: "PATCH"), expect: false)
-            args(createRequest(method: "DELETE"), expect: true)
-            args(createRequest(method: "HEAD"), expect: false)
+            expect(createRequest(method: "GET") ==> false)
+            expect(createRequest(method: "POST") ==> false)
+            expect(createRequest(method: "PUT") ==> false)
+            expect(createRequest(method: "PATCH") ==> false)
+            expect(createRequest(method: "DELETE") ==> true)
+            expect(createRequest(method: "HEAD") ==> false)
         }
         assert(to: Method.isHead) {
-            args(createRequest(method: "GET"), expect: false)
-            args(createRequest(method: "POST"), expect: false)
-            args(createRequest(method: "PUT"), expect: false)
-            args(createRequest(method: "PATCH"), expect: false)
-            args(createRequest(method: "DELETE"), expect: false)
-            args(createRequest(method: "HEAD"), expect: true)
+            expect(createRequest(method: "GET") ==> false)
+            expect(createRequest(method: "POST") ==> false)
+            expect(createRequest(method: "PUT") ==> false)
+            expect(createRequest(method: "PATCH") ==> false)
+            expect(createRequest(method: "DELETE") ==> false)
+            expect(createRequest(method: "HEAD") ==> true)
         }
     }
 
@@ -77,12 +77,12 @@ final class StubConditionTests: XCTestCase {
         }
 
         assert(to: actual) {
-            args("foo:", expect: true)
-            args("foo://", expect: true)
-            args("foo://bar/baz", expect: true)
-            args("bar://", expect: false)
-            args("bar://foo/", expect: false)
-            args("foobar://", expect: false)
+            expect("foo:" ==> true)
+            expect("foo://" ==> true)
+            expect("foo://bar/baz" ==> true)
+            expect("bar://" ==> false)
+            expect("bar://foo/" ==> false)
+            expect("foobar://" ==> false)
         }
     }
 
@@ -93,11 +93,11 @@ final class StubConditionTests: XCTestCase {
         }
 
         assert(to: actual) {
-            args("foo:", expect: false)
-            args("foo://", expect: false)
-            args("foo://bar/baz", expect: false)
-            args("bar://foo", expect: true)
-            args("bar://foo/baz", expect: true)
+            expect("foo:" ==> false)
+            expect("foo://" ==> false)
+            expect("foo://bar/baz" ==> false)
+            expect("bar://foo" ==> true)
+            expect("bar://foo/baz" ==> true)
         }
     }
 }
