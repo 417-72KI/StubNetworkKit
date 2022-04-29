@@ -100,4 +100,108 @@ final class StubConditionTests: XCTestCase {
             expect("bar://foo/baz" ==> true)
         }
     }
+
+    func testPathIs() throws {
+        func actual(_ url: String) -> Bool {
+            let matcher = Path.is("/foo/bar/baz")
+            return matcher(URLRequest(url: URL(string: url)!))
+        }
+
+        assert(to: actual) {
+            expect("foo:" ==> false)
+            expect("foo://" ==> false)
+            expect("foo://bar/baz" ==> false)
+            expect("scheme://foo" ==> false)
+            expect("scheme://foo/bar" ==> false)
+            expect("scheme://foo/bar/baz" ==> false)
+            expect("scheme://host/foo" ==> false)
+            expect("scheme://host/foo/bar" ==> false)
+            expect("scheme://host/foo/bar/baz" ==> true)
+            expect("scheme://host/foo/bar/baz?hoge=fuga" ==> true)
+            expect("scheme://host/foo/bar/baz#anchor" ==> true)
+            expect("scheme://host/foo/bar/baz?hoge=fuga#anchor" ==> true)
+            expect("scheme://host/foo/bar/baz/hoge" ==> false)
+            expect("scheme://host/path?/foo/bar/baz/hoge" ==> false)
+            expect("scheme://host/path#/foo/bar/baz/hoge" ==> false)
+        }
+    }
+
+    func testPathStartsWith() throws {
+        func actual(_ url: String) -> Bool {
+            let matcher = Path.startsWith("/foo/bar/baz")
+            return matcher(URLRequest(url: URL(string: url)!))
+        }
+
+        assert(to: actual) {
+            expect("foo:" ==> false)
+            expect("foo://" ==> false)
+            expect("foo://bar/baz" ==> false)
+            expect("scheme://foo" ==> false)
+            expect("scheme://foo/bar" ==> false)
+            expect("scheme://foo/bar/baz" ==> false)
+            expect("scheme://host/foo" ==> false)
+            expect("scheme://host/foo/bar" ==> false)
+            expect("scheme://host/foo/bar/baz" ==> true)
+            expect("scheme://host/foo/bar/baz?hoge=fuga" ==> true)
+            expect("scheme://host/foo/bar/baz#anchor" ==> true)
+            expect("scheme://host/foo/bar/baz?hoge=fuga#anchor" ==> true)
+            expect("scheme://host/foo/bar/baz/hoge" ==> true)
+            expect("scheme://host/path?/foo/bar/baz/hoge" ==> false)
+            expect("scheme://host/path#/foo/bar/baz/hoge" ==> false)
+        }
+    }
+
+    func testPathEndsWith() throws {
+        func actual(_ url: String) -> Bool {
+            let matcher = Path.endsWith("/foo/bar/baz")
+            return matcher(URLRequest(url: URL(string: url)!))
+        }
+
+        assert(to: actual) {
+            expect("foo:" ==> false)
+            expect("foo://" ==> false)
+            expect("foo://bar/baz" ==> false)
+            expect("scheme://foo" ==> false)
+            expect("scheme://foo/bar" ==> false)
+            expect("scheme://foo/bar/baz" ==> false)
+            expect("scheme://host/foo" ==> false)
+            expect("scheme://host/foo/bar" ==> false)
+            expect("scheme://host/foo/bar/baz" ==> true)
+            expect("scheme://host/foo/bar/baz?hoge=fuga" ==> true)
+            expect("scheme://host/foo/bar/baz#anchor" ==> true)
+            expect("scheme://host/foo/bar/baz?hoge=fuga#anchor" ==> true)
+            expect("scheme://host/foo/bar/baz/hoge" ==> false)
+            expect("scheme://host/path?/foo/bar/baz/hoge" ==> false)
+            expect("scheme://host/path#/foo/bar/baz/hoge" ==> false)
+        }
+    }
+
+    func testPathMatches() throws {
+        func actual(_ url: String) -> Bool {
+            let matcher = Path.matches("^/foo/bar(/[0-9]+)?$", options: .caseInsensitive)
+            return matcher(URLRequest(url: URL(string: url)!))
+        }
+
+        assert(to: actual) {
+            expect("foo:" ==> false)
+            expect("foo://" ==> false)
+            expect("foo://bar/baz" ==> false)
+            expect("scheme://foo" ==> false)
+            expect("scheme://foo/bar" ==> false)
+            expect("scheme://foo/bar/baz" ==> false)
+            expect("scheme://host/foo" ==> false)
+            expect("scheme://host/foo/bar" ==> true)
+            expect("scheme://host/foo/bar/" ==> true)
+            expect("scheme://host/foo/bar/baz" ==> false)
+            expect("scheme://host/foo/bar/1" ==> true)
+            expect("scheme://host/foo/bar/12" ==> true)
+            expect("scheme://host/foo/bar/12/baz" ==> false)
+            expect("scheme://host/path?/foo/bar" ==> false)
+            expect("scheme://host/path?/foo/bar/" ==> false)
+            expect("scheme://host/path?/foo/bar/baz" ==> false)
+            expect("scheme://host/path?/foo/bar/1" ==> false)
+            expect("scheme://host/path?/foo/bar/12" ==> false)
+            expect("scheme://host/path?/foo/bar/12/baz" ==> false)
+        }
+    }
 }
