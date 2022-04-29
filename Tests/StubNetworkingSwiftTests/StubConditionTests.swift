@@ -312,4 +312,63 @@ final class StubConditionTests: XCTestCase {
             expect(request("application/javascript") ==> false)
         }
     }
+
+    func testBodyIs() throws {
+        func request(_ body: String?) -> URLRequest {
+            var req = URLRequest(url: URL(string: "foo://bar")!)
+            req.httpBody = body?.data(using: .utf8)
+            return req
+        }
+
+        assert(to: Body.is(_:)) {
+            expect(("".data(using: .utf8)!, request("")) ==> true)
+            expect(("foo".data(using: .utf8)!, request("foo")) ==> true)
+            expect(("".data(using: .utf8)!, request(nil)) ==> false)
+            expect(("foo".data(using: .utf8)!, request("bar")) ==> false)
+        }
+    }
+
+    func testBodyIsJson() throws {
+        func request(_ jsonString: String) -> URLRequest {
+            var req = URLRequest(url: URL(string: "foo://bar")!)
+            req.httpBody = jsonString.data(using: .utf8)
+            return req
+        }
+
+        assert(to: Body.isJson(_:)) {
+            expect(([:], request(#"{}"#)) ==> true)
+            expect(([AnyHashable("foo"): "bar", "baz": 42, "qux": true], request(#"{"foo": "bar", "baz": 42, "qux": true}"#)) ==> true)
+            expect(([AnyHashable("foo"): "bar", "qux": true, "baz": 42], request(#"{"foo": "bar", "baz": 42, "qux": true}"#)) ==> true)
+            expect(([AnyHashable("foo"): "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"]]], request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "ham", "eggs"]}}"#)) ==> true)
+            expect(([AnyHashable("foo"): "bar", "baz": ["quux": ["spam", "ham", "eggs"], "qux": true]], request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "ham", "eggs"]}}"#)) ==> true)
+
+            expect(([:], request(#"{"foo": "bar"}"#)) ==> false)
+            expect(([AnyHashable("foo"): "bar", "baz": 42, "qux": true], request(#"{"baz": "bar", "foo": 42, "qux": true}"#)) ==> false)
+            expect(([AnyHashable("foo"): "bar", "baz": 42, "qux": true], request(#"{"foo": "bar", "baz": 41, "qux": true}"#)) ==> false)
+            expect(([AnyHashable("foo"): "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"]]], request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "eggs", "ham"]}}"#)) ==> false)
+        }
+    }
+
+    func testBodyIsForm() throws {
+        func request(_ formBody: String, addHeader: Bool = true) -> URLRequest {
+            var req = URLRequest(url: URL(string: "foo://bar")!)
+            if addHeader {
+                req.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            }
+            req.httpBody = formBody.data(using: .utf8)
+            return req
+        }
+
+
+        assert(to: Body.isForm(_:)) {
+            expect((["foo": "bar", "baz": nil, "qux": "42"], request("foo=bar&baz&qux=42")) ==> true)
+            expect((["foo": "bar" as String?, "baz": "", "qux": "42"], request("foo=bar&baz=&qux=42")) ==> true)
+            expect((["foo": "bar" as String?, "baz": "42", "qux": "true"], request("foo=bar&baz=42&qux=true")) ==> true)
+            expect((["foo": "bar" as String?, "baz": "42", "qux": "true"], request("foo=bar&qux=true&baz=42")) ==> true)
+
+            expect((["foo": "bar" as String?, "baz": "42", "qux": "true"], request("foo=bar&baz=42&qux=true", addHeader: false)) ==> false)
+            expect((["foo": "bar" as String?, "baz": "42"], request("foo=bar&baz=42&qux=true")) ==> false)
+            expect((["foo": "bar" as String?, "baz": "42", "qux": "true"], request("foo=bar&baz=42")) ==> false)
+        }
+    }
 }
