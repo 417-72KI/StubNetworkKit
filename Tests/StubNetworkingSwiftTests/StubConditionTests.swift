@@ -204,4 +204,24 @@ final class StubConditionTests: XCTestCase {
             expect("scheme://host/path?/foo/bar/12/baz" ==> false)
         }
     }
+
+    func testExtension() throws {
+        func actual(_ url: String) -> Bool {
+            let matcher = Extension.is("png")
+            return matcher(URLRequest(url: URL(string: url)!))
+        }
+
+        assert(to: actual) {
+            expect("png:" ==> false)
+            expect("png://" ==> false)
+            expect("png://foo/bar" ==> false)
+            expect("scheme://png/foo" ==> false)
+            expect("scheme://host/foo/bar" ==> false)
+            expect("scheme://host/foo/png" ==> false)
+            expect("scheme://host/foo/bar.png" ==> true)
+            expect("scheme://host/foo/bar.txt" ==> false)
+            expect("scheme://host/foo/bar.png?q=1" ==> true)
+            expect("scheme://host/foo/bar.txt?q=baz.png" ==> false)
+        }
+    }
 }
