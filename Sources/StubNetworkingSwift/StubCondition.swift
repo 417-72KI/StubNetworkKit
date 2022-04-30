@@ -105,11 +105,15 @@ public enum Extension {
 }
 
 public enum QueryParams {
-    public static func contains(_ params: [String: String?]) -> StubCondition {
+    public static func contains(_ params: [URLQueryItem]) -> StubCondition {
         {
             guard let queryItems = queryItems(from: $0) else { return false }
-            return params.allSatisfy { queryItems.first(forName: $0.key)?.value == $0.value }
+            return params.allSatisfy { queryItems.first(forName: $0.name)?.value == $0.value }
         }
+    }
+
+    public static func contains(_ params: [String: String?]) -> StubCondition {
+        contains(params.map(URLQueryItem.init))
     }
 
     public static func contains(_ paramNames: [String]) -> StubCondition {
