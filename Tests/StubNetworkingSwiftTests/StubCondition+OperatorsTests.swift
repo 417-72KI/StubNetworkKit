@@ -22,6 +22,12 @@ final class StubCondition_OperatorsTests: XCTestCase {
             let req = URLRequest(url: URL(string: "foo://bar")!)
             return (lhs || rhs)(req)
         }
+        func orAssign(lhs: @escaping StubCondition, rhs: @escaping StubCondition) -> Bool {
+            let req = URLRequest(url: URL(string: "foo://bar")!)
+            var condition = lhs
+            condition ||= rhs
+            return condition(req)
+        }
 
         assert(to: or) {
             expect((trueMatcher, trueMatcher) ==> true)
@@ -29,14 +35,32 @@ final class StubCondition_OperatorsTests: XCTestCase {
             expect((trueMatcher, falseMatcher) ==> true)
             expect((falseMatcher, falseMatcher) ==> false)
         }
+        assert(to: orAssign) {
+            expect((trueMatcher, trueMatcher) ==> true)
+            expect((falseMatcher, trueMatcher) ==> true)
+            expect((trueMatcher, falseMatcher) ==> true)
+            expect((falseMatcher, falseMatcher) ==> false)
+        }
     }
-
     func testAnd() throws {
         func and(lhs: @escaping StubCondition, rhs: @escaping StubCondition) -> Bool {
             let req = URLRequest(url: URL(string: "foo://bar")!)
             return (lhs && rhs)(req)
         }
+        func andAssign(lhs: @escaping StubCondition, rhs: @escaping StubCondition) -> Bool {
+            let req = URLRequest(url: URL(string: "foo://bar")!)
+            var condition = lhs
+            condition &&= rhs
+            return condition(req)
+        }
+
         assert(to: and) {
+            expect((trueMatcher, trueMatcher) ==> true)
+            expect((falseMatcher, trueMatcher) ==> false)
+            expect((trueMatcher, falseMatcher) ==> false)
+            expect((falseMatcher, falseMatcher) ==> false)
+        }
+        assert(to: andAssign) {
             expect((trueMatcher, trueMatcher) ==> true)
             expect((falseMatcher, trueMatcher) ==> false)
             expect((trueMatcher, falseMatcher) ==> false)
