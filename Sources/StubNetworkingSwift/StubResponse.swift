@@ -3,17 +3,44 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public struct StubResponse {
-    public let data: Data?
-    public let urlResponse: URLResponse?
+public enum StubResponse {
+    case success(data: Data?, statusCode: Int, headers: [String: String]?)
+    case failure(Error)
+}
 
-    public let error: Error?
+public extension StubResponse {
+    init(data: Data,
+         statusCode: Int = 200,
+         headers: [String: String]? = nil) {
+        self = .success(data: data, statusCode: statusCode, headers: headers)
+    }
+
+    init(fileURL: URL,
+         statusCode: Int = 200,
+         headers: [String: String]? = nil) {
+        do {
+            let data = try Data(contentsOf: fileURL)
+            self.init(data: data,
+                      statusCode: statusCode,
+                      headers: headers)
+        } catch {
+            self.init(data: .init(),
+                      statusCode: statusCode,
+                      headers: headers)
+        }
+    }
+
+    init(filePath: String,
+         statusCode: Int = 200,
+         headers: [String: String]? = nil) {
+        self.init(fileURL: URL(fileURLWithPath: filePath),
+                  statusCode: statusCode,
+                  headers: headers)
+    }
 }
 
 public extension StubResponse {
     init(error: Error) {
-        data = nil
-        urlResponse = nil
-        self.error = error
+        self = .failure(error)
     }
 }

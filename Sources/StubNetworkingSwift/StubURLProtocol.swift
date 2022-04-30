@@ -24,21 +24,29 @@ final class StubURLProtocol: URLProtocol {
     override func startLoading() {
         do {
             guard let stubResponse = Self.stubs
-                .last(where: { $0.0(request) })?.1(request) else {
+                .last(where: { $0.0(request) })?.1(request),
+                  let url = request.url else {
                 throw StubError.unexpectedRequest(request)
             }
-            let data = stubResponse.data
-            guard let response = stubResponse.urlResponse else {
-                throw StubError.unimplemented
-            }
+            switch stubResponse {
+            case let .success(data, statusCode, headers):
+                guard let urlResponse = HTTPURLResponse(
+                    url: url,
+                    statusCode: statusCode,
+                    httpVersion: "HTTP/1.1",
+                    headerFields: headers
+                ) else { throw StubError.responseInitializingFailed(url, statusCode, headers) }
 
-            client?.urlProtocol(self,
-                                didReceive: response,
-                                cacheStoragePolicy: .notAllowed)
-            if let data = data {
-                client?.urlProtocol(self, didLoad: data)
+                client?.urlProtocol(self,
+                                    didReceive: urlResponse,
+                                    cacheStoragePolicy: .notAllowed)
+                if let data = data {
+                    client?.urlProtocol(self, didLoad: data)
+                }
+                client?.urlProtocolDidFinishLoading(self)
+            case let .failure(error):
+                throw error
             }
-            client?.urlProtocolDidFinishLoading(self)
         } catch {
             client?.urlProtocol(self, didFailWithError: error)
         }

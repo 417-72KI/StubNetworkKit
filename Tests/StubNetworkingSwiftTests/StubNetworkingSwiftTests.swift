@@ -9,7 +9,8 @@ final class StubNetworkingSwiftTests: XCTestCase {
     func testSample() throws {
         let url = URL(string: "foo://bar/baz")!
 
-        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in StubResponse(error: StubError.unimplemented)
+        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
+            StubResponse(data: "Hello world!".data(using: .utf8)!)
         }
 
         let e = expectation(description: "URLSession")
