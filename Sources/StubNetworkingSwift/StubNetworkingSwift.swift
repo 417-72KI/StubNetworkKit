@@ -27,5 +27,6 @@ public func unregisterStubForSharedSession() {
 // MARK: - stub response
 public func stub(_ condition: @escaping StubCondition,
                  withResponse stubResponse: @escaping (URLRequest) -> StubResponse) {
-    StubURLProtocol.stubs.append((condition, stubResponse))
+    StubURLProtocol.stubs
+        .append(.init(condition: condition, response: stubResponse))
 }
