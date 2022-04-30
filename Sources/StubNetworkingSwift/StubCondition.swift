@@ -156,6 +156,15 @@ public enum Body {
         }
     }
 
+    public static func isJson(_ jsonArray: [Any]) -> StubCondition {
+        {
+            guard let httpBody = $0.httpBody,
+                  let jsonBody = try? JSONSerialization.jsonObject(with: httpBody) as? [Any] else { return false }
+            return NSArray(array: jsonBody)
+                .isEqual(to: jsonArray)
+        }
+    }
+
     public static func isForm(_ queryItems: [URLQueryItem]) -> StubCondition {
         Header.contains("Content-Type",
                         withValue: "application/x-www-form-urlencoded")

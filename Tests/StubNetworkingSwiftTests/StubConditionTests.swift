@@ -328,7 +328,7 @@ final class StubConditionTests: XCTestCase {
         }
     }
 
-    func testBodyIsJson() throws {
+    func testBodyIsJsonObject() throws {
         func request(_ jsonString: String) -> URLRequest {
             var req = URLRequest(url: URL(string: "foo://bar")!)
             req.httpBody = jsonString.data(using: .utf8)
@@ -342,10 +342,31 @@ final class StubConditionTests: XCTestCase {
             expect(([AnyHashable("foo"): "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"]]], request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "ham", "eggs"]}}"#)) ==> true)
             expect(([AnyHashable("foo"): "bar", "baz": ["quux": ["spam", "ham", "eggs"], "qux": true]], request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "ham", "eggs"]}}"#)) ==> true)
 
+            expect(([:], request(#"[]"#)) ==> false)
             expect(([:], request(#"{"foo": "bar"}"#)) ==> false)
             expect(([AnyHashable("foo"): "bar", "baz": 42, "qux": true], request(#"{"baz": "bar", "foo": 42, "qux": true}"#)) ==> false)
             expect(([AnyHashable("foo"): "bar", "baz": 42, "qux": true], request(#"{"foo": "bar", "baz": 41, "qux": true}"#)) ==> false)
             expect(([AnyHashable("foo"): "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"]]], request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "eggs", "ham"]}}"#)) ==> false)
+        }
+    }
+
+    func testBodyIsJsonArray() throws {
+        func request(_ jsonString: String) -> URLRequest {
+            var req = URLRequest(url: URL(string: "foo://bar")!)
+            req.httpBody = jsonString.data(using: .utf8)
+            return req
+        }
+
+        assert(to: Body.isJson(_:)) {
+            expect(([], request(#"[]"#)) ==> true)
+            expect((["foo", "bar", "baz", 42, "qux", true], request(#"["foo", "bar", "baz", 42, "qux", true]"#)) ==> true)
+            expect((["foo", "bar", "baz", 42, "qux", true], request(#"["foo", "bar", \#n"baz", 42, "qux", true]"#)) ==> true)
+            expect(([["foo", "bar", "baz"], ["qux": true, "quux": ["spam", "ham", "eggs"]]], request(#"[["foo", "bar", "baz"], {"qux": true, "quux": ["spam", "ham", "eggs"]}]"#)) ==> true)
+
+            expect(([], request(#"{}"#)) ==> false)
+            expect((["bar", 42], request(#"["foo", "bar", 42]"#)) ==> false)
+            expect((["bar", "foo", 42], request(#"["foo", "bar", 42]"#)) ==> false)
+            expect((["foo", "qux", 42], request(#"["foo", "bar", 42]"#)) ==> false)
         }
     }
 
