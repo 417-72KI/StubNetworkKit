@@ -5,6 +5,8 @@ import FoundationNetworking
 
 public typealias StubCondition = (URLRequest) -> Bool
 
+let alwaysTrue: StubCondition = { _ in true }
+
 // MARK: - Method
 
 public enum Method {
@@ -48,6 +50,19 @@ public extension Method {
     }
     static var isHead: StubCondition {
         { $0.httpMethod.flatMap(Self.init) == .head }
+    }
+}
+
+extension Method {
+    var condition: StubCondition {
+        switch self {
+        case .get: return Method.isGet
+        case .post: return Method.isPost
+        case .put: return Method.isPut
+        case .patch: return Method.isPatch
+        case .delete: return Method.isDelete
+        case .head: return Method.isHead
+        }
     }
 }
 
