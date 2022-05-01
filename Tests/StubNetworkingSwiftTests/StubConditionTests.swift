@@ -320,12 +320,13 @@ final class StubConditionTests: XCTestCase {
             req.httpBody = body?.data(using: .utf8)
             return req
         }
-
-        assert(to: Body.is(_:)) {
-            expect(("".data(using: .utf8)!, request("")) ==> true)
-            expect(("foo".data(using: .utf8)!, request("foo")) ==> true)
-            expect(("".data(using: .utf8)!, request(nil)) ==> false)
-            expect(("foo".data(using: .utf8)!, request("bar")) ==> false)
+        assert(to: Body.is("".data(using: .utf8)!)) {
+            expect(request("") ==> true)
+            expect(request(nil) ==> false)
+        }
+        assert(to: Body.is("foo".data(using: .utf8)!)) {
+            expect(request("foo") ==> true)
+            expect(request("bar") ==> false)
         }
     }
 
@@ -335,19 +336,22 @@ final class StubConditionTests: XCTestCase {
             req.httpBody = jsonString.data(using: .utf8)
             return req
         }
+        assert(to: Body.isJson([:])) {
+            expect(request(#"{}"#) ==> true)
+            expect(request(#"[]"#) ==> false)
+            expect(request(#"{"foo": "bar"}"#) ==> false)
+        }
+        assert(to: Body.isJson(["foo": "bar", "baz": 42, "qux": true])) {
+            expect(request(#"{"foo": "bar", "baz": 42, "qux": true}"#) ==> true)
+            expect(request(#"{"foo": "bar", "qux": true, "baz": 42}"#) ==> true)
+            expect(request(#"{"baz": "bar", "foo": 42, "qux": true}"#) ==> false)
+            expect(request(#"{"foo": "bar", "baz": 41, "qux": true}"#) ==> false)
+        }
+        assert(to: Body.isJson(["foo": "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"]]])) {
+            expect(request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "ham", "eggs"]}}"#) ==> true)
+            expect(request(#"{"foo": "bar", "baz": {"quux": ["spam", "ham", "eggs"], "qux": true}}"#) ==> true)
 
-        assert(to: Body.isJson(_:)) {
-            expect(([:], request(#"{}"#)) ==> true)
-            expect(([AnyHashable("foo"): "bar", "baz": 42, "qux": true], request(#"{"foo": "bar", "baz": 42, "qux": true}"#)) ==> true)
-            expect(([AnyHashable("foo"): "bar", "qux": true, "baz": 42], request(#"{"foo": "bar", "baz": 42, "qux": true}"#)) ==> true)
-            expect(([AnyHashable("foo"): "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"]]], request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "ham", "eggs"]}}"#)) ==> true)
-            expect(([AnyHashable("foo"): "bar", "baz": ["quux": ["spam", "ham", "eggs"], "qux": true]], request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "ham", "eggs"]}}"#)) ==> true)
-
-            expect(([:], request(#"[]"#)) ==> false)
-            expect(([:], request(#"{"foo": "bar"}"#)) ==> false)
-            expect(([AnyHashable("foo"): "bar", "baz": 42, "qux": true], request(#"{"baz": "bar", "foo": 42, "qux": true}"#)) ==> false)
-            expect(([AnyHashable("foo"): "bar", "baz": 42, "qux": true], request(#"{"foo": "bar", "baz": 41, "qux": true}"#)) ==> false)
-            expect(([AnyHashable("foo"): "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"]]], request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "eggs", "ham"]}}"#)) ==> false)
+            expect(request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "eggs", "ham"]}}"#) ==> false)
         }
     }
 
@@ -358,16 +362,19 @@ final class StubConditionTests: XCTestCase {
             return req
         }
 
-        assert(to: Body.isJson(_:)) {
-            expect(([], request(#"[]"#)) ==> true)
-            expect((["foo", "bar", "baz", 42, "qux", true], request(#"["foo", "bar", "baz", 42, "qux", true]"#)) ==> true)
-            expect((["foo", "bar", "baz", 42, "qux", true], request(#"["foo", "bar", \#n"baz", 42, "qux", true]"#)) ==> true)
-            expect(([["foo", "bar", "baz"], ["qux": true, "quux": ["spam", "ham", "eggs"]]], request(#"[["foo", "bar", "baz"], {"qux": true, "quux": ["spam", "ham", "eggs"]}]"#)) ==> true)
-
-            expect(([], request(#"{}"#)) ==> false)
-            expect((["bar", 42], request(#"["foo", "bar", 42]"#)) ==> false)
-            expect((["bar", "foo", 42], request(#"["foo", "bar", 42]"#)) ==> false)
-            expect((["foo", "qux", 42], request(#"["foo", "bar", 42]"#)) ==> false)
+        assert(to: Body.isJson([])) {
+            expect(request(#"[]"#) ==> true)
+            expect(request(#"{}"#) ==> false)
+        }
+        assert(to: Body.isJson(["foo", "bar", "baz", 42, "qux", true])) {
+            expect(request(#"["foo", "bar", "baz", 42, "qux", true]"#) ==> true)
+            expect(request(#"["foo", "bar", \#n"baz", 42, "qux", true]"#) ==> true)
+            expect(request(#"["bar", "baz", 42, "qux", true]"#) ==> false)
+            expect(request(#"["bar", "foo", "baz", 42, "qux", true]"#) ==> false)
+            expect(request(#"["foo", "bar", "baz", 41, "qux", true]"#) ==> false)
+        }
+        assert(to: Body.isJson([["foo", "bar", "baz"], ["qux": true, "quux": ["spam", "ham", "eggs"]]])) {
+            expect(request(#"[["foo", "bar", "baz"], {"qux": true, "quux": ["spam", "ham", "eggs"]}]"#) ==> true)
         }
     }
 
@@ -381,16 +388,20 @@ final class StubConditionTests: XCTestCase {
             return req
         }
 
-
-        assert(to: Body.isForm(_:)) {
-            expect((["foo": "bar", "baz": nil, "qux": "42"], request("foo=bar&baz&qux=42")) ==> true)
-            expect((["foo": "bar" as String?, "baz": "", "qux": "42"], request("foo=bar&baz=&qux=42")) ==> true)
-            expect((["foo": "bar" as String?, "baz": "42", "qux": "true"], request("foo=bar&baz=42&qux=true")) ==> true)
-            expect((["foo": "bar" as String?, "baz": "42", "qux": "true"], request("foo=bar&qux=true&baz=42")) ==> true)
-
-            expect((["foo": "bar" as String?, "baz": "42", "qux": "true"], request("foo=bar&baz=42&qux=true", addHeader: false)) ==> false)
-            expect((["foo": "bar" as String?, "baz": "42"], request("foo=bar&baz=42&qux=true")) ==> false)
-            expect((["foo": "bar" as String?, "baz": "42", "qux": "true"], request("foo=bar&baz=42")) ==> false)
+        assert(to: Body.isForm(["foo": "bar", "baz": nil, "qux": "42"])) {
+            expect(request("foo=bar&baz&qux=42") ==> true)
+        }
+        assert(to: Body.isForm(["foo": "bar" as String?, "baz": "42", "qux": "true"])) {
+            expect(request("foo=bar&baz=42&qux=true") ==> true)
+            expect(request("foo=bar&qux=true&baz=42") ==> true)
+            expect(request("foo=bar&baz=42&qux=true", addHeader: false) ==> false)
+            expect(request("foo=bar&baz=42") ==> false)
+        }
+        assert(to: Body.isForm(["foo": "bar" as String?, "baz": "", "qux": "42"])) {
+            expect(request("foo=bar&baz=&qux=42") ==> true)
+        }
+        assert(to: Body.isForm(["foo": "bar" as String?, "baz": "42"])) {
+            expect(request("foo=bar&baz=42&qux=true") ==> false)
         }
     }
 }
