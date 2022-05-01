@@ -43,8 +43,8 @@ public func stub(url: URL? = nil, method: Method? = nil) -> Stub {
 }
 
 @discardableResult
-public func stub(urlString: String? = nil, method: Method? = nil) -> Stub {
-    stub(url: urlString.flatMap(URL.init), method: method)
+public func stub(url: String, method: Method? = nil) -> Stub {
+    stub(url: URL(string: url), method: method)
 }
 
 // MARK: Scheme
@@ -95,7 +95,7 @@ public extension Stub {
 // MARK: QueryParams
 public extension Stub {
     @discardableResult
-    func queryParamsAndValues(_ queryParams: [String: String?]) -> Self {
+    func queryParams(_ queryParams: [String: String?]) -> Self {
         condition &&= QueryParams.contains(queryParams)
         return self
     }
