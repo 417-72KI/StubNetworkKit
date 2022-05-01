@@ -8,10 +8,9 @@ import SwiftParamTest
 
 final class StubConditionTests: XCTestCase {
     override func setUp() {
-        ParameterizedTest.option = ParameterizedTest.Option(
-            traceTable: .markdown,
-            saveTableToAttachement: .markdown
-        )
+        ParameterizedTest.option = .init(traceTable: .markdown,
+                                         saveTableToAttachement: .markdown)
+        StubNetworking.option = .init(printDebugLog: true)
     }
 
     func testMethod() throws {

@@ -6,6 +6,14 @@ import StubNetworkingSwift
 import SwiftParamTest
 
 final class StubTests: XCTestCase {
+    override func setUp() {
+        ParameterizedTest.option = ParameterizedTest.Option(
+            traceTable: .markdown,
+            saveTableToAttachement: .markdown
+        )
+        StubNetworking.option = .init(printDebugLog: true)
+    }
+
     func testStub() throws {
         assert(to: stub(url: "https://foo.bar/baz")) {
             expect(URL(string: "https://foo.bar/baz?q=1&empty=&flag")! ==> true)

@@ -5,7 +5,7 @@ import XCTest
 import StubNetworkingSwift
 import SwiftParamTest
 
-class StubCondition_ResultBuilderTests: XCTestCase {
+final class StubCondition_ResultBuilderTests: XCTestCase {
     func testBuild() throws {
         var req = URLRequest(url: .init(string: "https://foo.bar/baz?q=1&flag")!)
         req.httpMethod = "POST"

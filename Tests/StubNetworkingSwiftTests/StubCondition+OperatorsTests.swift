@@ -11,10 +11,9 @@ final class StubCondition_OperatorsTests: XCTestCase {
     private let falseMatcher: StubCondition = { _ in false }
 
     override func setUp() {
-        ParameterizedTest.option = ParameterizedTest.Option(
-            traceTable: .markdown,
-            saveTableToAttachement: .markdown
-        )
+        ParameterizedTest.option = .init(traceTable: .markdown,
+                                         saveTableToAttachement: .markdown)
+        StubNetworking.option = .init(printDebugLog: true)
     }
 
     func testOr() throws {
