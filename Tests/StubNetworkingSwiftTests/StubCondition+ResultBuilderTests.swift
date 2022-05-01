@@ -5,7 +5,7 @@ import XCTest
 import StubNetworkingSwift
 import SwiftParamTest
 
-class StubCondition_ResultBuilderTests: XCTestCase {
+final class StubCondition_ResultBuilderTests: XCTestCase {
     func testBuild() throws {
         var req = URLRequest(url: .init(string: "https://foo.bar/baz?q=1&flag")!)
         req.httpMethod = "POST"
@@ -14,7 +14,7 @@ class StubCondition_ResultBuilderTests: XCTestCase {
             Scheme.is("https")
             Host.is("foo.bar")
             Path.is("/baz")
-            Method.isPost
+            Method.isPost()
             QueryParams.contains(["q":"1", "flag": nil])
         }
         XCTAssertTrue(condition(req))
@@ -36,7 +36,7 @@ class StubCondition_ResultBuilderTests: XCTestCase {
             if let path = comps?.path {
                 Path.is(path)
             }
-            Method.isGet
+            Method.isGet()
             if let queryItems = comps?.queryItems {
                 QueryParams.contains(queryItems)
             }
@@ -56,12 +56,12 @@ class StubCondition_ResultBuilderTests: XCTestCase {
                 Path.is("/baz")
                 let alwaysFalse: StubCondition = { _ in false }
                 switch method {
-                case "GET": Method.isGet
-                case "POST": Method.isPost
-                case "PUT": Method.isPut
-                case "PATCH": Method.isPatch
-                case "DELETE": Method.isDelete
-                case "HEAD": Method.isHead
+                case "GET": Method.isGet()
+                case "POST": Method.isPost()
+                case "PUT": Method.isPut()
+                case "PATCH": Method.isPatch()
+                case "DELETE": Method.isDelete()
+                case "HEAD": Method.isHead()
                 default: alwaysFalse
                 }
                 QueryParams.contains(["q":"1", "flag": nil])

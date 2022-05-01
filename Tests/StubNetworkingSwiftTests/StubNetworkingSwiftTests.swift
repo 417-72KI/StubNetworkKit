@@ -16,6 +16,11 @@ import Moya
 #endif
 
 final class StubNetworkingSwiftTests: XCTestCase {
+    override func setUp() {
+        StubNetworking.option = .init(printDebugLog: true,
+                                      debugConditions: true)
+    }
+
     func testDefaultStubSession() throws {
         let url = URL(string: "foo://bar/baz")!
 

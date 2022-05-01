@@ -8,10 +8,10 @@ import SwiftParamTest
 
 final class StubConditionTests: XCTestCase {
     override func setUp() {
-        ParameterizedTest.option = ParameterizedTest.Option(
-            traceTable: .markdown,
-            saveTableToAttachement: .markdown
-        )
+        ParameterizedTest.option = .init(traceTable: .markdown,
+                                         saveTableToAttachement: .markdown)
+        StubNetworking.option = .init(printDebugLog: true,
+                                      debugConditions: false)
     }
 
     func testMethod() throws {
@@ -20,7 +20,7 @@ final class StubConditionTests: XCTestCase {
             req.httpMethod = method
             return req
         }
-        assert(to: Method.isGet) {
+        assert(to: Method.isGet()) {
             expect(createRequest(method: "GET") ==> true)
             expect(createRequest(method: "POST") ==> false)
             expect(createRequest(method: "PUT") ==> false)
@@ -28,7 +28,7 @@ final class StubConditionTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> false)
             expect(createRequest(method: "HEAD") ==> false)
         }
-        assert(to: Method.isPost) {
+        assert(to: Method.isPost()) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> true)
             expect(createRequest(method: "PUT") ==> false)
@@ -36,7 +36,7 @@ final class StubConditionTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> false)
             expect(createRequest(method: "HEAD") ==> false)
         }
-        assert(to: Method.isPut) {
+        assert(to: Method.isPut()) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> false)
             expect(createRequest(method: "PUT") ==> true)
@@ -44,7 +44,7 @@ final class StubConditionTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> false)
             expect(createRequest(method: "HEAD") ==> false)
         }
-        assert(to: Method.isPatch) {
+        assert(to: Method.isPatch()) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> false)
             expect(createRequest(method: "PUT") ==> false)
@@ -52,7 +52,7 @@ final class StubConditionTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> false)
             expect(createRequest(method: "HEAD") ==> false)
         }
-        assert(to: Method.isDelete) {
+        assert(to: Method.isDelete()) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> false)
             expect(createRequest(method: "PUT") ==> false)
@@ -60,7 +60,7 @@ final class StubConditionTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> true)
             expect(createRequest(method: "HEAD") ==> false)
         }
-        assert(to: Method.isHead) {
+        assert(to: Method.isHead()) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> false)
             expect(createRequest(method: "PUT") ==> false)
