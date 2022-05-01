@@ -123,7 +123,10 @@ public enum QueryParams {
     public static func contains(_ params: [URLQueryItem]) -> StubCondition {
         {
             guard let queryItems = queryItems(from: $0) else { return false }
-            return params.allSatisfy { queryItems.first(forName: $0.name)?.value == $0.value }
+            return params.allSatisfy {
+                guard let queryItem = queryItems.first(forName: $0.name) else { return false }
+                return queryItem.value == $0.value
+            }
         }
     }
 

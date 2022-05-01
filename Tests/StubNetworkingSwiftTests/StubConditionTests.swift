@@ -238,6 +238,7 @@ final class StubConditionTests: XCTestCase {
             expect("foo://bar" ==> false)
             expect("foo://bar?q=test" ==> false)
             expect("foo://bar?lang=ja" ==> false)
+            expect("foo://bar?q=1&lang=ja&empty=" ==> false)
             expect("foo://bar#q=1&lang=ja&empty=&flag" ==> false)
             expect("foo://bar#lang=ja&empty=&flag&q=test" ==> false)
 
