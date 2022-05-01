@@ -31,8 +31,15 @@ func stubCondition(_ lhs: @escaping (URLRequest) -> [AnyHashable: Any]?,
                       line: line)
         switch (rhs, lhs($0)) {
         case let (expected?, actual?):
+            #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
             return NSDictionary(dictionary: expected)
                 .isEqual(to: actual)
+            #else
+            // MEMO: In Linux, `NSDictionary.isEqual` returns unexpected result.
+            let expected = try? JSONSerialization.data(withJSONObject: expected, options: [.fragmentsAllowed, .withoutEscapingSlashes, .sortedKeys])
+            let actual = try? JSONSerialization.data(withJSONObject: actual, options: [.fragmentsAllowed, .withoutEscapingSlashes, .sortedKeys])
+            return expected == actual
+            #endif
         case (nil, nil):
             return true
         default:
@@ -52,8 +59,14 @@ func stubCondition(_ lhs: @escaping (URLRequest) -> [Any]?,
                       line: line)
         switch (rhs, lhs($0)) {
         case let (expected?, actual?):
+            #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
             return NSArray(array: expected)
                 .isEqual(to: actual)
+            #else
+            let expected = try? JSONSerialization.data(withJSONObject: expected, options: [.fragmentsAllowed, .withoutEscapingSlashes, .sortedKeys])
+            let actual = try? JSONSerialization.data(withJSONObject: actual, options: [.fragmentsAllowed, .withoutEscapingSlashes, .sortedKeys])
+            return expected == actual
+            #endif
         case (nil, nil):
             return true
         default:
