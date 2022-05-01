@@ -17,7 +17,8 @@ import Moya
 
 final class StubNetworkingSwiftTests: XCTestCase {
     override func setUp() {
-        StubNetworking.option = .init(printDebugLog: true)
+        StubNetworking.option = .init(printDebugLog: true,
+                                      debugConditions: true)
     }
 
     func testDefaultStubSession() throws {

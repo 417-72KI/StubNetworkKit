@@ -13,7 +13,8 @@ final class StubCondition_OperatorsTests: XCTestCase {
     override func setUp() {
         ParameterizedTest.option = .init(traceTable: .markdown,
                                          saveTableToAttachement: .markdown)
-        StubNetworking.option = .init(printDebugLog: true)
+        StubNetworking.option = .init(printDebugLog: true,
+                                      debugConditions: true)
     }
 
     func testOr() throws {

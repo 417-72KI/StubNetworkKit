@@ -12,9 +12,12 @@ public class StubNetworking {
 public extension StubNetworking {
     struct Option {
         public var printDebugLog: Bool
+        public var debugConditions: Bool
 
-        public init(printDebugLog: Bool) {
+        public init(printDebugLog: Bool,
+                    debugConditions: Bool) {
             self.printDebugLog = printDebugLog
+            self.debugConditions = debugConditions
         }
     }
 }
@@ -53,10 +56,13 @@ public func stub(_ condition: @escaping StubCondition,
 }
 
 // MARK: - logger
-func debugLog(_ message: String) {
+func debugLog(_ message: Any,
+              file: StaticString = #file,
+              line: UInt = #line) {
     guard StubNetworking.option.printDebugLog else { return }
+    let file = file.description.split(separator: "/").last!
 
-    print("\u{001B}[33m[\(String(describing: StubNetworking.self))] \(message)\u{001B}[m")
+    print("\u{001B}[33m[\(file):L\(line)] \(message)\u{001B}[m")
 }
 
 func dumpCondition<T: Equatable>(expected: T?,
@@ -69,6 +75,47 @@ func dumpCondition<T: Equatable>(expected: T?,
     let actual = unwrap(actual)
     let result = (expected == actual)
     print("\u{001B}[\(result ? 32 : 31)m[\(file):L\(line)] expected: \(expected), actual: \(actual)\u{001B}[m")
+}
+
+func dumpCondition(expected: [Any]?,
+                   actual: [Any]?,
+                   file: StaticString = #file,
+                   line: UInt = #line) {
+    guard StubNetworking.option.debugConditions else { return }
+    let file = file.description.split(separator: "/").last!
+    let result: Bool = {
+        switch (expected, actual) {
+        case let (expected?, actual?):
+            return NSArray(array: expected)
+                .isEqual(to: actual)
+        case (nil, nil):
+            return true
+        default:
+            return false
+        }
+    }()
+    print("\u{001B}[\(result ? 32 : 31)m[\(file):L\(line)] expected: \(String(describing: expected)), actual: \(String(describing: actual))\u{001B}[m")
+}
+
+func dumpCondition(expected: [AnyHashable: Any]?,
+                   actual: [AnyHashable: Any]?,
+                   file: StaticString = #file,
+                   line: UInt = #line) {
+    guard StubNetworking.option.debugConditions else { return }
+    let file = file.description.split(separator: "/").last!
+    let result: Bool = {
+        switch (expected, actual) {
+        case let (expected?, actual?):
+            return NSDictionary(dictionary: expected)
+                .isEqual(to: actual)
+        case (nil, nil):
+            return true
+        default:
+            return false
+        }
+    }()
+
+    print("\u{001B}[\(result ? 32 : 31)m[\(file):L\(line)] expected: \(String(describing: expected)), actual: \(String(describing: actual))\u{001B}[m")
 }
 
 private func unwrap<T: Equatable>(_ value: T?) -> String {
