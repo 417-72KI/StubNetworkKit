@@ -19,13 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
+      latest-xcode: ${{ steps.matrix.outputs.latest-xcode }}
     steps:
       - uses: actions/checkout@v3
       - name: Extract matrix
         id: matrix
         run: |
-          LATEST_XCODE_VERSION="$(cat .github/matrix.json | jq -rc '.xcode_version | max')"
-          echo "::set-output name=matrix::$(cat .github/matrix.json | jq --arg latest "${LATEST_XCODE_VERSION}" -rc '. + {latest_xcode_version: $latest}')"
+          echo "::set-output name=latest-xcode::$(cat .github/matrix.json | jq -rc '.xcode_version | max')"
+          echo "::set-output name=matrix::$(cat .github/matrix.json | jq -rc .)"
   test-linux:
     name: Test(Linux)
     needs: generate-matrix
@@ -58,7 +59,6 @@ jobs:
         xcode-version: ${{ fromJson(needs.generate-matrix.outputs.matrix).xcode_version }}
         platform: ${{ fromJson(needs.generate-matrix.outputs.matrix).platform }}
     env:
-      LATEST_XCODE_VERSION: ${{ fromJson(needs.generate-matrix.outputs.matrix).latest_xcode_version }}
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer
     steps:
       - uses: actions/checkout@v3
@@ -87,7 +87,7 @@ jobs:
           -resultBundlePath 'test_output/test.xcresult' \
           clean test | xcpretty
       - name: Upload artifacts
-        if: ${{ matrix.xcode-version }} == ${{ env.LATEST_XCODE_VERSION }} && (success() || failure())
+        if: matrix.xcode-version == needs.generate-matrix.outputs.latest-xcode && (success() || failure())
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.platform }}
@@ -98,16 +98,14 @@ jobs:
     name: Export xcodebuild test result
     if: success() || failure()
     needs: test-macos
-    runs-on: macOS-12
+    runs-on: macOS-latest
     steps:
       - uses: actions/download-artifact@v3
         with:
           path: test_output
       - name: Merge xcresult files
-        run:
-          xcrun xcresulttool merge test_output/**/*.xcresult --output-path test_output/TestResults.xcresult
+        run: xcrun xcresulttool merge test_output/**/*.xcresult --output-path test_output/TestResults.xcresult
       - uses: kishikawakatsumi/xcresulttool@v1
-        if: success() || failure()
         with:
           path: test_output/TestResults.xcresult
           show-passed-tests: false
