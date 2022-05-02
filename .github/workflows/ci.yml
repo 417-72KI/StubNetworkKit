@@ -88,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.platform }}
-          path: test_output/test.xcresult
+          path: test_output
           if-no-files-found: error
           retention-days: 1
   xcodebuild_result:
