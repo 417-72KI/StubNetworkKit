@@ -54,9 +54,9 @@ jobs:
         xcode-version: ${{ fromJson(needs.generate-matrix.outputs.matrix).xcode_version }}
         platform:
           - macOS
-          - iOS Simulator
-          - watchOS Simulator
-          - tvOS Simulator
+          - iOS
+          - watchOS
+          - tvOS
     env:
       latest-xcode-version: ${{ fromJson(needs.generate-matrix.outputs.matrix).latest_xcode_version }}
     steps:
@@ -69,6 +69,10 @@ jobs:
             ${{ runner.os }}-swift-${{ matrix.xcode-version }}-${{ matrix.platform }}
             ${{ runner.os }}-swift
             ${{ runner.os }}-
+      - name: Detect destination
+        id: destination
+        run: |
+          echo "::set-output name=value::$(./.github/scripts/detect-destination.sh ${{ matrix.platform }})"
       - name: Test
         run: |
           swift package clean
@@ -76,7 +80,7 @@ jobs:
           xcodebuild \
           -enableCodeCoverage YES \
           -scheme "$(xcrun --sdk macosx xcodebuild -list -json | jq -r '.workspace.schemes[0]' 2>/dev/null)" \
-          -destination "platform=${{ matrix.platform }}" \
+          -destination "${{ steps.destination.outputs.value }}" \
           -clonedSourcePackagesDirPath '.build' \
           -resultBundlePath 'test_output/test.xcresult' \
           clean test | xcpretty
