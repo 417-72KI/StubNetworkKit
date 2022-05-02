@@ -3,6 +3,12 @@
         "13.3.1",
         "13.2.1"
     ],
+    "platform": [
+        "macOS",
+        "iOS",
+        "watchOS",
+        "tvOS"
+    ],
     "swift_version": [
         "5.6",
         "5.5",

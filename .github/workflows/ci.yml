@@ -21,7 +21,7 @@ jobs:
       - name: Extract matrix
         id: matrix
         run: |
-          echo "::set-output name=matrix::$(cat .github/matrix.json | jq -rc '{xcode_version: .xcode_version, latest_xcode_version: .xcode_version | max, swift_version: .swift_version}')"
+          echo "::set-output name=matrix::$(cat .github/matrix.json | jq -rc '{xcode_version: .xcode_version, latest_xcode_version: .xcode_version | max, platform: .platform, swift_version: .swift_version}')"
   test-linux:
     name: Test(Linux)
     needs: generate-matrix
@@ -52,11 +52,7 @@ jobs:
       fail-fast: false
       matrix:
         xcode-version: ${{ fromJson(needs.generate-matrix.outputs.matrix).xcode_version }}
-        platform:
-          - macOS
-          - iOS
-          - watchOS
-          - tvOS
+        platform: ${{ fromJson(needs.generate-matrix.outputs.matrix).platform }}
     env:
       LATEST_XCODE_VERSION: ${{ fromJson(needs.generate-matrix.outputs.matrix).latest_xcode_version }}
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer
@@ -68,6 +64,7 @@ jobs:
           key: ${{ runner.os }}-swift-${{ matrix.xcode-version }}-${{ matrix.platform }}-${{ hashFiles('Package.swift') }}
           restore-keys: |
             ${{ runner.os }}-swift-${{ matrix.xcode-version }}-${{ matrix.platform }}
+            ${{ runner.os }}-swift-${{ matrix.xcode-version }}
             ${{ runner.os }}-swift
             ${{ runner.os }}-
       - name: Detect destination
@@ -95,6 +92,7 @@ jobs:
           retention-days: 1
   xcodebuild_result:
     name: Export xcodebuild test result
+    if: success() || failure()
     needs: test-macos
     runs-on: macOS-12
     steps:

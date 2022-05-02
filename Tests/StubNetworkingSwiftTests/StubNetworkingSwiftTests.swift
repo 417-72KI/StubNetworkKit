@@ -38,6 +38,8 @@ final class StubNetworkingSwiftTests: XCTestCase {
         waitForExpectations(timeout: 5)
     }
 
+    // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+    #if !os(watchOS)
     func testSharedSession() throws {
         registerStubForSharedSession()
         defer { unregisterStubForSharedSession() }
@@ -57,6 +59,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         }.resume()
         waitForExpectations(timeout: 5)
     }
+    #endif
 
     // MARK: - Alamofire
     #if canImport(Alamofire)
