@@ -1,0 +1,113 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - .github/workflows/ci.yml
+      - Package.*
+      - Sources/**/*.swift
+      - Tests/**/*.swift
+      - .github/matrix.json
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  generate-matrix:
+    name: Generate matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      latest-xcode: ${{ steps.matrix.outputs.latest-xcode }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Extract matrix
+        id: matrix
+        run: |
+          echo "::set-output name=latest-xcode::$(cat .github/matrix.json | jq -rc '.xcode_version | max')"
+          echo "::set-output name=matrix::$(cat .github/matrix.json | jq -rc .)"
+  test-linux:
+    name: Test(Linux)
+    needs: generate-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        swift-version: ${{ fromJson(needs.generate-matrix.outputs.matrix).swift_version }}
+    container:
+      image: swift:${{ matrix.swift-version }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: .build
+          key: ${{ runner.os }}-swift-${{ matrix.swift-version }}-${{ hashFiles('Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-swift-${{ matrix.swift-version }}
+            ${{ runner.os }}-swift
+            ${{ runner.os }}-
+      - name: Test
+        run: swift package clean && swift test --enable-test-discovery
+  test-macos:
+    name: Test(macOS)
+    needs: generate-matrix
+    runs-on: macOS-12
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode-version: ${{ fromJson(needs.generate-matrix.outputs.matrix).xcode_version }}
+        platform: ${{ fromJson(needs.generate-matrix.outputs.matrix).platform }}
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: .build
+          key: ${{ runner.os }}-swift-${{ matrix.xcode-version }}-${{ matrix.platform }}-${{ hashFiles('Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-swift-${{ matrix.xcode-version }}-${{ matrix.platform }}
+            ${{ runner.os }}-swift-${{ matrix.xcode-version }}
+            ${{ runner.os }}-swift
+            ${{ runner.os }}-
+      - name: Detect destination
+        id: destination
+        run: |
+          echo "::set-output name=value::$(./.github/scripts/detect-destination.sh ${{ matrix.platform }})"
+      - name: Test
+        run: |
+          swift package clean
+          set -o pipefail && xcrun \
+          xcodebuild \
+          -enableCodeCoverage YES \
+          -scheme "$(xcrun --sdk macosx xcodebuild -list -json | jq -r '.workspace.schemes[0]' 2>/dev/null)" \
+          -destination "${{ steps.destination.outputs.value }}" \
+          -clonedSourcePackagesDirPath '.build' \
+          -resultBundlePath 'test_output/test.xcresult' \
+          clean test | xcpretty
+      - name: Upload artifacts
+        if: matrix.xcode-version == needs.generate-matrix.outputs.latest-xcode && (success() || failure())
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.platform }}
+          path: test_output
+          if-no-files-found: error
+          retention-days: 1
+  xcodebuild_result:
+    name: Export xcodebuild test result
+    if: success() || failure()
+    needs: test-macos
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: test_output
+      - name: Merge xcresult files
+        run: xcrun xcresulttool merge test_output/**/*.xcresult --output-path test_output/TestResults.xcresult
+      - uses: kishikawakatsumi/xcresulttool@v1
+        with:
+          path: test_output/TestResults.xcresult
+          show-passed-tests: false
+          show-code-coverage: false
+          upload-bundles: true
