@@ -1,0 +1,46 @@
+name: CI
+on:
+  pull_request:
+    paths:
+      - .github/workflows/ci.yml
+      - Package.*
+      - Sources/**/*.swift
+      - Tests/**/*.swift
+      - .github/matrix.json
+concurrency: 
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+jobs:
+  generate-matrix:
+    name: Extract latest Xcode version from matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Extract matrix
+        id: matrix
+        run: |
+          echo "::set-output name=matrix::$(cat .github/matrix.json | jq -rc '{xcode_version: .xcode_version, latest_xcode_version: .xcode_version | max, swift_version: .swift_version}')"
+  test-linux:
+    name: Test(Linux)
+    needs: generate-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        swift-version: ${{ fromJson(needs.generate-matrix.outputs.matrix).swift_version }}
+    container:
+      image: swift:${{ matrix.swift-version }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: .build
+          key: ${{ runner.os }}-swift-${{ matrix.swift-version }}-${{ hashFiles('Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-swift-${{ matrix.swift-version }}
+            ${{ runner.os }}-swift
+            ${{ runner.os }}-
+      - name: Test
+        run: swift package clean && swift test --enable-test-discovery
