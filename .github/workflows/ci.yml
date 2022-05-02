@@ -58,7 +58,8 @@ jobs:
           - watchOS
           - tvOS
     env:
-      latest-xcode-version: ${{ fromJson(needs.generate-matrix.outputs.matrix).latest_xcode_version }}
+      LATEST_XCODE_VERSION: ${{ fromJson(needs.generate-matrix.outputs.matrix).latest_xcode_version }}
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode-version }}.app/Contents/Developer
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
@@ -84,3 +85,29 @@ jobs:
           -clonedSourcePackagesDirPath '.build' \
           -resultBundlePath 'test_output/test.xcresult' \
           clean test | xcpretty
+      - name: Upload artifacts
+        if: ${{ matrix.xcode-version }} == ${{ env.LATEST_XCODE_VERSION }} && (success() || failure())
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.platform }}
+          path: test_output/test.xcresult
+          if-no-files-found: error
+          retention-days: 1
+  xcodebuild_result:
+    name: Export xcodebuild test result
+    needs: test-macos
+    runs-on: macOS-12
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: test_output
+      - name: Merge xcresult files
+        run:
+          xcrun xcresulttool merge test_output/**/*.xcresult --output-path test_output/TestResults.xcresult
+      - uses: kishikawakatsumi/xcresulttool@v1
+        if: success() || failure()
+        with:
+          path: test_output/TestResults.xcresult
+          show-passed-tests: false
+          show-code-coverage: false
+          upload-bundles: true
