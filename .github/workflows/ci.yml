@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   generate-matrix:
-    name: Extract latest Xcode version from matrix
+    name: Generate matrix
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
@@ -21,7 +21,8 @@ jobs:
       - name: Extract matrix
         id: matrix
         run: |
-          echo "::set-output name=matrix::$(cat .github/matrix.json | jq -rc '{xcode_version: .xcode_version, latest_xcode_version: .xcode_version | max, platform: .platform, swift_version: .swift_version}')"
+          LATEST_XCODE_VERSION="$(cat .github/matrix.json | jq -rc '.xcode_version | max')"
+          echo "::set-output name=matrix::$(cat .github/matrix.json | jq --arg latest "${LATEST_XCODE_VERSION}" -rc '. + {latest_xcode_version: $latest}')"
   test-linux:
     name: Test(Linux)
     needs: generate-matrix
