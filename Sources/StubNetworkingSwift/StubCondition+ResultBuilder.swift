@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 @resultBuilder
 public struct StubConditionBuilder {
@@ -20,6 +23,12 @@ public struct StubConditionBuilder {
 }
 
 // MARK: -
-public func stub(@StubConditionBuilder builder: () -> StubCondition) -> StubCondition {
+public func stubCondition(@StubConditionBuilder builder: () -> StubCondition) -> StubCondition {
     builder()
+}
+
+@discardableResult
+public func stub(@StubConditionBuilder builder: () -> StubCondition,
+                 withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
+    stub(stubCondition(builder: builder), withResponse: stubResponse)
 }
