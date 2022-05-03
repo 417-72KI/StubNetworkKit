@@ -64,7 +64,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
     // MARK: - Alamofire
     #if canImport(Alamofire)
     func testAlamofire() throws {
-        let config = URLSessionConfiguration.af.default
+        let config = URLSessionConfiguration.af.ephemeral
         registerStub(to: config)
         let session = Session(configuration: config)
 
@@ -87,6 +87,28 @@ final class StubNetworkingSwiftTests: XCTestCase {
         XCTAssertEqual(result?.response?.statusCode, 200)
         XCTAssertNil(result?.error)
     }
+
+    #if compiler(>=5.6) && canImport(_Concurrency)
+    func testAlamofireWithConcurrency() async throws {
+        let config = URLSessionConfiguration.af.ephemeral
+        registerStub(to: config)
+        let session = Session(configuration: config)
+
+        let url = URL(string: "foo://bar/baz")!
+
+        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
+            StubResponse(data: "Hello world!".data(using: .utf8)!)
+        }
+
+        let request = session.request(url)
+        let result = await request
+            .serializingString()
+            .response
+        XCTAssertEqual(result.value, "Hello world!")
+        XCTAssertEqual(result.response?.statusCode, 200)
+        XCTAssertNil(result.error)
+    }
+    #endif
     #endif
 
     // MARK: - APIKit
