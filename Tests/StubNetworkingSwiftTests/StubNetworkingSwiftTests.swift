@@ -25,10 +25,32 @@ final class StubNetworkingSwiftTests: XCTestCase {
         clearStubs()
     }
 
-    func testDefaultStubSession() throws {
+    func testDefaultStubSession_basic() throws {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
+            StubResponse(data: "Hello world!".data(using: .utf8)!)
+        }
+
+        let e = expectation(description: "URLSession")
+        defaultStubSession.dataTask(with: url) { data, response, error in
+            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
+            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
+            XCTAssertNil(error)
+            e.fulfill()
+        }.resume()
+        waitForExpectations(timeout: 5)
+    }
+
+    func testDefaultStubSession_resultBuilder() throws {
+        let url = URL(string: "foo://bar/baz")!
+
+        stub {
+            Scheme.is("foo")
+            Host.is("bar")
+            Path.is("/baz")
+            Method.isGet()
+        } withResponse: { _ in
             StubResponse(data: "Hello world!".data(using: .utf8)!)
         }
 
