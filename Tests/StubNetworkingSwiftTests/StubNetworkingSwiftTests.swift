@@ -21,6 +21,10 @@ final class StubNetworkingSwiftTests: XCTestCase {
                                       debugConditions: true)
     }
 
+    override func tearDown() {
+        clearStubs()
+    }
+
     func testDefaultStubSession() throws {
         let url = URL(string: "foo://bar/baz")!
 
@@ -59,6 +63,39 @@ final class StubNetworkingSwiftTests: XCTestCase {
         }.resume()
         waitForExpectations(timeout: 5)
     }
+    #endif
+
+    #if compiler(>=5.6) && canImport(_Concurrency)
+    @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
+    func testDefaultStubSessionWithConcurrency() async throws {
+        let url = URL(string: "foo://bar/baz")!
+
+        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
+            StubResponse(data: "Hello world!".data(using: .utf8)!)
+        }
+
+        let (data, response) = try await defaultStubSession.data(from: url)
+        XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
+        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
+    }
+
+    #if !os(watchOS)
+    @available(macOS 12.0, iOS 15.0, tvOS 15.0, *)
+    func testSharedSessionWithConcurrency() async throws {
+        registerStubForSharedSession()
+        defer { unregisterStubForSharedSession() }
+
+        let url = URL(string: "foo://bar/baz")!
+
+        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
+            StubResponse(data: "Hello world!".data(using: .utf8)!)
+        }
+
+        let (data, response) = try await URLSession.shared.data(from: url)
+        XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
+        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
+    }
+    #endif
     #endif
 
     // MARK: - Alamofire
