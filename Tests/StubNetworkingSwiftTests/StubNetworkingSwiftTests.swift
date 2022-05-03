@@ -64,6 +64,25 @@ final class StubNetworkingSwiftTests: XCTestCase {
         waitForExpectations(timeout: 5)
     }
 
+    func testDefaultStubSession_functionChaining() throws {
+        let url = URL(string: "foo://bar/baz")!
+        stub()
+            .scheme("foo")
+            .host("bar")
+            .path("/baz")
+            .method(.get)
+            .responseData("Hello world!".data(using: .utf8)!)
+
+        let e = expectation(description: "URLSession")
+        defaultStubSession.dataTask(with: url) { data, response, error in
+            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
+            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
+            XCTAssertNil(error)
+            e.fulfill()
+        }.resume()
+        waitForExpectations(timeout: 5)
+    }
+
     // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
     #if !os(watchOS)
     func testSharedSession() throws {
