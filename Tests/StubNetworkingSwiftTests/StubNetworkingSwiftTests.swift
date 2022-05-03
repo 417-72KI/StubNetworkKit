@@ -74,15 +74,18 @@ final class StubNetworkingSwiftTests: XCTestCase {
             StubResponse(data: "Hello world!".data(using: .utf8)!)
         }
 
+        var result: AFDataResponse<String>!
         let e = expectation(description: "Alamofire")
         session.request(url)
-            .responseString { res in
-                XCTAssertEqual(res.value, "Hello world!")
-                XCTAssertEqual(res.response?.statusCode, 200)
-                XCTAssertNil(res.error)
+            .responseString {
+                result = $0
                 e.fulfill()
             }.resume()
         waitForExpectations(timeout: 5)
+
+        XCTAssertEqual(result?.value, "Hello world!")
+        XCTAssertEqual(result?.response?.statusCode, 200)
+        XCTAssertNil(result?.error)
     }
     #endif
 
@@ -112,20 +115,18 @@ final class StubNetworkingSwiftTests: XCTestCase {
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
             StubResponse(data: #"{"status": 200}"#.data(using: .utf8)!)
         }
-
+        var result: Result<FakeRequest.Response, SessionTaskError>!
         let e = expectation(description: "APIKit")
         Session(adapter: adapter)
             .send(FakeRequest()) {
-                do {
-                    let response = try $0.get()
-                    XCTAssertEqual(response.status, 200)
-                } catch {
-                    XCTFail(error.localizedDescription)
-                }
+                result = $0
                 e.fulfill()
             }?
             .resume()
         waitForExpectations(timeout: 5)
+
+        let response = try XCTUnwrap(result).get()
+        XCTAssertEqual(response.status, 200)
     }
     #endif
 
@@ -149,19 +150,17 @@ final class StubNetworkingSwiftTests: XCTestCase {
             StubResponse(data: "Hello world!".data(using: .utf8)!)
         }
 
+        var result: Result<Response, MoyaError>!
         let e = expectation(description: "Moya")
         provider.request(.init()) {
-            do {
-                let response = try $0.get()
-                XCTAssertEqual(String(data: response.data, encoding: .utf8), "Hello world!")
-                XCTAssertEqual(response.statusCode, 200)
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
+            result = $0
             e.fulfill()
         }
         waitForExpectations(timeout: 5)
 
+        let response = try XCTUnwrap(result).get()
+        XCTAssertEqual(String(data: response.data, encoding: .utf8), "Hello world!")
+        XCTAssertEqual(response.statusCode, 200)
     }
     #endif
 }
