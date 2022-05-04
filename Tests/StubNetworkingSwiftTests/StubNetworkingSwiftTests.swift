@@ -29,7 +29,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let e = expectation(description: "URLSession")
@@ -51,7 +51,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
             Path.is("/baz")
             Method.isGet()
         } withResponse: { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let e = expectation(description: "URLSession")
@@ -144,7 +144,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let e = expectation(description: "URLSession")
@@ -164,7 +164,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let (data, response) = try await defaultStubSession.data(from: url)
@@ -181,7 +181,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let (data, response) = try await URLSession.shared.data(from: url)
@@ -201,7 +201,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         var result: AFDataResponse<String>!
@@ -227,7 +227,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let request = session.request(url)
@@ -264,9 +264,12 @@ final class StubNetworkingSwiftTests: XCTestCase {
         registerStub(to: config)
         let adapter = URLSessionAdapter(configuration: config)
 
-        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: #"{"status": 200}"#.data(using: .utf8)!)
-        }
+        stub {
+            Scheme.is("foo")
+            Host.is("bar")
+            Path.is("/baz")
+        } withResponse: { _ in .json(["status": 200]) }
+
         var result: Result<FakeRequest.Response, SessionTaskError>!
         let e = expectation(description: "APIKit")
         Session(adapter: adapter)
@@ -299,7 +302,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let provider = MoyaProvider<FakeService>(session: session)
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         var result: Result<Response, MoyaError>!
