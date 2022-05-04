@@ -16,13 +16,27 @@ public final class Stub {
     }
 }
 
+// MARK: - Basic builder
+@discardableResult
+public func stub(_ condition: @escaping StubCondition,
+                 withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
+    let stub = Stub(condition: condition,
+                    response: stubResponse)
+    StubURLProtocol.register(stub)
+    return stub
+}
+
+public func clearStubs() {
+    StubURLProtocol.reset()
+}
+
 // MARK: - Method chain builders
 @discardableResult
 public func stub(url: URL? = nil,
                  method: Method? = nil,
                  file: StaticString = #file,
                  line: UInt = #line) -> Stub {
-    let condition = stub {
+    let condition = stubCondition {
         if let url = url {
             let comps = URLComponents(url: url, resolvingAgainstBaseURL: false)
             if let scheme = comps?.scheme {
@@ -42,7 +56,9 @@ public func stub(url: URL? = nil,
             method.condition(file: file, line: line)
         }
     }
-    return Stub(condition: condition)
+    let stub = Stub(condition: condition)
+    StubURLProtocol.register(stub)
+    return stub
 }
 
 @discardableResult
@@ -205,7 +221,67 @@ public extension Stub {
     }
 }
 
+// MARK: - Return values
+public extension Stub {
+    @discardableResult
+    func responseData(_ data: Data, statusCode: Int = 200, headers: [String: String]? = nil) -> Self {
+        response = successResponse(data, statusCode: statusCode, headers: headers)
+        return self
+    }
+
+    @discardableResult
+    func responseJson(_ jsonObject: [AnyHashable: Any], statusCode: Int = 200) -> Self {
+        do {
+            let data = try JSONSerialization.data(withJSONObject: jsonObject,
+                                                  options: .sortedKeys)
+            response = successResponse(data,
+                                       statusCode: statusCode,
+                                       headers: ["Content-Type": "application/json"])
+
+        } catch {
+            response = errorResponse(.unexpectedError(error))
+        }
+        return self
+    }
+
+    @discardableResult
+    func responseJson(_ jsonArray: [Any], statusCode: Int = 200) -> Self {
+        do {
+            let data = try JSONSerialization.data(withJSONObject: jsonArray,
+                                                  options: .sortedKeys)
+            response = successResponse(data,
+                                       statusCode: statusCode,
+                                       headers: ["Content-Type": "application/json"])
+
+        } catch {
+            response = errorResponse(.unexpectedError(error))
+        }
+        return self
+    }
+
+    @discardableResult
+    func responseData(withFilePath filePath: String,
+                      extension ext: String? = nil,
+                      in bundle: Bundle = .main,
+                      headers: [String: String]? = nil) -> Self {
+        let url = StubResponse.url(forResource: filePath,
+                                   withExtension: ext,
+                                   in: bundle)
+        do {
+            let data = try Data(contentsOf: url)
+            response = successResponse(data)
+        } catch {
+            response = errorResponse(.unexpectedError(error))
+        }
+        return self
+    }
+}
+
 // MARK: -
+func successResponse(_ data: Data?, statusCode: Int = 200, headers: [String: String]? = nil) -> Stub.Response {
+    { _ in .success(data: data, statusCode: statusCode, headers: headers) }
+}
+
 func errorResponse(_ error: StubError) -> Stub.Response {
     { _ in .failure(error) }
 }

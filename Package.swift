@@ -61,7 +61,8 @@ let package = Package(
             dependencies: [
                 "StubNetworkingSwift",
                 "SwiftParamTest",
-            ] + testTargetDependencies
+            ] + testTargetDependencies,
+            resources: [.copy("Fixtures")]
         ),
     ]
 )

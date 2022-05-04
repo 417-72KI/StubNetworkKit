@@ -25,11 +25,11 @@ final class StubNetworkingSwiftTests: XCTestCase {
         clearStubs()
     }
 
-    func testDefaultStubSession() throws {
+    func testDefaultStubSession_basic() throws {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let e = expectation(description: "URLSession")
@@ -42,6 +42,122 @@ final class StubNetworkingSwiftTests: XCTestCase {
         waitForExpectations(timeout: 5)
     }
 
+    func testDefaultStubSession_resultBuilder() throws {
+        let url = URL(string: "foo://bar/baz")!
+
+        stub {
+            Scheme.is("foo")
+            Host.is("bar")
+            Path.is("/baz")
+            Method.isGet()
+        } withResponse: { _ in
+            .data("Hello world!".data(using: .utf8)!)
+        }
+
+        let e = expectation(description: "URLSession")
+        defaultStubSession.dataTask(with: url) { data, response, error in
+            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
+            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
+            XCTAssertNil(error)
+            e.fulfill()
+        }.resume()
+        waitForExpectations(timeout: 5)
+    }
+
+    func testDefaultStubSession_functionChaining() throws {
+        let url = URL(string: "foo://bar/baz")!
+        stub()
+            .scheme("foo")
+            .host("bar")
+            .path("/baz")
+            .method(.get)
+            .responseData("Hello world!".data(using: .utf8)!)
+
+        let e = expectation(description: "URLSession")
+        defaultStubSession.dataTask(with: url) { data, response, error in
+            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
+            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
+            XCTAssertNil(error)
+            e.fulfill()
+        }.resume()
+        waitForExpectations(timeout: 5)
+    }
+
+    func testDefaultStubSession_fixture() throws {
+        let url = URL(string: "foo://bar/baz")!
+        stub {
+            Scheme.is("foo")
+            Host.is("bar")
+            Path.is("/baz")
+            Method.isGet()
+        } withResponse: { _ in .json(fromFile: "Fixtures/sample", in: .module) }
+
+        var data: Data?
+        let e = expectation(description: "URLSession_fixture")
+        defaultStubSession.dataTask(with: url) { d, res, err in
+            data = d
+            XCTAssertEqual((res as? HTTPURLResponse)?.statusCode, 200)
+            XCTAssertNil(err)
+            e.fulfill()
+        }.resume()
+        waitForExpectations(timeout: 5)
+
+        let actual = try JSONDecoder()
+            .decode(Sample.self, from: XCTUnwrap(data))
+        XCTAssertEqual(actual, .init(foo: "hoge",
+                                     bar: 42,
+                                     baz: true,
+                                     qux: .init(
+                                        quux: "fuga",
+                                        corge: 3.14,
+                                        grault: false,
+                                        garply: [
+                                            "spam",
+                                            "ham",
+                                            "eggs"
+                                        ]
+                                     )
+                                    )
+        )
+    }
+
+    func testDefaultStubSession_functionChaining_fixture() throws {
+        let url = URL(string: "foo://bar/baz")!
+        stub()
+            .scheme("foo")
+            .host("bar")
+            .path("/baz")
+            .method(.get)
+            .responseData(withFilePath: "Fixtures/sample", extension: "json", in: .module)
+
+        var data: Data?
+        let e = expectation(description: "URLSession_functionChaining_fixture")
+        defaultStubSession.dataTask(with: url) { d, res, err in
+            data = d
+            XCTAssertEqual((res as? HTTPURLResponse)?.statusCode, 200)
+            XCTAssertNil(err)
+            e.fulfill()
+        }.resume()
+        waitForExpectations(timeout: 5)
+
+        let actual = try JSONDecoder()
+            .decode(Sample.self, from: XCTUnwrap(data))
+        XCTAssertEqual(actual, .init(foo: "hoge",
+                                     bar: 42,
+                                     baz: true,
+                                     qux: .init(
+                                        quux: "fuga",
+                                        corge: 3.14,
+                                        grault: false,
+                                        garply: [
+                                            "spam",
+                                            "ham",
+                                            "eggs"
+                                        ]
+                                     )
+                                    )
+        )
+    }
     // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
     #if !os(watchOS)
     func testSharedSession() throws {
@@ -51,7 +167,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let e = expectation(description: "URLSession")
@@ -71,7 +187,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let (data, response) = try await defaultStubSession.data(from: url)
@@ -88,7 +204,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let (data, response) = try await URLSession.shared.data(from: url)
@@ -108,7 +224,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         var result: AFDataResponse<String>!
@@ -134,7 +250,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         let request = session.request(url)
@@ -171,9 +287,12 @@ final class StubNetworkingSwiftTests: XCTestCase {
         registerStub(to: config)
         let adapter = URLSessionAdapter(configuration: config)
 
-        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: #"{"status": 200}"#.data(using: .utf8)!)
-        }
+        stub {
+            Scheme.is("foo")
+            Host.is("bar")
+            Path.is("/baz")
+        } withResponse: { _ in .json(["status": 200]) }
+
         var result: Result<FakeRequest.Response, SessionTaskError>!
         let e = expectation(description: "APIKit")
         Session(adapter: adapter)
@@ -206,7 +325,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         let provider = MoyaProvider<FakeService>(session: session)
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) { _ in
-            StubResponse(data: "Hello world!".data(using: .utf8)!)
+            .data("Hello world!".data(using: .utf8)!)
         }
 
         var result: Result<Response, MoyaError>!
@@ -222,4 +341,20 @@ final class StubNetworkingSwiftTests: XCTestCase {
         XCTAssertEqual(response.statusCode, 200)
     }
     #endif
+}
+
+private extension StubNetworkingSwiftTests {
+    struct Sample: Decodable, Equatable {
+        var foo: String
+        var bar: Int
+        var baz: Bool
+        var qux: Qux
+
+        struct Qux: Decodable, Equatable {
+            var quux: String
+            var corge: Decimal
+            var grault: Bool
+            var garply: [String]
+        }
+    }
 }

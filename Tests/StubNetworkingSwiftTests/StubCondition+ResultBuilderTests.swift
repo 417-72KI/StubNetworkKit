@@ -10,7 +10,7 @@ final class StubCondition_ResultBuilderTests: XCTestCase {
         var req = URLRequest(url: .init(string: "https://foo.bar/baz?q=1&flag")!)
         req.httpMethod = "POST"
 
-        let condition = stub {
+        let condition = stubCondition {
             Scheme.is("https")
             Host.is("foo.bar")
             Path.is("/baz")
@@ -26,7 +26,7 @@ final class StubCondition_ResultBuilderTests: XCTestCase {
         let comps = URLComponents(string: "https://foo.bar/baz?q=1&flag")
         let req = URLRequest(url: comps!.url!)
 
-        let condition = stub {
+        let condition = stubCondition {
             if let scheme = comps?.scheme {
                 Scheme.is(scheme)
             }
@@ -50,7 +50,7 @@ final class StubCondition_ResultBuilderTests: XCTestCase {
             var request = URLRequest(url: .init(string: "https://foo.bar/baz?q=1&flag")!)
             request.httpMethod = method
 
-            let condition = stub {
+            let condition = stubCondition {
                 Scheme.is("https")
                 Host.is("foo.bar")
                 Path.is("/baz")

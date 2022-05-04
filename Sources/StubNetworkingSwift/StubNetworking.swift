@@ -51,17 +51,6 @@ public func unregisterStubForSharedSession() {
     URLProtocol.unregisterClass(StubURLProtocol.self)
 }
 
-// MARK: - stub response
-public func stub(_ condition: @escaping StubCondition,
-                 withResponse stubResponse: @escaping (URLRequest) -> StubResponse) {
-    StubURLProtocol.register(.init(condition: condition,
-                                   response: stubResponse))
-}
-
-public func clearStubs() {
-    StubURLProtocol.reset()
-}
-
 // MARK: - logger
 func debugLog(_ message: Any,
               file: StaticString = #file,

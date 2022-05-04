@@ -8,6 +8,7 @@ public enum StubResponse {
     case failure(Error)
 }
 
+// MARK: - Success
 public extension StubResponse {
     init(data: Data,
          statusCode: Int = 200,
@@ -24,9 +25,7 @@ public extension StubResponse {
                       statusCode: statusCode,
                       headers: headers)
         } catch {
-            self.init(data: .init(),
-                      statusCode: statusCode,
-                      headers: headers)
+            self.init(error: error)
         }
     }
 
@@ -39,6 +38,44 @@ public extension StubResponse {
     }
 }
 
+// MARK: JSON
+public extension StubResponse {
+    init(jsonObject: [AnyHashable: Any],
+         statusCode: Int = 200,
+         headers appendingHeaders: [String: String]? = nil) {
+        do {
+            let data = try JSONSerialization.data(withJSONObject: jsonObject)
+            var headers = ["Content-Type": "application/json"]
+            if let appendingHeaders = appendingHeaders {
+                headers.merge(appendingHeaders) { (used, _) in used }
+            }
+            self.init(data: data,
+                      statusCode: statusCode,
+                      headers: headers)
+        } catch {
+            self.init(error: error)
+        }
+    }
+
+    init(jsonArray: [Any],
+         statusCode: Int = 200,
+         headers appendingHeaders: [String: String]? = nil) {
+        do {
+            let data = try JSONSerialization.data(withJSONObject: jsonArray)
+            var headers = ["Content-Type": "application/json"]
+            if let appendingHeaders = appendingHeaders {
+                headers.merge(appendingHeaders) { (used, _) in used }
+            }
+            self.init(data: data,
+                      statusCode: statusCode,
+                      headers: headers)
+        } catch {
+            self.init(error: error)
+        }
+    }
+}
+
+// MARK: - Failure
 public extension StubResponse {
     init(error: Error) {
         self = .failure(error)
