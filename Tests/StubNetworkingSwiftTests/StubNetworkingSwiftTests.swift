@@ -90,7 +90,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
             Host.is("bar")
             Path.is("/baz")
             Method.isGet()
-        } withResponse: { _ in .json(fromFile: "Resources/fixtures/sample", in: .module) }
+        } withResponse: { _ in .json(fromFile: "Fixtures/sample", in: .module) }
 
         var data: Data?
         let e = expectation(description: "URLSession_fixture")
@@ -128,7 +128,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
             .host("bar")
             .path("/baz")
             .method(.get)
-            .responseData(withFilePath: "Resources/fixtures/sample", extension: "json", in: .module)
+            .responseData(withFilePath: "Fixtures/sample", extension: "json", in: .module)
 
         var data: Data?
         let e = expectation(description: "URLSession_functionChaining_fixture")
