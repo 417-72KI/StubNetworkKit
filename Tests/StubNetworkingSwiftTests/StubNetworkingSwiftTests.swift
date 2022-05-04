@@ -25,6 +25,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         clearStubs()
     }
 
+    /// Example function for basic implementation
     func testDefaultStubSession_basic() throws {
         let url = URL(string: "foo://bar/baz")!
 
@@ -42,6 +43,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         waitForExpectations(timeout: 5)
     }
 
+    /// Example function for using Result Builder implementation
     func testDefaultStubSession_resultBuilder() throws {
         let url = URL(string: "foo://bar/baz")!
 
@@ -64,6 +66,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         waitForExpectations(timeout: 5)
     }
 
+    /// Example function for using function-chain implementation
     func testDefaultStubSession_functionChaining() throws {
         let url = URL(string: "foo://bar/baz")!
         stub()
@@ -83,6 +86,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         waitForExpectations(timeout: 5)
     }
 
+    /// Example function for using fixture response.
     func testDefaultStubSession_fixture() throws {
         let url = URL(string: "foo://bar/baz")!
         stub {
@@ -121,6 +125,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
         )
     }
 
+    /// Example function for using function-chain implementation and fixture response.
     func testDefaultStubSession_functionChaining_fixture() throws {
         let url = URL(string: "foo://bar/baz")!
         stub()
@@ -160,6 +165,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
     }
     // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
     #if !os(watchOS)
+    /// Example function for intercepting `URLSession.shared` requests
     func testSharedSession() throws {
         registerStubForSharedSession()
         defer { unregisterStubForSharedSession() }
