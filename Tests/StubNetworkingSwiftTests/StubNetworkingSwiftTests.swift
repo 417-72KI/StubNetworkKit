@@ -83,6 +83,58 @@ final class StubNetworkingSwiftTests: XCTestCase {
         waitForExpectations(timeout: 5)
     }
 
+    func testDefaultStubSession_fixture() throws {
+        struct Sample: Decodable, Equatable {
+            var foo: String
+            var bar: Int
+            var baz: Bool
+            var qux: Qux
+
+            struct Qux: Decodable, Equatable {
+                var quux: String
+                var corge: Decimal
+                var grault: Bool
+                var garply: [String]
+            }
+        }
+
+        let url = URL(string: "foo://bar/baz")!
+        stub {
+            Scheme.is("foo")
+            Host.is("bar")
+            Path.is("/baz")
+            Method.isGet()
+        } withResponse: { _ in .json(fromFile: "Resources/fixtures/sample", in: .module) }
+
+        var data: Data?
+        let e = expectation(description: "URLSession")
+        defaultStubSession.dataTask(with: url) { d, res, err in
+            data = d
+            XCTAssertEqual((res as? HTTPURLResponse)?.statusCode, 200)
+            XCTAssertNil(err)
+            e.fulfill()
+        }.resume()
+        waitForExpectations(timeout: 5)
+
+        let testData = try JSONDecoder()
+            .decode(Sample.self, from: XCTUnwrap(data))
+        XCTAssertEqual(testData, .init(foo: "hoge",
+                                       bar: 42,
+                                       baz: true,
+                                       qux: .init(
+                                        quux: "fuga",
+                                        corge: 3.14,
+                                        grault: false,
+                                        garply: [
+                                            "spam",
+                                            "ham",
+                                            "eggs"
+                                        ]
+                                       )
+                                      )
+        )
+    }
+
     // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
     #if !os(watchOS)
     func testSharedSession() throws {
