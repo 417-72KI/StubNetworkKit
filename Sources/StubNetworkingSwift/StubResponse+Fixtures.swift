@@ -30,12 +30,11 @@ public extension StubResponse {
                         in bundle: Bundle = .main,
                         statusCode: Int = 200,
                         headers: [String: String]? = nil) -> Self {
-        guard let path = bundle.path(forResource: filePath, ofType: ext) else {
-            preconditionFailure("File path \"\(filePath)\(ext.flatMap { ".\($0)" } ?? "")\" not found in \(bundle)")
-        }
-        return self.init(filePath: path,
-                         statusCode: statusCode,
-                         headers: headers)
+        self.init(filePath: path(filePath,
+                                 withExtension: ext,
+                                 in: bundle),
+                  statusCode: statusCode,
+                  headers: headers)
     }
 
     static func json(fromFile filePath: String,

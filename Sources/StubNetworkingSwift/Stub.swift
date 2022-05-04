@@ -258,6 +258,23 @@ public extension Stub {
         }
         return self
     }
+
+    @discardableResult
+    func responseData(withFilePath filePath: String,
+                      extension ext: String? = nil,
+                      in bundle: Bundle = .main,
+                      headers: [String: String]? = nil) -> Self {
+        let url = StubResponse.url(forResource: filePath,
+                                   withExtension: ext,
+                                   in: bundle)
+        do {
+            let data = try Data(contentsOf: url)
+            response = successResponse(data)
+        } catch {
+            response = errorResponse(.unexpectedError(error))
+        }
+        return self
+    }
 }
 
 // MARK: -
