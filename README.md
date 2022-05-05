@@ -17,7 +17,7 @@
 ### Swift Package Manager(recommended)
 
 ```swift:Package.swift
-.package(url: "https://github.com/417-72KI/StubNetworkingSwift.git", from: "1.0.0"),
+.package(url: "https://github.com/417-72KI/StubNetworkingSwift.git", from: "0.0.2"),
 ```
 
 ### CocoaPods

@@ -1,6 +1,6 @@
 PROJECT_NAME = StubNetworkingSwift
 
-ver = 0.0.1
+ver = 0.0.2
 
 .SILENT:
 
