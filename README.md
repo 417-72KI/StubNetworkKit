@@ -3,6 +3,8 @@
 [![CI](https://github.com/417-72KI/StubNetworkingSwift/actions/workflows/ci.yml/badge.svg)](https://github.com/417-72KI/StubNetworkingSwift/actions/workflows/ci.yml)
 [![GitHub release](https://img.shields.io/github/release/417-72KI/StubNetworkingSwift/all.svg)](https://github.com/417-72KI/StubNetworkingSwift/releases)
 [![Swift Package Manager](https://img.shields.io/badge/Swift%20Package%20Manager-5.3|5.4|5.5|5.6-brightgreen.svg)](https://github.com/apple/swift-package-manager)
+[![CocoaPods Version](http://img.shields.io/cocoapods/v/StubNetworkingSwift.svg?style=flat)](http://cocoapods.org/pods/StubNetworkingSwift)
+[![CocoaPods Platform](http://img.shields.io/cocoapods/p/StubNetworkingSwift.svg?style=flat)](http://cocoapods.org/pods/StubNetworkingSwift)
 [![GitHub license](https://img.shields.io/github/license/417-72KI/StubNetworkingSwift)](https://github.com/417-72KI/StubNetworkingSwift/blob/main/LICENSE)
 
 **100% pure Swift** library to stub network requests.
@@ -19,7 +21,9 @@
 ```
 
 ### CocoaPods
-TBD(Future support)
+```ruby:Podfile
+pod 'StubNetworkingSwift'
+```
 
 ## Preparation
 **Pure Swift** is not supporting *method-swizzling*, therefore you have to enable stub explicitly.
