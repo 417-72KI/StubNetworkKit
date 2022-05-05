@@ -42,7 +42,12 @@ let testTargetDependencies: [Target.Dependency] = {
 
 let package = Package(
     name: "StubNetworkingSwift",
-    platforms: [.macOS(.v11), .iOS(.v14), .watchOS(.v5), .tvOS(.v14)],
+    platforms: [
+        .macOS(.v11),
+        .iOS(.v14),
+        .watchOS(.v5),
+        .tvOS(.v14)
+    ],
     products: [
         .library(
             name: "StubNetworkingSwift",
