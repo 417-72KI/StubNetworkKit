@@ -6,7 +6,9 @@ import FoundationNetworking
 public final class Stub {
     typealias Response = (URLRequest) -> StubResponse
 
+    /// Matcher to judge if use stub response.
     private(set) var condition: StubCondition
+    /// Stub response to return.
     private(set) var response: Response
 
     init(condition: @escaping StubCondition = alwaysTrue,
@@ -18,6 +20,11 @@ public final class Stub {
 
 // MARK: - Basic builder
 @discardableResult
+/// Create and register new stub.
+/// - Parameters:
+///   - condition: Matcher to judge if use stub response.
+///   - stubResponse: Stub response to return
+/// - Returns: Created stub object.
 public func stub(_ condition: @escaping StubCondition,
                  withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
     let stub = Stub(condition: condition,
@@ -26,11 +33,17 @@ public func stub(_ condition: @escaping StubCondition,
     return stub
 }
 
+/// Clear all registered stubs.
 public func clearStubs() {
     StubURLProtocol.reset()
 }
 
 // MARK: - Method chain builders
+/// Create and register new stub.
+/// - Parameters:
+///   - url: URL to match
+///   - method: Method to match
+/// - Returns: created stub object.
 @discardableResult
 public func stub(url: URL? = nil,
                  method: Method? = nil,
@@ -61,6 +74,11 @@ public func stub(url: URL? = nil,
     return stub
 }
 
+/// Create and register new stub.
+/// - Parameters:
+///   - url: URL string to match
+///   - method: Method to match
+/// - Returns: created stub object.
 @discardableResult
 public func stub(url: String,
                  method: Method? = nil,
@@ -71,6 +89,10 @@ public func stub(url: String,
 
 // MARK: Scheme
 public extension Stub {
+    /// Add scheme matcher.
+    /// - Parameters:
+    ///   - scheme: Scheme to match
+    /// - Returns: self
     @discardableResult
     func scheme(_ scheme: String,
                 file: StaticString = #file,
@@ -82,6 +104,10 @@ public extension Stub {
 
 // MARK: Host
 public extension Stub {
+    /// Add host matcher.
+    /// - Parameters:
+    ///   - host: Host to match
+    /// - Returns: self
     @discardableResult
     func host(_ host: String,
               file: StaticString = #file,
@@ -93,6 +119,10 @@ public extension Stub {
 
 // MARK: Path
 public extension Stub {
+    /// Add path matcher.
+    /// - Parameters:
+    ///   - path: Path to match
+    /// - Returns: self
     @discardableResult
     func path(_ path: String,
               file: StaticString = #file,
@@ -104,6 +134,10 @@ public extension Stub {
 
 // MARK: PathExtension
 public extension Stub {
+    /// Add path extension (e.g. `.json`, `.png`) matcher.
+    /// - Parameters:
+    ///   - ext: Path extension to match
+    /// - Returns: self
     @discardableResult
     func pathExtension(_ ext: String,
                        file: StaticString = #file,
@@ -115,6 +149,10 @@ public extension Stub {
 
 // MARK: Method
 public extension Stub {
+    /// Add method matcher.
+    /// - Parameters:
+    ///   - method: Method to match
+    /// - Returns: self
     @discardableResult
     func method(_ method: Method,
                 file: StaticString = #file,
@@ -126,6 +164,10 @@ public extension Stub {
 
 // MARK: QueryParams
 public extension Stub {
+    /// Add query params matcher.
+    /// - Parameters:
+    ///   - queryParams: Name-value pairs to match
+    /// - Returns: self
     @discardableResult
     func queryParams(_ queryParams: [String: String?],
                      file: StaticString = #file,
@@ -134,6 +176,10 @@ public extension Stub {
         return self
     }
 
+    /// Add query params matcher.
+    /// - Parameters:
+    ///   - queryItems: `URLQueryItem` list to match
+    /// - Returns: self
     @discardableResult
     func queryItems(_ queryItems: [URLQueryItem],
                     file: StaticString = #file,
@@ -142,6 +188,12 @@ public extension Stub {
         return self
     }
 
+    /// Add query params matcher.
+    ///
+    /// This matcher only tests if param-names exist.
+    /// - Parameters:
+    ///   - host: Param names to match
+    /// - Returns: self
     @discardableResult
     func queryParams(_ queryParams: [String],
                      file: StaticString = #file,
