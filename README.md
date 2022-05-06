@@ -39,8 +39,18 @@ Sample codes with using `Alamofire`, `APIKit` or `Moya` exist as test-cases in [
 ### Basic
 
 ```swift
-stub(Scheme.is("https") && Host.is("foo") && Path.is("/bar")) { _ in
-    .json(["message": "Hello world!"])
+stub(Scheme.is("https") && Host.is("foo") && Path.is("/bar"))
+    .responseJson(["message": "Hello world!"])
+```
+
+#### Switch response with conditional branches in request.
+
+```swift
+stub(Scheme.is("https") && Host.is("foo") && Path.is("/bar")) { request in
+    guard request.url?.query == "q=1" else {
+        return .error(.unexpectedRequest($0))
+    }
+    return .json(["message": "Hello world!"])
 }
 ```
 
@@ -51,7 +61,29 @@ stub {
     Host.is("foo")
     Path.is("/bar")
     Method.isGet()
-} withResponse: { _ in .json(["message": "Hello world!"]) }
+}.responseJson(["message": "Hello world!"])
+```
+
+#### Switch response with conditional branches in request.
+
+```swift
+stub {
+    Scheme.is("https")
+    Host.is("foo")
+    Path.is("/bar")
+    Method.isGet()
+} withResponse: { request in
+    guard request.url?.query == "q=1" else {
+        return .error(.unexpectedRequest($0))
+    }
+    return .json(["message": "Hello world!"]) 
+}
+```
+
+### 
+```swift
+stub(url: "foo://bar/baz", method: .get)
+    .responseData("Hello world!".data(using: .utf8)!)
 ```
 
 ### Function chain
