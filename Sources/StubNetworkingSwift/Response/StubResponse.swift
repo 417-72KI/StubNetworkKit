@@ -81,3 +81,15 @@ public extension StubResponse {
         self = .failure(error)
     }
 }
+
+// MARK: -
+extension StubResponse {
+    func get() throws -> (Data?, Int, [String: String]?) {
+        switch self {
+        case let .success(data, statusCode, headers):
+            return (data, statusCode, headers)
+        case let .failure(error):
+            throw error
+        }
+    }
+}
