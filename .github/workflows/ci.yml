@@ -12,7 +12,7 @@ on:
       - .github/matrix.json
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
 jobs:
   generate-matrix:
     name: Generate matrix
