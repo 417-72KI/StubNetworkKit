@@ -19,18 +19,29 @@ public final class Stub {
 }
 
 // MARK: - Basic builder
-@discardableResult
 /// Create and register new stub.
 /// - Parameters:
 ///   - condition: Matcher to judge if use stub response.
 ///   - stubResponse: Stub response to return
 /// - Returns: Created stub object.
+@discardableResult
 public func stub(_ condition: @escaping StubCondition,
                  withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
     let stub = Stub(condition: condition,
                     response: stubResponse)
     StubURLProtocol.register(stub)
     return stub
+}
+
+/// Create and register new stub.
+///
+/// Note that response is unregistered, and needs calling `.responseData/Json`.
+/// - Parameters:
+///   - condition: Matcher to judge if use stub response.
+/// - Returns: Created stub object.
+@discardableResult
+public func stub(_ condition: @escaping StubCondition) -> Stub {
+    stub(condition, withResponse: errorResponse(.unimplemented))
 }
 
 /// Clear all registered stubs.
