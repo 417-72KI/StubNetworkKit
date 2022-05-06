@@ -56,7 +56,7 @@ public extension StubResponse {
 }
 
 public extension StubResponse {
-    static func error(_ error: Error) -> Self {
+    static func error(_ error: StubError) -> Self {
         .init(error: error)
     }
 }
