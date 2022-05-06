@@ -22,30 +22,26 @@ final class StubURLProtocol: URLProtocol {
                 throw StubError.unexpectedRequest(request)
             }
             debugLog("Stub response detected for request: \(request)")
-            switch response {
-            case let .success(data, statusCode, headers):
-                debugLog("""
-                    data: \(data.flatMap { String(data: $0, encoding: .utf8) } ?? data?.base64EncodedString() ?? "(nil)")
-                    status code: \(statusCode)
-                    """)
+            let (data, statusCode, headers) = try response.get()
+            debugLog("""
+                data: \(data.flatMap { String(data: $0, encoding: .utf8) } ?? data?.base64EncodedString() ?? "(nil)")
+                status code: \(statusCode)
+                """)
 
-                guard let urlResponse = HTTPURLResponse(
-                    url: url,
-                    statusCode: statusCode,
-                    httpVersion: "HTTP/1.1",
-                    headerFields: headers
-                ) else { throw StubError.responseInitializingFailed(url, statusCode, headers) }
+            guard let urlResponse = HTTPURLResponse(
+                url: url,
+                statusCode: statusCode,
+                httpVersion: "HTTP/1.1",
+                headerFields: headers
+            ) else { throw StubError.responseInitializingFailed(url, statusCode, headers) }
 
-                client?.urlProtocol(self,
-                                    didReceive: urlResponse,
-                                    cacheStoragePolicy: .notAllowed)
-                if let data = data {
-                    client?.urlProtocol(self, didLoad: data)
-                }
-                client?.urlProtocolDidFinishLoading(self)
-            case let .failure(error):
-                throw error
+            client?.urlProtocol(self,
+                                didReceive: urlResponse,
+                                cacheStoragePolicy: .notAllowed)
+            if let data = data {
+                client?.urlProtocol(self, didLoad: data)
             }
+            client?.urlProtocolDidFinishLoading(self)
         } catch {
             client?.urlProtocol(self, didFailWithError: error)
         }
