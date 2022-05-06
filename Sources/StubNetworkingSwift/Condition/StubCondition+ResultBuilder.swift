@@ -30,5 +30,12 @@ public func stubCondition(@StubConditionBuilder builder: () -> StubCondition) ->
 @discardableResult
 public func stub(@StubConditionBuilder builder: () -> StubCondition,
                  withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
-    stub(stubCondition(builder: builder), withResponse: stubResponse)
+    stub(stubCondition(builder: builder),
+         withResponse: stubResponse)
+}
+
+@discardableResult
+public func stub(@StubConditionBuilder builder: () -> StubCondition) -> Stub {
+    stub(stubCondition(builder: builder),
+         withResponse: errorResponse(.unimplemented))
 }
