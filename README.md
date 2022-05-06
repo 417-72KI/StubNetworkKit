@@ -2,7 +2,8 @@
 
 [![CI](https://github.com/417-72KI/StubNetworkingSwift/actions/workflows/ci.yml/badge.svg)](https://github.com/417-72KI/StubNetworkingSwift/actions/workflows/ci.yml)
 [![GitHub release](https://img.shields.io/github/release/417-72KI/StubNetworkingSwift/all.svg)](https://github.com/417-72KI/StubNetworkingSwift/releases)
-[![Swift Package Manager](https://img.shields.io/badge/Swift%20Package%20Manager-5.3|5.4|5.5|5.6-brightgreen.svg)](https://github.com/apple/swift-package-manager)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2F417-72KI%2FStubNetworkingSwift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/417-72KI/StubNetworkingSwift)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2F417-72KI%2FStubNetworkingSwift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/417-72KI/StubNetworkingSwift)
 [![CocoaPods Version](http://img.shields.io/cocoapods/v/StubNetworkingSwift.svg?style=flat)](http://cocoapods.org/pods/StubNetworkingSwift)
 [![CocoaPods Platform](http://img.shields.io/cocoapods/p/StubNetworkingSwift.svg?style=flat)](http://cocoapods.org/pods/StubNetworkingSwift)
 [![GitHub license](https://img.shields.io/github/license/417-72KI/StubNetworkingSwift)](https://github.com/417-72KI/StubNetworkingSwift/blob/main/LICENSE)
