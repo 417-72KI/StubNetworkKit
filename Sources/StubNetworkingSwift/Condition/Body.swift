@@ -105,13 +105,11 @@ extension _Body {
         case let (.isData(lData, _, _), .isData(rData, _, _)):
             return lData == rData
         case let (.isJsonObject(lJson, _, _), .isJsonObject(rJson, _, _)):
-            let lJson = try? JSONSerialization.data(withJSONObject: lJson, options: [.fragmentsAllowed, .withoutEscapingSlashes, .sortedKeys])
-            let rJson = try? JSONSerialization.data(withJSONObject: rJson, options: [.fragmentsAllowed, .withoutEscapingSlashes, .sortedKeys])
-            return lJson == rJson
+            return NSDictionary(dictionary: lJson)
+                .isEqual(to: rJson)
         case let (.isJsonArray(lJson, _, _), .isJsonArray(rJson, _, _)):
-            let lJson = try? JSONSerialization.data(withJSONObject: lJson, options: [.fragmentsAllowed, .withoutEscapingSlashes, .sortedKeys])
-            let rJson = try? JSONSerialization.data(withJSONObject: rJson, options: [.fragmentsAllowed, .withoutEscapingSlashes, .sortedKeys])
-            return lJson == rJson
+            return NSArray(array: lJson)
+                .isEqual(to: rJson)
         case let (.isForm(lItems, _, _), .isForm(rItems, _, _)):
             return lItems.sorted(by: \.name) == rItems.sorted(by: \.name)
         default: return false
