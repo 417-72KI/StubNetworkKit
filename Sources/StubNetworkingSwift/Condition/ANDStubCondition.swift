@@ -9,6 +9,9 @@ extension ANDStubCondition {
     }
 }
 
+extension ANDStubCondition: Equatable where T1: Equatable, T2: Equatable {
+}
+
 // MARK: -
 public func && <T1: StubConditionType, T2: StubConditionType>(lhs: T1, rhs: T2) -> some StubConditionType {
     ANDStubCondition(c1: lhs, c2: rhs)

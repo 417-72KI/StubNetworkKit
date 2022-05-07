@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum Body {}
+public enum Body: Equatable {}
 
 public extension Body {
     static func `is`(_ body: Data,

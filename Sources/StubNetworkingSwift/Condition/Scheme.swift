@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum Scheme {}
+public enum Scheme: Equatable {}
 
 public extension Scheme {
     static func `is`(_ scheme: String,

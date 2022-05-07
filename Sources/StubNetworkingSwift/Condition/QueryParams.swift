@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum QueryParams {}
+public enum QueryParams: Equatable {}
 
 public extension QueryParams {
     static func contains(_ params: [URLQueryItem],

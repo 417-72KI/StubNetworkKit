@@ -1,4 +1,4 @@
-public protocol StubConditionType: Equatable {
+public protocol StubConditionType {
     var condition: StubCondition { get }
 }
 
@@ -13,10 +13,4 @@ final class _AlwaysTrue: StubConditionType {
 
 extension _AlwaysTrue {
     var condition: StubCondition { { _ in true } }
-}
-
-extension _AlwaysTrue {
-    static func == (lhs: _AlwaysTrue, rhs: _AlwaysTrue) -> Bool {
-        true
-    }
 }

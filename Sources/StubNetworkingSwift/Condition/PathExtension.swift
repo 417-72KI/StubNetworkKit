@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum Extension {}
+public enum Extension: Equatable {}
 
 public extension Extension {
     static func `is`(_ ext: String,

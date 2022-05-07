@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum Path {}
+public enum Path: Equatable {}
 
 public extension Path {
     static func `is`(_ path: String,

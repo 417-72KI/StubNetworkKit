@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum Header {}
+public enum Header: Equatable {}
 
 public extension Header {
     static func contains(_ name: String,

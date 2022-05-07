@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum Host {}
+public enum Host: Equatable {}
 
 public extension Host {
     static func `is`(_ host: String,
