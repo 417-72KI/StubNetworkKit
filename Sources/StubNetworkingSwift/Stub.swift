@@ -19,7 +19,7 @@ public final class Stub {
 }
 
 extension Stub {
-    convenience init(condition: StubConditionType,
+    convenience init(condition: StubConditionType = alwaysTrue,
                      response: @escaping Response = errorResponse(.unimplemented)) {
         self.init(matcher: condition.matcher, response: response)
     }
