@@ -11,7 +11,7 @@ public final class Stub {
     /// Stub response to return.
     private(set) var response: Response
 
-    init(condition: @escaping StubCondition = alwaysTrue,
+    init(condition: @escaping StubCondition = alwaysTrueCondition,
          response: @escaping Response = errorResponse(.unimplemented)) {
         self.condition = condition
         self.response = response

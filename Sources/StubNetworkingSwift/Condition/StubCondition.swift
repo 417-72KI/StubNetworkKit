@@ -5,7 +5,7 @@ import FoundationNetworking
 
 public typealias StubCondition = (URLRequest) -> Bool
 
-let alwaysTrue: StubCondition = { _ in true }
+let alwaysTrueCondition: StubCondition = { _ in true }
 
 func stubCondition<T: Equatable>(_ lhs: @escaping (URLRequest) -> T,
                                  _ rhs: T,
