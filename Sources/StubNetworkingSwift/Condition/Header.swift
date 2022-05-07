@@ -3,17 +3,19 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum Header {
-    public static func contains(_ name: String,
-                                file: StaticString = #file,
-                                line: UInt = #line) -> StubCondition {
+public enum Header {}
+
+public extension Header {
+    static func contains(_ name: String,
+                         file: StaticString = #file,
+                         line: UInt = #line) -> StubCondition {
         !stubCondition({ $0.value(forHTTPHeaderField: name) }, nil, file: file, line: line)
     }
-
-    public static func contains(_ name: String,
-                                withValue value: String,
-                                file: StaticString = #file,
-                                line: UInt = #line) -> StubCondition {
+    
+    static func contains(_ name: String,
+                         withValue value: String,
+                         file: StaticString = #file,
+                         line: UInt = #line) -> StubCondition {
         stubCondition({ $0.value(forHTTPHeaderField: name) }, value, file: file, line: line)
     }
 }

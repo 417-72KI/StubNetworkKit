@@ -3,10 +3,12 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum QueryParams {
-    public static func contains(_ params: [URLQueryItem],
-                                file: StaticString = #file,
-                                line: UInt = #line) -> StubCondition {
+public enum QueryParams {}
+
+public extension QueryParams {
+    static func contains(_ params: [URLQueryItem],
+                         file: StaticString = #file,
+                         line: UInt = #line) -> StubCondition {
         stubCondition({
             guard let queryItems = queryItems(from: $0) else { return false }
             return params.allSatisfy {
@@ -16,15 +18,15 @@ public enum QueryParams {
         }, true, file: file, line: line)
     }
 
-    public static func contains(_ params: [String: String?],
-                                file: StaticString = #file,
-                                line: UInt = #line) -> StubCondition {
+    static func contains(_ params: [String: String?],
+                         file: StaticString = #file,
+                         line: UInt = #line) -> StubCondition {
         contains(params.map(URLQueryItem.init), file: file, line: line)
     }
 
-    public static func contains(_ paramNames: [String],
-                                file: StaticString = #file,
-                                line: UInt = #line) -> StubCondition {
+    static func contains(_ paramNames: [String],
+                         file: StaticString = #file,
+                         line: UInt = #line) -> StubCondition {
         stubCondition({
             guard let keys = keys(from: $0) else { return false }
             return paramNames.allSatisfy { keys.contains($0) }
