@@ -1,0 +1,27 @@
+import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
+enum _Host: StubConditionType {
+    case `is`(String, file: StaticString = #file, line: UInt = #line)
+}
+
+extension _Host {
+    var condition: StubCondition{
+        switch self {
+        case let .is(host, file, line):
+            precondition(!host.contains("/"), "The host part of an URL never contains any slash.", file: file, line: line)
+            return stubCondition({ $0.url?.host }, host, file: file, line: line)
+        }
+    }
+}
+
+extension _Host {
+    static func == (lhs: _Host, rhs: _Host) -> Bool {
+        switch (lhs, rhs) {
+        case let (.is(lHost, _, _), .is(rHost, _, _)):
+            return lHost == rHost
+        }
+    }
+}
