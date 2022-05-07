@@ -3,6 +3,16 @@ import Foundation
 import FoundationNetworking
 #endif
 
+public enum Host {
+    public static func `is`(_ host: String,
+                            file: StaticString = #file,
+                            line: UInt = #line) -> StubCondition {
+        precondition(!host.contains("/"), "The host part of an URL never contains any slash.", file: file, line: line)
+        return stubCondition({ $0.url?.host }, host, file: file, line: line)
+    }
+}
+
+// MARK: -
 enum _Host: StubConditionType {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }

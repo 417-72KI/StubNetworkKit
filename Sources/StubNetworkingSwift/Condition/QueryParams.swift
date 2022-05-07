@@ -3,6 +3,52 @@ import Foundation
 import FoundationNetworking
 #endif
 
+public enum QueryParams {
+    public static func contains(_ params: [URLQueryItem],
+                                file: StaticString = #file,
+                                line: UInt = #line) -> StubCondition {
+        stubCondition({
+            guard let queryItems = queryItems(from: $0) else { return false }
+            return params.allSatisfy {
+                guard let queryItem = queryItems.first(forName: $0.name) else { return false }
+                return queryItem.value == $0.value
+            }
+        }, true, file: file, line: line)
+    }
+
+    public static func contains(_ params: [String: String?],
+                                file: StaticString = #file,
+                                line: UInt = #line) -> StubCondition {
+        contains(params.map(URLQueryItem.init), file: file, line: line)
+    }
+
+    public static func contains(_ paramNames: [String],
+                                file: StaticString = #file,
+                                line: UInt = #line) -> StubCondition {
+        stubCondition({
+            guard let keys = keys(from: $0) else { return false }
+            return paramNames.allSatisfy { keys.contains($0) }
+        }, true, file: file, line: line)
+    }
+}
+
+extension QueryParams {
+    static func queryItems(from req: URLRequest,
+                           file: StaticString = #file,
+                           line: UInt = #line) -> [URLQueryItem]? {
+        req.url
+            .flatMap { URLComponents(url: $0, resolvingAgainstBaseURL: false) }?
+            .queryItems
+    }
+
+    static func keys(from req: URLRequest,
+                     file: StaticString = #file,
+                     line: UInt = #line) -> [String]? {
+        queryItems(from: req).flatMap { $0.map(\.name) }
+    }
+}
+
+// MARK: -
 enum _QueryParams: StubConditionType {
     case containsItems([URLQueryItem], file: StaticString = #file, line: UInt = #line)
     case containsKeys([String], file: StaticString = #file, line: UInt = #line)

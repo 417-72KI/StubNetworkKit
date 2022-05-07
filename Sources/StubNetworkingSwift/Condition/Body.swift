@@ -3,6 +3,60 @@ import Foundation
 import FoundationNetworking
 #endif
 
+public enum Body {
+    public static func `is`(_ body: Data,
+                            file: StaticString = #file,
+                            line: UInt = #line) -> StubCondition {
+        stubCondition({ $0.httpBody }, body, file: file, line: line)
+    }
+
+    public static func isJson(_ jsonObject: [AnyHashable: Any],
+                              file: StaticString = #file,
+                              line: UInt = #line) -> StubCondition {
+        stubCondition({
+            guard let httpBody = $0.httpBody,
+                  let jsonBody = try? JSONSerialization.jsonObject(with: httpBody) as? [AnyHashable: Any] else { return nil }
+            return jsonBody
+        }, jsonObject, file: file, line: line)
+    }
+
+    public static func isJson(_ jsonArray: [Any],
+                              file: StaticString = #file,
+                              line: UInt = #line) -> StubCondition {
+        stubCondition({
+            guard let httpBody = $0.httpBody,
+                  let jsonBody = try? JSONSerialization.jsonObject(with: httpBody) as? [Any] else { return nil }
+            return jsonBody
+        }, jsonArray, file: file, line: line)
+    }
+
+    public static func isForm(_ queryItems: [URLQueryItem], file: StaticString = #file, line: UInt = #line) -> StubCondition {
+        Header.contains("Content-Type",
+                        withValue: "application/x-www-form-urlencoded",
+                        file: file,
+                        line: line)
+        && stubCondition({
+            guard let query = $0.httpBody
+                .flatMap({ String(data: $0, encoding: .utf8) }) else { return [] }
+            let items: [URLQueryItem] = {
+                var comps = URLComponents()
+                comps.percentEncodedQuery = query
+                return comps.queryItems ?? []
+            }()
+            return items.sorted(by: \.name)
+        }, queryItems.sorted(by: \.name), file: file, line: line)
+    }
+
+    public static func isForm(_ params: [String: String?], file: StaticString = #file, line: UInt = #line) -> StubCondition {
+        isForm(params.map(URLQueryItem.init), file: file, line: line)
+    }
+
+    public static func isForm(_ queryItems: URLQueryItem..., file: StaticString = #file, line: UInt = #line) -> StubCondition {
+        isForm(queryItems, file: file, line: line)
+    }
+}
+
+// MARK: -
 enum _Body: StubConditionType {
     case isData(Data, file: StaticString = #file, line: UInt = #line)
     case isJsonObject([AnyHashable: Any], file: StaticString = #file, line: UInt = #line)

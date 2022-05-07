@@ -3,6 +3,15 @@ import Foundation
 import FoundationNetworking
 #endif
 
+public enum Extension {
+    public static func `is`(_ ext: String,
+                            file: StaticString = #file,
+                            line: UInt = #line) -> StubCondition {
+        stubCondition({ $0.url?.pathExtension }, ext, file: file, line: line)
+    }
+}
+
+// MARK: -
 enum _PathExtension: StubConditionType {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }

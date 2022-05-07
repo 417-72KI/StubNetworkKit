@@ -3,6 +3,50 @@ import Foundation
 import FoundationNetworking
 #endif
 
+public enum Path {
+    public static func `is`(_ path: String,
+                            file: StaticString = #file,
+                            line: UInt = #line) -> StubCondition {
+        stubCondition({ $0.url?.path }, path, file: file, line: line)
+    }
+
+    public static func startsWith(_ path: String,
+                                  file: StaticString = #file,
+                                  line: UInt = #line) -> StubCondition {
+        stubCondition({ $0.url?.path.hasPrefix(path) }, true, file: file, line: line)
+    }
+
+    public static func endsWith(_ path: String,
+                                file: StaticString = #file,
+                                line: UInt = #line) -> StubCondition {
+        stubCondition({ $0.url?.path.hasSuffix(path) }, true, file: file, line: line)
+    }
+
+    public static func matches(_ regex: NSRegularExpression,
+                               file: StaticString = #file,
+                               line: UInt = #line) -> StubCondition {
+
+        stubCondition({
+            guard let path = $0.url?.path,
+                  let _ = regex.firstMatch(in: path, range: .init(location: 0, length: path.utf16.count)) else { return false }
+            return true
+        }, true, file: file, line: line)
+    }
+
+    public static func matches(_ pattern: String,
+                               options: NSRegularExpression.Options = [],
+                               file: StaticString = #file,
+                               line: UInt = #line) -> StubCondition {
+        do {
+            let regex = try NSRegularExpression(pattern: pattern, options: options)
+            return matches(regex, file: file, line: line)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+}
+
+// MARK: -
 enum _Path: StubConditionType {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
     case startsWith(String, file: StaticString = #file, line: UInt = #line)
