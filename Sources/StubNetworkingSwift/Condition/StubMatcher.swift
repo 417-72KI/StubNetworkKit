@@ -3,14 +3,14 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public typealias StubCondition = (URLRequest) -> Bool
+public typealias StubMatcher = (URLRequest) -> Bool
 
-let alwaysTrueCondition: StubCondition = { _ in true }
+let alwaysTrueCondition: StubMatcher = { _ in true }
 
-func stubCondition<T: Equatable>(_ lhs: @escaping (URLRequest) -> T,
-                                 _ rhs: T,
-                                 file: StaticString = #file,
-                                 line: UInt = #line) -> StubCondition {
+func stubMatcher<T: Equatable>(_ lhs: @escaping (URLRequest) -> T,
+                               _ rhs: T,
+                               file: StaticString = #file,
+                               line: UInt = #line) -> StubMatcher {
     {
         dumpCondition(expected: rhs,
                       actual: lhs($0),
@@ -20,10 +20,10 @@ func stubCondition<T: Equatable>(_ lhs: @escaping (URLRequest) -> T,
     }
 }
 
-func stubCondition(_ lhs: @escaping (URLRequest) -> [AnyHashable: Any]?,
-                   _ rhs: [AnyHashable: Any]?,
-                   file: StaticString = #file,
-                   line: UInt = #line) -> StubCondition {
+func stubMatcher(_ lhs: @escaping (URLRequest) -> [AnyHashable: Any]?,
+                 _ rhs: [AnyHashable: Any]?,
+                 file: StaticString = #file,
+                 line: UInt = #line) -> StubMatcher {
     {
         dumpCondition(expected: rhs,
                       actual: lhs($0),
@@ -48,10 +48,10 @@ func stubCondition(_ lhs: @escaping (URLRequest) -> [AnyHashable: Any]?,
     }
 }
 
-func stubCondition(_ lhs: @escaping (URLRequest) -> [Any]?,
-                   _ rhs: [Any]?,
-                   file: StaticString = #file,
-                   line: UInt = #line) -> StubCondition {
+func stubMatcher(_ lhs: @escaping (URLRequest) -> [Any]?,
+                 _ rhs: [Any]?,
+                 file: StaticString = #file,
+                 line: UInt = #line) -> StubMatcher {
     {
         dumpCondition(expected: rhs,
                       actual: lhs($0),

@@ -6,9 +6,9 @@ import XCTest
 import StubNetworkingSwift
 import SwiftParamTest
 
-final class StubCondition_OperatorsTests: XCTestCase {
-    private let trueMatcher: StubCondition = { _ in true }
-    private let falseMatcher: StubCondition = { _ in false }
+final class StubMatcher_OperatorsTests: XCTestCase {
+    private let trueMatcher: StubMatcher = { _ in true }
+    private let falseMatcher: StubMatcher = { _ in false }
 
     override func setUp() {
         ParameterizedTest.option = .init(traceTable: .markdown,
@@ -18,11 +18,11 @@ final class StubCondition_OperatorsTests: XCTestCase {
     }
 
     func testOr() throws {
-        func or(lhs: @escaping StubCondition, rhs: @escaping StubCondition) -> Bool {
+        func or(lhs: @escaping StubMatcher, rhs: @escaping StubMatcher) -> Bool {
             let req = URLRequest(url: URL(string: "foo://bar")!)
             return (lhs || rhs)(req)
         }
-        func orAssign(lhs: @escaping StubCondition, rhs: @escaping StubCondition) -> Bool {
+        func orAssign(lhs: @escaping StubMatcher, rhs: @escaping StubMatcher) -> Bool {
             let req = URLRequest(url: URL(string: "foo://bar")!)
             var condition = lhs
             condition ||= rhs
@@ -43,11 +43,11 @@ final class StubCondition_OperatorsTests: XCTestCase {
         }
     }
     func testAnd() throws {
-        func and(lhs: @escaping StubCondition, rhs: @escaping StubCondition) -> Bool {
+        func and(lhs: @escaping StubMatcher, rhs: @escaping StubMatcher) -> Bool {
             let req = URLRequest(url: URL(string: "foo://bar")!)
             return (lhs && rhs)(req)
         }
-        func andAssign(lhs: @escaping StubCondition, rhs: @escaping StubCondition) -> Bool {
+        func andAssign(lhs: @escaping StubMatcher, rhs: @escaping StubMatcher) -> Bool {
             let req = URLRequest(url: URL(string: "foo://bar")!)
             var condition = lhs
             condition &&= rhs
@@ -69,7 +69,7 @@ final class StubCondition_OperatorsTests: XCTestCase {
     }
 
     func testNot() throws {
-        func not(expr: @escaping StubCondition) -> Bool {
+        func not(expr: @escaping StubMatcher) -> Bool {
             let req = URLRequest(url: URL(string: "foo://bar")!)
             return (!expr)(req)
         }

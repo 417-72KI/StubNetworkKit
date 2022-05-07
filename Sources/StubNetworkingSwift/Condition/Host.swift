@@ -8,9 +8,8 @@ public enum Host: Equatable {}
 public extension Host {
     static func `is`(_ host: String,
                      file: StaticString = #file,
-                     line: UInt = #line) -> StubCondition {
-        precondition(!host.contains("/"), "The host part of an URL never contains any slash.", file: file, line: line)
-        return stubCondition({ $0.url?.host }, host, file: file, line: line)
+                     line: UInt = #line) -> some StubConditionType {
+        _Host.is(host, file: file, line: line)
     }
 }
 
@@ -20,11 +19,11 @@ enum _Host: StubConditionType {
 }
 
 extension _Host {
-    var condition: StubCondition{
+    var matcher: StubMatcher{
         switch self {
         case let .is(host, file, line):
             precondition(!host.contains("/"), "The host part of an URL never contains any slash.", file: file, line: line)
-            return stubCondition({ $0.url?.host }, host, file: file, line: line)
+            return stubMatcher({ $0.url?.host }, host, file: file, line: line)
         }
     }
 }

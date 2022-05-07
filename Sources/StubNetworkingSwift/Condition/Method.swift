@@ -27,35 +27,35 @@ extension Method: ExpressibleByStringLiteral {
 }
 
 public extension Method {
-    static func isGet(file: StaticString = #file, line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.httpMethod.flatMap(Self.init) }, .get, file: file, line: line)
+    static func isGet(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+        _Method.isGet(file: file, line: line)
     }
-    static func isPost(file: StaticString = #file, line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.httpMethod.flatMap(Self.init) }, .post, file: file, line: line)
+    static func isPost(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+        _Method.isPost(file: file, line: line)
     }
-    static func isPut(file: StaticString = #file, line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.httpMethod.flatMap(Self.init) }, .put, file: file, line: line)
+    static func isPut(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+        _Method.isPut(file: file, line: line)
     }
-    static func isPatch(file: StaticString = #file, line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.httpMethod.flatMap(Self.init) }, .patch, file: file, line: line)
+    static func isPatch(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+        _Method.isPatch(file: file, line: line)
     }
-    static func isDelete(file: StaticString = #file, line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.httpMethod.flatMap(Self.init) }, .delete, file: file, line: line)
+    static func isDelete(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+        _Method.isDelete(file: file, line: line)
     }
-    static func isHead(file: StaticString = #file, line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.httpMethod.flatMap(Self.init) }, .head, file: file, line: line)
+    static func isHead(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+        _Method.isHead(file: file, line: line)
     }
 }
 
 extension Method {
-    func condition(file: StaticString = #file, line: UInt = #line) -> StubCondition {
+    func condition(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
         switch self {
-        case .get: return Method.isGet(file: file, line: line)
-        case .post: return Method.isPost(file: file, line: line)
-        case .put: return Method.isPut(file: file, line: line)
-        case .patch: return Method.isPatch(file: file, line: line)
-        case .delete: return Method.isDelete(file: file, line: line)
-        case .head: return Method.isHead(file: file, line: line)
+        case .get: return _Method.isGet(file: file, line: line)
+        case .post: return _Method.isPost(file: file, line: line)
+        case .put: return _Method.isPut(file: file, line: line)
+        case .patch: return _Method.isPatch(file: file, line: line)
+        case .delete: return _Method.isDelete(file: file, line: line)
+        case .head: return _Method.isHead(file: file, line: line)
         }
     }
 }
@@ -71,20 +71,20 @@ enum _Method: StubConditionType {
 }
 
 extension _Method {
-    var condition: StubCondition {
+    var matcher: StubMatcher {
         switch self {
         case let .isGet(file, line):
-            return stubCondition({ $0.httpMethod.flatMap(Method.init) }, .get, file: file, line: line)
+            return stubMatcher({ $0.httpMethod.flatMap(Method.init) }, .get, file: file, line: line)
         case let .isPost(file, line):
-            return stubCondition({ $0.httpMethod.flatMap(Method.init) }, .post, file: file, line: line)
+            return stubMatcher({ $0.httpMethod.flatMap(Method.init) }, .post, file: file, line: line)
         case let .isPut(file, line):
-            return stubCondition({ $0.httpMethod.flatMap(Method.init) }, .put, file: file, line: line)
+            return stubMatcher({ $0.httpMethod.flatMap(Method.init) }, .put, file: file, line: line)
         case let .isPatch(file, line):
-            return stubCondition({ $0.httpMethod.flatMap(Method.init) }, .patch, file: file, line: line)
+            return stubMatcher({ $0.httpMethod.flatMap(Method.init) }, .patch, file: file, line: line)
         case let .isDelete(file, line):
-            return stubCondition({ $0.httpMethod.flatMap(Method.init) }, .delete, file: file, line: line)
+            return stubMatcher({ $0.httpMethod.flatMap(Method.init) }, .delete, file: file, line: line)
         case let .isHead(file, line):
-            return stubCondition({ $0.httpMethod.flatMap(Method.init) }, .head, file: file, line: line)
+            return stubMatcher({ $0.httpMethod.flatMap(Method.init) }, .head, file: file, line: line)
         }
     }
 }

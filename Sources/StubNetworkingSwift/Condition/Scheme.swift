@@ -8,10 +8,8 @@ public enum Scheme: Equatable {}
 public extension Scheme {
     static func `is`(_ scheme: String,
                      file: StaticString = #file,
-                     line: UInt = #line) -> StubCondition {
-        precondition(!scheme.contains("://"), "The scheme part of an URL never contains '://'.", file: file, line: line)
-        precondition(!scheme.contains("/"), "The scheme part of an URL never contains any slash.", file: file, line: line)
-        return stubCondition({ $0.url?.scheme }, scheme, file: file, line: line)
+                     line: UInt = #line) -> some StubConditionType {
+        _Scheme.is(scheme, file: file, line: line)
     }
 }
 
@@ -21,12 +19,12 @@ enum _Scheme: StubConditionType {
 }
 
 extension _Scheme {
-    var condition: StubCondition{
+    var matcher: StubMatcher{
         switch self {
         case let .is(scheme, file, line):
             precondition(!scheme.contains("://"), "The scheme part of an URL never contains '://'.", file: file, line: line)
             precondition(!scheme.contains("/"), "The scheme part of an URL never contains any slash.", file: file, line: line)
-            return stubCondition({ $0.url?.scheme }, scheme, file: file, line: line)
+            return stubMatcher({ $0.url?.scheme }, scheme, file: file, line: line)
         }
     }
 }

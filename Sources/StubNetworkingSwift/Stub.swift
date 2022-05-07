@@ -7,27 +7,34 @@ public final class Stub {
     typealias Response = (URLRequest) -> StubResponse
 
     /// Matcher to judge if use stub response.
-    private(set) var condition: StubCondition
+    private(set) var matcher: StubMatcher
     /// Stub response to return.
     private(set) var response: Response
 
-    init(condition: @escaping StubCondition = alwaysTrueCondition,
+    init(matcher: @escaping StubMatcher = alwaysTrueCondition,
          response: @escaping Response = errorResponse(.unimplemented)) {
-        self.condition = condition
+        self.matcher = matcher
         self.response = response
+    }
+}
+
+extension Stub {
+    convenience init(condition: StubConditionType,
+                     response: @escaping Response = errorResponse(.unimplemented)) {
+        self.init(matcher: condition.matcher, response: response)
     }
 }
 
 // MARK: - Basic builder
 /// Create and register new stub.
 /// - Parameters:
-///   - condition: Matcher to judge if use stub response.
+///   - matcher: Matcher to judge if use stub response.
 ///   - stubResponse: Stub response to return
 /// - Returns: Created stub object.
 @discardableResult
-public func stub(_ condition: @escaping StubCondition,
+public func stub(_ matcher: @escaping StubMatcher,
                  withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
-    let stub = Stub(condition: condition,
+    let stub = Stub(matcher: matcher,
                     response: stubResponse)
     StubURLProtocol.register(stub)
     return stub
@@ -37,10 +44,35 @@ public func stub(_ condition: @escaping StubCondition,
 ///
 /// Note that response is unregistered, and needs calling `.responseData/Json`.
 /// - Parameters:
-///   - condition: Matcher to judge if use stub response.
+///   - matcher: Matcher to judge if use stub response.
 /// - Returns: Created stub object.
 @discardableResult
-public func stub(_ condition: @escaping StubCondition) -> Stub {
+public func stub(_ matcher: @escaping StubMatcher) -> Stub {
+    stub(matcher, withResponse: errorResponse(.unimplemented))
+}
+
+/// Create and register new stub.
+/// - Parameters:
+///   - matcher: Matcher to judge if use stub response.
+///   - stubResponse: Stub response to return
+/// - Returns: Created stub object.
+@discardableResult
+public func stub(_ condition: StubConditionType,
+                 withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
+    let stub = Stub(matcher: condition.matcher,
+                    response: stubResponse)
+    StubURLProtocol.register(stub)
+    return stub
+}
+
+/// Create and register new stub.
+///
+/// Note that response is unregistered, and needs calling `.responseData/Json`.
+/// - Parameters:
+///   - matcher: Matcher to judge if use stub response.
+/// - Returns: Created stub object.
+@discardableResult
+public func stub(_ condition: StubConditionType) -> Stub {
     stub(condition, withResponse: errorResponse(.unimplemented))
 }
 
@@ -108,7 +140,7 @@ public extension Stub {
     func scheme(_ scheme: String,
                 file: StaticString = #file,
                 line: UInt = #line) -> Self {
-        condition &&= Scheme.is(scheme, file: file, line: line)
+        matcher &&= Scheme.is(scheme, file: file, line: line).matcher
         return self
     }
 }
@@ -123,7 +155,7 @@ public extension Stub {
     func host(_ host: String,
               file: StaticString = #file,
               line: UInt = #line) -> Self {
-        condition &&= Host.is(host, file: file, line: line)
+        matcher &&= Host.is(host, file: file, line: line).matcher
         return self
     }
 }
@@ -138,7 +170,7 @@ public extension Stub {
     func path(_ path: String,
               file: StaticString = #file,
               line: UInt = #line) -> Self {
-        condition &&= Path.is(path, file: file, line: line)
+        matcher &&= Path.is(path, file: file, line: line).matcher
         return self
     }
 }
@@ -153,7 +185,7 @@ public extension Stub {
     func pathExtension(_ ext: String,
                        file: StaticString = #file,
                        line: UInt = #line) -> Self {
-        condition &&= Extension.is(ext, file: file, line: line)
+        matcher &&= Extension.is(ext, file: file, line: line).matcher
         return self
     }
 }
@@ -168,7 +200,7 @@ public extension Stub {
     func method(_ method: Method,
                 file: StaticString = #file,
                 line: UInt = #line) -> Self {
-        condition &&= method.condition(file: file, line: line)
+        matcher &&= method.condition(file: file, line: line).matcher
         return self
     }
 }
@@ -183,7 +215,7 @@ public extension Stub {
     func queryParams(_ queryParams: [String: String?],
                      file: StaticString = #file,
                      line: UInt = #line) -> Self {
-        condition &&= QueryParams.contains(queryParams, file: file, line: line)
+        matcher &&= QueryParams.contains(queryParams, file: file, line: line).matcher
         return self
     }
 
@@ -195,7 +227,7 @@ public extension Stub {
     func queryItems(_ queryItems: [URLQueryItem],
                     file: StaticString = #file,
                     line: UInt = #line) -> Self {
-        condition &&= QueryParams.contains(queryItems, file: file, line: line)
+        matcher &&= QueryParams.contains(queryItems, file: file, line: line).matcher
         return self
     }
 
@@ -209,7 +241,7 @@ public extension Stub {
     func queryParams(_ queryParams: [String],
                      file: StaticString = #file,
                      line: UInt = #line) -> Self {
-        condition &&= QueryParams.contains(queryParams, file: file, line: line)
+        matcher &&= QueryParams.contains(queryParams, file: file, line: line).matcher
         return self
     }
 }
@@ -220,7 +252,7 @@ public extension Stub {
     func header(_ name: String,
                 file: StaticString = #file,
                 line: UInt = #line) -> Self {
-        condition &&= Header.contains(name, file: file, line: line)
+        matcher &&= Header.contains(name, file: file, line: line).matcher
         return self
     }
 
@@ -229,7 +261,7 @@ public extension Stub {
                 value: String,
                 file: StaticString = #file,
                 line: UInt = #line) -> Self {
-        condition &&= Header.contains(name, withValue: value, file: file, line: line)
+        matcher &&= Header.contains(name, withValue: value, file: file, line: line).matcher
         return self
     }
 }
@@ -240,7 +272,7 @@ public extension Stub {
     func body(_ body: Data,
               file: StaticString = #file,
               line: UInt = #line) -> Self {
-        condition &&= Body.is(body, file: file, line: line)
+        matcher &&= Body.is(body, file: file, line: line).matcher
         return self
     }
 
@@ -248,7 +280,7 @@ public extension Stub {
     func jsonBody(_ jsonObject: [AnyHashable: Any],
                   file: StaticString = #file,
                   line: UInt = #line) -> Self {
-        condition &&= Body.isJson(jsonObject, file: file, line: line)
+        matcher &&= Body.isJson(jsonObject, file: file, line: line).matcher
         return self
     }
 
@@ -256,7 +288,7 @@ public extension Stub {
     func jsonBody(_ jsonArray: [Any],
                   file: StaticString = #file,
                   line: UInt = #line) -> Self {
-        condition &&= Body.isJson(jsonArray, file: file, line: line)
+        matcher &&= Body.isJson(jsonArray, file: file, line: line).matcher
         return self
     }
 
@@ -264,7 +296,7 @@ public extension Stub {
     func formBody(_ queryItems: [URLQueryItem],
                   file: StaticString = #file,
                   line: UInt = #line) -> Self {
-        condition &&= Body.isForm(queryItems, file: file, line: line)
+        matcher &&= Body.isForm(queryItems, file: file, line: line).matcher
         return self
     }
 
@@ -272,7 +304,7 @@ public extension Stub {
     func formBody(_ queryItems: [String: String?],
                   file: StaticString = #file,
                   line: UInt = #line) -> Self {
-        condition &&= Body.isForm(queryItems, file: file, line: line)
+        matcher &&= Body.isForm(queryItems, file: file, line: line).matcher
         return self
     }
 

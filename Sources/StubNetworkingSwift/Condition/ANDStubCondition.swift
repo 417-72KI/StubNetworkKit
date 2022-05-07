@@ -4,8 +4,8 @@ struct ANDStubCondition<T1: StubConditionType, T2: StubConditionType>: StubCondi
 }
 
 extension ANDStubCondition {
-    var condition: StubCondition {
-        c1.condition && c2.condition
+    var matcher: StubMatcher {
+        c1.matcher && c2.matcher
     }
 }
 

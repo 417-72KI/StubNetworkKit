@@ -8,8 +8,8 @@ public enum Extension: Equatable {}
 public extension Extension {
     static func `is`(_ ext: String,
                      file: StaticString = #file,
-                     line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.url?.pathExtension }, ext, file: file, line: line)
+                     line: UInt = #line) -> some StubConditionType {
+        _PathExtension.is(ext, file: file, line: line)
     }
 }
 
@@ -19,10 +19,10 @@ enum _PathExtension: StubConditionType {
 }
 
 extension _PathExtension {
-    var condition: StubCondition{
+    var matcher: StubMatcher{
         switch self {
         case let .is(pathExtension, file, line):
-            return stubCondition({ $0.url?.pathExtension }, pathExtension, file: file, line: line)
+            return stubMatcher({ $0.url?.pathExtension }, pathExtension, file: file, line: line)
         }
     }
 }

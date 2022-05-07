@@ -11,7 +11,7 @@ extension XCTestCase {
     func assert(to stub: Stub,
                 @ParameterBuilder1<URLRequest, Bool> builder: () -> [Row1<URLRequest, Bool>]
     ) -> ParameterizedTestResult {
-        assert(to: stub.condition, builder: builder)
+        assert(to: stub.matcher, builder: builder)
     }
 }
 

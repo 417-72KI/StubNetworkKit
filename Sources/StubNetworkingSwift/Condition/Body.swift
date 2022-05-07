@@ -8,53 +8,32 @@ public enum Body: Equatable {}
 public extension Body {
     static func `is`(_ body: Data,
                      file: StaticString = #file,
-                     line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.httpBody }, body, file: file, line: line)
+                     line: UInt = #line) -> some StubConditionType {
+        _Body.isData(body, file: file, line: line)
     }
 
     static func isJson(_ jsonObject: [AnyHashable: Any],
                        file: StaticString = #file,
-                       line: UInt = #line) -> StubCondition {
-        stubCondition({
-            guard let httpBody = $0.httpBody,
-                  let jsonBody = try? JSONSerialization.jsonObject(with: httpBody) as? [AnyHashable: Any] else { return nil }
-            return jsonBody
-        }, jsonObject, file: file, line: line)
+                       line: UInt = #line) -> some StubConditionType {
+        _Body.isJsonObject(jsonObject, file: file, line: line)
     }
 
     static func isJson(_ jsonArray: [Any],
                        file: StaticString = #file,
-                       line: UInt = #line) -> StubCondition {
-        stubCondition({
-            guard let httpBody = $0.httpBody,
-                  let jsonBody = try? JSONSerialization.jsonObject(with: httpBody) as? [Any] else { return nil }
-            return jsonBody
-        }, jsonArray, file: file, line: line)
+                       line: UInt = #line) -> some StubConditionType {
+        _Body.isJsonArray(jsonArray)
     }
 
-    static func isForm(_ queryItems: [URLQueryItem], file: StaticString = #file, line: UInt = #line) -> StubCondition {
-        Header.contains("Content-Type",
-                        withValue: "application/x-www-form-urlencoded",
-                        file: file,
-                        line: line)
-        && stubCondition({
-            guard let query = $0.httpBody
-                .flatMap({ String(data: $0, encoding: .utf8) }) else { return [] }
-            let items: [URLQueryItem] = {
-                var comps = URLComponents()
-                comps.percentEncodedQuery = query
-                return comps.queryItems ?? []
-            }()
-            return items.sorted(by: \.name)
-        }, queryItems.sorted(by: \.name), file: file, line: line)
+    static func isForm(_ queryItems: [URLQueryItem], file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+        _Body.isForm(queryItems, file: file, line: line)
     }
 
-    static func isForm(_ params: [String: String?], file: StaticString = #file, line: UInt = #line) -> StubCondition {
-        isForm(params.map(URLQueryItem.init), file: file, line: line)
+    static func isForm(_ params: [String: String?], file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+        _Body.isForm(params, file: file, line: line)
     }
 
-    static func isForm(_ queryItems: URLQueryItem..., file: StaticString = #file, line: UInt = #line) -> StubCondition {
-        isForm(queryItems, file: file, line: line)
+    static func isForm(_ queryItems: URLQueryItem..., file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+        _Body.isForm(queryItems, file: file, line: line)
     }
 }
 
@@ -77,24 +56,24 @@ extension _Body {
 }
 
 extension _Body {
-    var condition: StubCondition {
+    var matcher: StubMatcher {
         switch self {
         case let .isData(body, file, line):
-            return stubCondition({ $0.httpBody }, body, file: file, line: line)
+            return stubMatcher({ $0.httpBody }, body, file: file, line: line)
         case let .isJsonObject(jsonObject, file, line):
-            return stubCondition({
+            return stubMatcher({
                 guard let httpBody = $0.httpBody,
                       let jsonBody = try? JSONSerialization.jsonObject(with: httpBody) as? [AnyHashable: Any] else { return nil }
                 return jsonBody
             }, jsonObject, file: file, line: line)
         case let .isJsonArray(jsonArray, file, line):
-            return stubCondition({
+            return stubMatcher({
                 guard let httpBody = $0.httpBody,
                       let jsonBody = try? JSONSerialization.jsonObject(with: httpBody) as? [Any] else { return nil }
                 return jsonBody
             }, jsonArray, file: file, line: line)
         case let .isForm(queryItems, file, line):
-            return stubCondition({ $0.formBody?.sorted(by: \.name) }, queryItems.sorted(by: \.name), file: file, line: line)
+            return stubMatcher({ $0.formBody?.sorted(by: \.name) }, queryItems.sorted(by: \.name), file: file, line: line)
         }
     }
 }

@@ -8,15 +8,15 @@ public enum Header: Equatable {}
 public extension Header {
     static func contains(_ name: String,
                          file: StaticString = #file,
-                         line: UInt = #line) -> StubCondition {
-        !stubCondition({ $0.value(forHTTPHeaderField: name) }, nil, file: file, line: line)
+                         line: UInt = #line) -> some StubConditionType {
+        _Header.containsFieldName(name, file: file, line: line)
     }
     
     static func contains(_ name: String,
                          withValue value: String,
                          file: StaticString = #file,
-                         line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.value(forHTTPHeaderField: name) }, value, file: file, line: line)
+                         line: UInt = #line) -> some StubConditionType {
+        _Header.containsFieldNameWithValue(name, value: value, file: file, line: line)
     }
 }
 
@@ -27,12 +27,12 @@ enum _Header: StubConditionType {
 }
 
 extension _Header {
-    var condition: StubCondition{
+    var matcher: StubMatcher{
         switch self {
         case let .containsFieldName(field, file, line):
-            return !stubCondition({ $0.value(forHTTPHeaderField: field) }, nil, file: file, line: line)
+            return !stubMatcher({ $0.value(forHTTPHeaderField: field) }, nil, file: file, line: line)
         case let .containsFieldNameWithValue(field, value, file, line):
-            return stubCondition({ $0.value(forHTTPHeaderField: field) }, value, file: file, line: line)
+            return stubMatcher({ $0.value(forHTTPHeaderField: field) }, value, file: file, line: line)
         }
     }
 }

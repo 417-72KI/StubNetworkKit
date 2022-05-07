@@ -5,5 +5,5 @@ struct AnyStubCondition: StubConditionType {
         self.base = base
     }
 
-    var condition: StubCondition { base.condition }
+    var matcher: StubMatcher { base.matcher }
 }

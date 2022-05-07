@@ -65,6 +65,6 @@ extension StubURLProtocol {
 private extension StubURLProtocol {
     func stub(with request: URLRequest) -> Stub? {
         Self.stubs
-            .last(where: { $0.condition(request) })
+            .last(where: { $0.matcher(request) })
     }
 }

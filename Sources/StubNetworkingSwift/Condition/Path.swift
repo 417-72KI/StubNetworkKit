@@ -8,43 +8,27 @@ public enum Path: Equatable {}
 public extension Path {
     static func `is`(_ path: String,
                      file: StaticString = #file,
-                     line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.url?.path }, path, file: file, line: line)
+                     line: UInt = #line) -> some StubConditionType {
+        _Path.is(path, file: file, line: line)
     }
 
     static func startsWith(_ path: String,
                            file: StaticString = #file,
-                           line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.url?.path.hasPrefix(path) }, true, file: file, line: line)
+                           line: UInt = #line) -> some StubConditionType {
+        _Path.startsWith(path, file: file, line: line)
     }
 
     static func endsWith(_ path: String,
                          file: StaticString = #file,
-                         line: UInt = #line) -> StubCondition {
-        stubCondition({ $0.url?.path.hasSuffix(path) }, true, file: file, line: line)
-    }
-
-    static func matches(_ regex: NSRegularExpression,
-                        file: StaticString = #file,
-                        line: UInt = #line) -> StubCondition {
-
-        stubCondition({
-            guard let path = $0.url?.path,
-                  let _ = regex.firstMatch(in: path, range: .init(location: 0, length: path.utf16.count)) else { return false }
-            return true
-        }, true, file: file, line: line)
+                         line: UInt = #line) -> some StubConditionType {
+        _Path.endsWith(path, file: file, line: line)
     }
 
     static func matches(_ pattern: String,
                         options: NSRegularExpression.Options = [],
                         file: StaticString = #file,
-                        line: UInt = #line) -> StubCondition {
-        do {
-            let regex = try NSRegularExpression(pattern: pattern, options: options)
-            return matches(regex, file: file, line: line)
-        } catch {
-            fatalError(error.localizedDescription)
-        }
+                        line: UInt = #line) -> some StubConditionType {
+        _Path.matches(pattern, options: options, file: file, line: line)
     }
 }
 
@@ -57,17 +41,17 @@ enum _Path: StubConditionType {
 }
 
 extension _Path {
-    var condition: StubCondition{
+    var matcher: StubMatcher{
         switch self {
         case let .is(path, file, line):
-            return stubCondition({ $0.url?.path }, path, file: file, line: line)
+            return stubMatcher({ $0.url?.path }, path, file: file, line: line)
         case let .startsWith(path, file, line):
-            return stubCondition({ $0.url?.path.hasPrefix(path) }, true, file: file, line: line)
+            return stubMatcher({ $0.url?.path.hasPrefix(path) }, true, file: file, line: line)
         case let .endsWith(path, file, line):
-            return stubCondition({ $0.url?.path.hasSuffix(path) }, true, file: file, line: line)
+            return stubMatcher({ $0.url?.path.hasSuffix(path) }, true, file: file, line: line)
         case let .matches(pattern, options, file, line):
             let regex = try! NSRegularExpression(pattern: pattern, options: options)
-            return stubCondition({
+            return stubMatcher({
                 guard let path = $0.url?.path,
                       let _ = regex.firstMatch(in: path, range: .init(location: 0, length: path.utf16.count)) else { return false }
                 return true

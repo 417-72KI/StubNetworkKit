@@ -6,31 +6,22 @@ import FoundationNetworking
 public enum QueryParams: Equatable {}
 
 public extension QueryParams {
-    static func contains(_ params: [URLQueryItem],
+    static func contains(_ items: [URLQueryItem],
                          file: StaticString = #file,
-                         line: UInt = #line) -> StubCondition {
-        stubCondition({
-            guard let queryItems = queryItems(from: $0) else { return false }
-            return params.allSatisfy {
-                guard let queryItem = queryItems.first(forName: $0.name) else { return false }
-                return queryItem.value == $0.value
-            }
-        }, true, file: file, line: line)
+                         line: UInt = #line) -> some StubConditionType {
+        _QueryParams.containsItems(items, file: file, line: line)
     }
 
     static func contains(_ params: [String: String?],
                          file: StaticString = #file,
-                         line: UInt = #line) -> StubCondition {
-        contains(params.map(URLQueryItem.init), file: file, line: line)
+                         line: UInt = #line) -> some StubConditionType {
+        _QueryParams.containsKeysAndValues(params, file: file, line: line)
     }
 
     static func contains(_ paramNames: [String],
                          file: StaticString = #file,
-                         line: UInt = #line) -> StubCondition {
-        stubCondition({
-            guard let keys = keys(from: $0) else { return false }
-            return paramNames.allSatisfy { keys.contains($0) }
-        }, true, file: file, line: line)
+                         line: UInt = #line) -> some StubConditionType {
+        _QueryParams.containsKeys(paramNames, file: file, line: line)
     }
 }
 
@@ -63,10 +54,10 @@ extension _QueryParams {
 }
 
 extension _QueryParams {
-    var condition: StubCondition{
+    var matcher: StubMatcher{
         switch self {
         case let .containsItems(items, file, line):
-            return stubCondition({
+            return stubMatcher({
                 guard let queryItems = queryItems(from: $0) else { return false }
                 return items.allSatisfy {
                     guard let queryItem = queryItems.first(forName: $0.name) else { return false }
@@ -74,7 +65,7 @@ extension _QueryParams {
                 }
             }, true, file: file, line: line)
         case let .containsKeys(params, file, line):
-            return stubCondition({
+            return stubMatcher({
                 guard let keys = keys(from: $0) else { return false }
                 return params.allSatisfy { keys.contains($0) }
             }, true, file: file, line: line)
