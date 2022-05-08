@@ -6,18 +6,18 @@ import FoundationNetworking
 @resultBuilder
 public struct StubConditionBuilder {
     public static func buildBlock(_ components: StubCondition...) -> StubCondition {
-        components.reduce({ _ in true }) { $0 && $1 }
+        components.reduce(alwaysTrue) { AnyStubCondition($0) && AnyStubCondition($1) }
     }
 
     public static func buildOptional(_ component: StubCondition?) -> StubCondition {
-        component ?? { _ in true }
+        component ?? alwaysTrue
     }
 
-    public static func buildEither(first component: @escaping StubCondition) -> StubCondition {
+    public static func buildEither(first component: StubCondition) -> StubCondition {
         component
     }
 
-    public static func buildEither(second component: @escaping StubCondition) -> StubCondition {
+    public static func buildEither(second component: StubCondition) -> StubCondition {
         component
     }
 }

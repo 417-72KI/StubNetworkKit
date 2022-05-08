@@ -6,7 +6,7 @@ import XCTest
 import StubNetworkingSwift
 import SwiftParamTest
 
-final class StubConditionTests: XCTestCase {
+final class StubMatcherTests: XCTestCase {
     override func setUp() {
         ParameterizedTest.option = .init(traceTable: .markdown,
                                          saveTableToAttachement: .markdown)
@@ -20,7 +20,7 @@ final class StubConditionTests: XCTestCase {
             req.httpMethod = method
             return req
         }
-        assert(to: Method.isGet()) {
+        assert(to: Method.isGet().matcher) {
             expect(createRequest(method: "GET") ==> true)
             expect(createRequest(method: "POST") ==> false)
             expect(createRequest(method: "PUT") ==> false)
@@ -28,7 +28,7 @@ final class StubConditionTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> false)
             expect(createRequest(method: "HEAD") ==> false)
         }
-        assert(to: Method.isPost()) {
+        assert(to: Method.isPost().matcher) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> true)
             expect(createRequest(method: "PUT") ==> false)
@@ -36,7 +36,7 @@ final class StubConditionTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> false)
             expect(createRequest(method: "HEAD") ==> false)
         }
-        assert(to: Method.isPut()) {
+        assert(to: Method.isPut().matcher) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> false)
             expect(createRequest(method: "PUT") ==> true)
@@ -44,7 +44,7 @@ final class StubConditionTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> false)
             expect(createRequest(method: "HEAD") ==> false)
         }
-        assert(to: Method.isPatch()) {
+        assert(to: Method.isPatch().matcher) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> false)
             expect(createRequest(method: "PUT") ==> false)
@@ -52,7 +52,7 @@ final class StubConditionTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> false)
             expect(createRequest(method: "HEAD") ==> false)
         }
-        assert(to: Method.isDelete()) {
+        assert(to: Method.isDelete().matcher) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> false)
             expect(createRequest(method: "PUT") ==> false)
@@ -60,7 +60,7 @@ final class StubConditionTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> true)
             expect(createRequest(method: "HEAD") ==> false)
         }
-        assert(to: Method.isHead()) {
+        assert(to: Method.isHead().matcher) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> false)
             expect(createRequest(method: "PUT") ==> false)
@@ -73,6 +73,7 @@ final class StubConditionTests: XCTestCase {
     func testScheme() throws {
         func actual(_ url: String) -> Bool {
             let matcher = Scheme.is("foo")
+                .matcher
             return matcher(URLRequest(url: URL(string: url)!))
         }
 
@@ -89,6 +90,7 @@ final class StubConditionTests: XCTestCase {
     func testHost() throws {
         func actual(_ url: String) -> Bool {
             let matcher = Host.is("foo")
+                .matcher
             return matcher(URLRequest(url: URL(string: url)!))
         }
 
@@ -104,6 +106,7 @@ final class StubConditionTests: XCTestCase {
     func testPathIs() throws {
         func actual(_ url: String) -> Bool {
             let matcher = Path.is("/foo/bar/baz")
+                .matcher
             return matcher(URLRequest(url: URL(string: url)!))
         }
 
@@ -129,6 +132,7 @@ final class StubConditionTests: XCTestCase {
     func testPathStartsWith() throws {
         func actual(_ url: String) -> Bool {
             let matcher = Path.startsWith("/foo/bar/baz")
+                .matcher
             return matcher(URLRequest(url: URL(string: url)!))
         }
 
@@ -154,6 +158,7 @@ final class StubConditionTests: XCTestCase {
     func testPathEndsWith() throws {
         func actual(_ url: String) -> Bool {
             let matcher = Path.endsWith("/foo/bar/baz")
+                .matcher
             return matcher(URLRequest(url: URL(string: url)!))
         }
 
@@ -179,6 +184,7 @@ final class StubConditionTests: XCTestCase {
     func testPathMatches() throws {
         func actual(_ url: String) -> Bool {
             let matcher = Path.matches("^/foo/bar(/[0-9]+)?$", options: .caseInsensitive)
+                .matcher
             return matcher(URLRequest(url: URL(string: url)!))
         }
 
@@ -208,6 +214,7 @@ final class StubConditionTests: XCTestCase {
     func testExtension() throws {
         func actual(_ url: String) -> Bool {
             let matcher = Extension.is("png")
+                .matcher
             return matcher(URLRequest(url: URL(string: url)!))
         }
 
@@ -231,6 +238,7 @@ final class StubConditionTests: XCTestCase {
                                                 "lang": "ja",
                                                 "empty": "",
                                                 "flag": nil])
+                .matcher
             return matcher(URLRequest(url: URL(string: url)!))
         }
 
@@ -258,7 +266,7 @@ final class StubConditionTests: XCTestCase {
 
     func testQueryParamsContainsParamNames() throws {
         func actual(_ url: String) -> Bool {
-            let matcher = QueryParams.contains(["q", "lang", "empty", "flag"])
+            let matcher = QueryParams.contains(["q", "lang", "empty", "flag"]).matcher
             return matcher(URLRequest(url: URL(string: url)!))
         }
 
@@ -292,7 +300,7 @@ final class StubConditionTests: XCTestCase {
             return req
         }
 
-        assert(to: Header.contains("Content-Type")) {
+        assert(to: Header.contains("Content-Type").matcher) {
             expect(request(true) ==> true)
             expect(request(false) ==> false)
         }
@@ -307,7 +315,7 @@ final class StubConditionTests: XCTestCase {
             return req
         }
 
-        assert(to: Header.contains("Content-Type", withValue: "application/json")) {
+        assert(to: Header.contains("Content-Type", withValue: "application/json").matcher) {
             expect(request(nil) ==> false)
             expect(request("application/json") ==> true)
             expect(request("application/javascript") ==> false)
@@ -320,11 +328,11 @@ final class StubConditionTests: XCTestCase {
             req.httpBody = body?.data(using: .utf8)
             return req
         }
-        assert(to: Body.is("".data(using: .utf8)!)) {
+        assert(to: Body.is("".data(using: .utf8)!).matcher) {
             expect(request("") ==> true)
             expect(request(nil) ==> false)
         }
-        assert(to: Body.is("foo".data(using: .utf8)!)) {
+        assert(to: Body.is("foo".data(using: .utf8)!).matcher) {
             expect(request("foo") ==> true)
             expect(request("bar") ==> false)
         }
@@ -336,18 +344,18 @@ final class StubConditionTests: XCTestCase {
             req.httpBody = jsonString.data(using: .utf8)
             return req
         }
-        assert(to: Body.isJson([:])) {
+        assert(to: Body.isJson([:]).matcher) {
             expect(request(#"{}"#) ==> true)
             expect(request(#"[]"#) ==> false)
             expect(request(#"{"foo": "bar"}"#) ==> false)
         }
-        assert(to: Body.isJson(["foo": "bar", "baz": 42, "qux": true])) {
+        assert(to: Body.isJson(["foo": "bar", "baz": 42, "qux": true]).matcher) {
             expect(request(#"{"foo": "bar", "baz": 42, "qux": true}"#) ==> true)
             expect(request(#"{"foo": "bar", "qux": true, "baz": 42}"#) ==> true)
             expect(request(#"{"baz": "bar", "foo": 42, "qux": true}"#) ==> false)
             expect(request(#"{"foo": "bar", "baz": 41, "qux": true}"#) ==> false)
         }
-        assert(to: Body.isJson(["foo": "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"]]])) {
+        assert(to: Body.isJson(["foo": "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"]]]).matcher) {
             expect(request(#"{"foo": "bar", "baz": {"qux": true, "quux": ["spam", "ham", "eggs"]}}"#) ==> true)
             expect(request(#"{"foo": "bar", "baz": {"quux": ["spam", "ham", "eggs"], "qux": true}}"#) ==> true)
 
@@ -362,18 +370,18 @@ final class StubConditionTests: XCTestCase {
             return req
         }
 
-        assert(to: Body.isJson([])) {
+        assert(to: Body.isJson([]).matcher) {
             expect(request(#"[]"#) ==> true)
             expect(request(#"{}"#) ==> false)
         }
-        assert(to: Body.isJson(["foo", "bar", "baz", 42, "qux", true])) {
+        assert(to: Body.isJson(["foo", "bar", "baz", 42, "qux", true]).matcher) {
             expect(request(#"["foo", "bar", "baz", 42, "qux", true]"#) ==> true)
             expect(request(#"["foo", "bar", \#n"baz", 42, "qux", true]"#) ==> true)
             expect(request(#"["bar", "baz", 42, "qux", true]"#) ==> false)
             expect(request(#"["bar", "foo", "baz", 42, "qux", true]"#) ==> false)
             expect(request(#"["foo", "bar", "baz", 41, "qux", true]"#) ==> false)
         }
-        assert(to: Body.isJson([["foo", "bar", "baz"], ["qux": true, "quux": ["spam", "ham", "eggs"]]])) {
+        assert(to: Body.isJson([["foo", "bar", "baz"], ["qux": true, "quux": ["spam", "ham", "eggs"]]]).matcher) {
             expect(request(#"[["foo", "bar", "baz"], {"qux": true, "quux": ["spam", "ham", "eggs"]}]"#) ==> true)
         }
     }
@@ -388,19 +396,19 @@ final class StubConditionTests: XCTestCase {
             return req
         }
 
-        assert(to: Body.isForm(["foo": "bar", "baz": nil, "qux": "42"])) {
+        assert(to: Body.isForm(["foo": "bar", "baz": nil, "qux": "42"]).matcher) {
             expect(request("foo=bar&baz&qux=42") ==> true)
         }
-        assert(to: Body.isForm(["foo": "bar" as String?, "baz": "42", "qux": "true"])) {
+        assert(to: Body.isForm(["foo": "bar" as String?, "baz": "42", "qux": "true"]).matcher) {
             expect(request("foo=bar&baz=42&qux=true") ==> true)
             expect(request("foo=bar&qux=true&baz=42") ==> true)
             expect(request("foo=bar&baz=42&qux=true", addHeader: false) ==> false)
             expect(request("foo=bar&baz=42") ==> false)
         }
-        assert(to: Body.isForm(["foo": "bar" as String?, "baz": "", "qux": "42"])) {
+        assert(to: Body.isForm(["foo": "bar" as String?, "baz": "", "qux": "42"]).matcher) {
             expect(request("foo=bar&baz=&qux=42") ==> true)
         }
-        assert(to: Body.isForm(["foo": "bar" as String?, "baz": "42"])) {
+        assert(to: Body.isForm(["foo": "bar" as String?, "baz": "42"]).matcher) {
             expect(request("foo=bar&baz=42&qux=true") ==> false)
         }
     }
