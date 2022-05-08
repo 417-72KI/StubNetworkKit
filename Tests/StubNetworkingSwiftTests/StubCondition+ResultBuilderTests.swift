@@ -17,9 +17,9 @@ final class StubCondition_ResultBuilderTests: XCTestCase {
             Method.isPost()
             QueryParams.contains(["q":"1", "flag": nil])
         }
-        XCTAssertTrue(condition.execute(req))
+        XCTAssertTrue(condition.matcher(req))
 
-        XCTAssertFalse(condition.execute(URL(fileURLWithPath: "/foo/bar")))
+        XCTAssertFalse(condition.matcher(URL(fileURLWithPath: "/foo/bar")))
     }
 
     func testBuildOptional() throws {
@@ -41,7 +41,7 @@ final class StubCondition_ResultBuilderTests: XCTestCase {
                 QueryParams.contains(queryItems)
             }
         }
-        XCTAssertTrue(condition.execute(req))
+        XCTAssertTrue(condition.matcher(req))
     }
 
     func testBuildEither() throws {
@@ -65,7 +65,7 @@ final class StubCondition_ResultBuilderTests: XCTestCase {
                 }
                 QueryParams.contains(["q":"1", "flag": nil])
             }
-            return condition.execute(request)
+            return condition.matcher(request)
         }
 
         assert(to: test) {

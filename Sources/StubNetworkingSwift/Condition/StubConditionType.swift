@@ -8,12 +8,8 @@ public protocol StubConditionType {
 }
 
 public extension StubConditionType {
-    func execute(_ req: URLRequest) -> Bool {
-        matcher(req)
-    }
-
-    func execute(_ url: URL) -> Bool {
-        execute(URLRequest(url: url))
+    func matcher(_ url: URL) -> Bool {
+        matcher(URLRequest(url: url))
     }
 }
 
