@@ -3,6 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
+/// An opaque type which represents a stub condition.
 public protocol StubCondition {
     var matcher: StubMatcher { get }
 }
@@ -14,6 +15,7 @@ public extension StubCondition {
 }
 
 // MARK: -
+/// A singleton object used to represent a stub-condition which always returns `true`.
 public let alwaysTrue: some StubCondition = {
     _AlwaysTrue()
 }()
@@ -27,6 +29,7 @@ extension _AlwaysTrue {
 }
 
 // MARK: -
+/// A singleton object used to represent a stub-condition which always returns `false`.
 public let alwaysFalse: some StubCondition = {
     _AlwaysFalse()
 }()
