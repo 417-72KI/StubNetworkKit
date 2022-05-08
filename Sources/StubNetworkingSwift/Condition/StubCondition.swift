@@ -3,22 +3,22 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public protocol StubConditionType {
+public protocol StubCondition {
     var matcher: StubMatcher { get }
 }
 
-public extension StubConditionType {
+public extension StubCondition {
     func matcher(_ url: URL) -> Bool {
         matcher(URLRequest(url: url))
     }
 }
 
 // MARK: -
-public let alwaysTrue: some StubConditionType = {
+public let alwaysTrue: some StubCondition = {
     _AlwaysTrue()
 }()
 
-final class _AlwaysTrue: StubConditionType {
+final class _AlwaysTrue: StubCondition {
     fileprivate init() {}
 }
 
@@ -27,11 +27,11 @@ extension _AlwaysTrue {
 }
 
 // MARK: -
-public let alwaysFalse: some StubConditionType = {
+public let alwaysFalse: some StubCondition = {
     _AlwaysFalse()
 }()
 
-final class _AlwaysFalse: StubConditionType {
+final class _AlwaysFalse: StubCondition {
     fileprivate init() {}
 }
 

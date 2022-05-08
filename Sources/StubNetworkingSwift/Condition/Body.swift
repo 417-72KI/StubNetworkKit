@@ -8,37 +8,37 @@ public enum Body: Equatable {}
 public extension Body {
     static func `is`(_ body: Data,
                      file: StaticString = #file,
-                     line: UInt = #line) -> some StubConditionType {
+                     line: UInt = #line) -> some StubCondition {
         _Body.isData(body, file: file, line: line)
     }
 
     static func isJson(_ jsonObject: [AnyHashable: Any],
                        file: StaticString = #file,
-                       line: UInt = #line) -> some StubConditionType {
+                       line: UInt = #line) -> some StubCondition {
         _Body.isJsonObject(jsonObject, file: file, line: line)
     }
 
     static func isJson(_ jsonArray: [Any],
                        file: StaticString = #file,
-                       line: UInt = #line) -> some StubConditionType {
+                       line: UInt = #line) -> some StubCondition {
         _Body.isJsonArray(jsonArray)
     }
 
-    static func isForm(_ queryItems: [URLQueryItem], file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+    static func isForm(_ queryItems: [URLQueryItem], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Body.isForm(queryItems, file: file, line: line)
     }
 
-    static func isForm(_ params: [String: String?], file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+    static func isForm(_ params: [String: String?], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Body.isForm(params, file: file, line: line)
     }
 
-    static func isForm(_ queryItems: URLQueryItem..., file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+    static func isForm(_ queryItems: URLQueryItem..., file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Body.isForm(queryItems, file: file, line: line)
     }
 }
 
 // MARK: -
-enum _Body: StubConditionType {
+enum _Body: StubCondition {
     case isData(Data, file: StaticString = #file, line: UInt = #line)
     case isJsonObject([AnyHashable: Any], file: StaticString = #file, line: UInt = #line)
     case isJsonArray([Any], file: StaticString = #file, line: UInt = #line)

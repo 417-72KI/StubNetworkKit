@@ -19,7 +19,7 @@ public final class Stub {
 }
 
 extension Stub {
-    convenience init(condition: StubConditionType = alwaysTrue,
+    convenience init(condition: StubCondition = alwaysTrue,
                      response: @escaping Response = errorResponse(.unimplemented)) {
         self.init(matcher: condition.matcher, response: response)
     }
@@ -57,7 +57,7 @@ public func stub(_ matcher: @escaping StubMatcher) -> Stub {
 ///   - stubResponse: Stub response to return
 /// - Returns: Created stub object.
 @discardableResult
-public func stub(_ condition: StubConditionType,
+public func stub(_ condition: StubCondition,
                  withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
     let stub = Stub(matcher: condition.matcher,
                     response: stubResponse)
@@ -72,7 +72,7 @@ public func stub(_ condition: StubConditionType,
 ///   - matcher: Matcher to judge if use stub response.
 /// - Returns: Created stub object.
 @discardableResult
-public func stub(_ condition: StubConditionType) -> Stub {
+public func stub(_ condition: StubCondition) -> Stub {
     stub(condition, withResponse: errorResponse(.unimplemented))
 }
 

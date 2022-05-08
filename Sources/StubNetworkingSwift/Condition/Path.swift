@@ -8,32 +8,32 @@ public enum Path: Equatable {}
 public extension Path {
     static func `is`(_ path: String,
                      file: StaticString = #file,
-                     line: UInt = #line) -> some StubConditionType {
+                     line: UInt = #line) -> some StubCondition {
         _Path.is(path, file: file, line: line)
     }
 
     static func startsWith(_ path: String,
                            file: StaticString = #file,
-                           line: UInt = #line) -> some StubConditionType {
+                           line: UInt = #line) -> some StubCondition {
         _Path.startsWith(path, file: file, line: line)
     }
 
     static func endsWith(_ path: String,
                          file: StaticString = #file,
-                         line: UInt = #line) -> some StubConditionType {
+                         line: UInt = #line) -> some StubCondition {
         _Path.endsWith(path, file: file, line: line)
     }
 
     static func matches(_ pattern: String,
                         options: NSRegularExpression.Options = [],
                         file: StaticString = #file,
-                        line: UInt = #line) -> some StubConditionType {
+                        line: UInt = #line) -> some StubCondition {
         _Path.matches(pattern, options: options, file: file, line: line)
     }
 }
 
 // MARK: -
-enum _Path: StubConditionType {
+enum _Path: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
     case startsWith(String, file: StaticString = #file, line: UInt = #line)
     case endsWith(String, file: StaticString = #file, line: UInt = #line)

@@ -8,19 +8,19 @@ public enum QueryParams: Equatable {}
 public extension QueryParams {
     static func contains(_ items: [URLQueryItem],
                          file: StaticString = #file,
-                         line: UInt = #line) -> some StubConditionType {
+                         line: UInt = #line) -> some StubCondition {
         _QueryParams.containsItems(items, file: file, line: line)
     }
 
     static func contains(_ params: [String: String?],
                          file: StaticString = #file,
-                         line: UInt = #line) -> some StubConditionType {
+                         line: UInt = #line) -> some StubCondition {
         _QueryParams.containsKeysAndValues(params, file: file, line: line)
     }
 
     static func contains(_ paramNames: [String],
                          file: StaticString = #file,
-                         line: UInt = #line) -> some StubConditionType {
+                         line: UInt = #line) -> some StubCondition {
         _QueryParams.containsKeys(paramNames, file: file, line: line)
     }
 }
@@ -42,7 +42,7 @@ extension QueryParams {
 }
 
 // MARK: -
-enum _QueryParams: StubConditionType {
+enum _QueryParams: StubCondition {
     case containsItems([URLQueryItem], file: StaticString = #file, line: UInt = #line)
     case containsKeys([String], file: StaticString = #file, line: UInt = #line)
 }

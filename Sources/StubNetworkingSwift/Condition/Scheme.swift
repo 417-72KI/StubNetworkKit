@@ -8,13 +8,13 @@ public enum Scheme: Equatable {}
 public extension Scheme {
     static func `is`(_ scheme: String,
                      file: StaticString = #file,
-                     line: UInt = #line) -> some StubConditionType {
+                     line: UInt = #line) -> some StubCondition {
         _Scheme.is(scheme, file: file, line: line)
     }
 }
 
 // MARK: -
-enum _Scheme: StubConditionType {
+enum _Scheme: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }
 

@@ -8,13 +8,13 @@ public enum Host: Equatable {}
 public extension Host {
     static func `is`(_ host: String,
                      file: StaticString = #file,
-                     line: UInt = #line) -> some StubConditionType {
+                     line: UInt = #line) -> some StubCondition {
         _Host.is(host, file: file, line: line)
     }
 }
 
 // MARK: -
-enum _Host: StubConditionType {
+enum _Host: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }
 

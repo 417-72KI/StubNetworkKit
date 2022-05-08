@@ -8,20 +8,20 @@ public enum Header: Equatable {}
 public extension Header {
     static func contains(_ name: String,
                          file: StaticString = #file,
-                         line: UInt = #line) -> some StubConditionType {
+                         line: UInt = #line) -> some StubCondition {
         _Header.containsFieldName(name, file: file, line: line)
     }
     
     static func contains(_ name: String,
                          withValue value: String,
                          file: StaticString = #file,
-                         line: UInt = #line) -> some StubConditionType {
+                         line: UInt = #line) -> some StubCondition {
         _Header.containsFieldNameWithValue(name, value: value, file: file, line: line)
     }
 }
 
 // MARK: -
-enum _Header: StubConditionType {
+enum _Header: StubCondition {
     case containsFieldName(String, file: StaticString = #file, line: UInt = #line)
     case containsFieldNameWithValue(String, value: String, file: StaticString = #file, line: UInt = #line)
 }

@@ -8,13 +8,13 @@ public enum Extension: Equatable {}
 public extension Extension {
     static func `is`(_ ext: String,
                      file: StaticString = #file,
-                     line: UInt = #line) -> some StubConditionType {
+                     line: UInt = #line) -> some StubCondition {
         _PathExtension.is(ext, file: file, line: line)
     }
 }
 
 // MARK: -
-enum _PathExtension: StubConditionType {
+enum _PathExtension: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }
 

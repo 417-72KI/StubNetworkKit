@@ -27,28 +27,28 @@ extension Method: ExpressibleByStringLiteral {
 }
 
 public extension Method {
-    static func isGet(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+    static func isGet(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isGet(file: file, line: line)
     }
-    static func isPost(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+    static func isPost(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isPost(file: file, line: line)
     }
-    static func isPut(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+    static func isPut(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isPut(file: file, line: line)
     }
-    static func isPatch(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+    static func isPatch(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isPatch(file: file, line: line)
     }
-    static func isDelete(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+    static func isDelete(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isDelete(file: file, line: line)
     }
-    static func isHead(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+    static func isHead(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isHead(file: file, line: line)
     }
 }
 
 extension Method {
-    func condition(file: StaticString = #file, line: UInt = #line) -> some StubConditionType {
+    func condition(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         switch self {
         case .get: return _Method.isGet(file: file, line: line)
         case .post: return _Method.isPost(file: file, line: line)
@@ -61,7 +61,7 @@ extension Method {
 }
 
 // MARK: -
-enum _Method: StubConditionType {
+enum _Method: StubCondition {
     case isGet(file: StaticString = #file, line: UInt = #line)
     case isPost(file: StaticString = #file, line: UInt = #line)
     case isPut(file: StaticString = #file, line: UInt = #line)
