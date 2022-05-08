@@ -2,7 +2,7 @@
 import FoundationNetworking
 #endif
 import XCTest
-import StubNetworkingSwift
+import StubNetworkKit
 import SwiftParamTest
 
 final class StubCondition_ResultBuilderTests: XCTestCase {

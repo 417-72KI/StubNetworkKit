@@ -1,4 +1,4 @@
-PROJECT_NAME = StubNetworkingSwift
+PROJECT_NAME = StubNetworkKit
 
 ver = 0.0.2
 

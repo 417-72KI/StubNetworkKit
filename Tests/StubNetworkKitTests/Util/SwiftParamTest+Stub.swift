@@ -2,7 +2,7 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
-@testable import StubNetworkingSwift
+@testable import StubNetworkKit
 import SwiftParamTest
 import XCTest
 
@@ -24,7 +24,7 @@ func expect<R: Equatable>(
 }
 
 func expect<R: Equatable>(
-    _ row: Row2<URL, StubNetworkingSwift.Method, R>,
+    _ row: Row2<URL, StubNetworkKit.Method, R>,
     file: StaticString = #file,
     line: UInt = #line
 ) -> Row1<URLRequest, R> {

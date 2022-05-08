@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 import XCTest
-import StubNetworkingSwift
+import StubNetworkKit
 
 #if canImport(Alamofire)
 import Alamofire
@@ -15,7 +15,7 @@ import APIKit
 import Moya
 #endif
 
-final class StubNetworkingSwiftTests: XCTestCase {
+final class StubNetworkKitTests: XCTestCase {
     override func setUp() {
         StubNetworking.option = .init(printDebugLog: true,
                                       debugConditions: true)
@@ -408,7 +408,7 @@ final class StubNetworkingSwiftTests: XCTestCase {
     #endif
 }
 
-private extension StubNetworkingSwiftTests {
+private extension StubNetworkKitTests {
     struct Sample: Decodable, Equatable {
         var foo: String
         var bar: Int

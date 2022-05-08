@@ -41,7 +41,7 @@ let testTargetDependencies: [Target.Dependency] = {
 }()
 
 let package = Package(
-    name: "StubNetworkingSwift",
+    name: "StubNetworkKit",
     platforms: [
         .macOS(.v11),
         .iOS(.v14),
@@ -50,21 +50,21 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "StubNetworkingSwift",
-            targets: ["StubNetworkingSwift"]),
+            name: "StubNetworkKit",
+            targets: ["StubNetworkKit"]),
     ],
     dependencies: [
         .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.0"),
     ] + testDependencies,
     targets: [
         .target(
-            name: "StubNetworkingSwift",
+            name: "StubNetworkKit",
             dependencies: []
         ),
         .testTarget(
-            name: "StubNetworkingSwiftTests",
+            name: "StubNetworkKitTests",
             dependencies: [
-                "StubNetworkingSwift",
+                "StubNetworkKit",
                 "SwiftParamTest",
             ] + testTargetDependencies,
             resources: [.copy("Fixtures")]
