@@ -69,6 +69,9 @@ sed -i '' -E "s/(spec\.ios\.deployment_target *= )\"([0-9]*\.[0-9]*(\.[0-9]*)?)\
 sed -i '' -E "s/(spec\.tvos\.deployment_target *= )\"([0-9]*\.[0-9]*(\.[0-9]*)?)\"/\1\"${TV_OS_VERSION}\"/g" ${PROJECT_NAME}.podspec
 sed -i '' -E "s/(spec\.watchos\.deployment_target *= )\"([0-9]*\.[0-9]*(\.[0-9]*)?)\"/\1\"${WATCH_OS_VERSION}\"/g" ${PROJECT_NAME}.podspec
 
+SWIFT_VERSIONS="$(cat .github/matrix.json | jq -rc '.swift_version | sort' | sed 's/"/'"'"'/g' | sed 's/'"'"','"'"'/'"'"', '"'"'/g')"
+sed -i '' -E "s/(spec\.swift_versions *= )(\[.*\])/\1${SWIFT_VERSIONS}/g" ${PROJECT_NAME}.podspec
+
 
 COMMIT_OPTION=''
 if [ $DEBUG -ne 0 ]; then
