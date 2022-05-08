@@ -18,12 +18,12 @@ Pod::Spec.new do |spec|
 
   spec.ios.deployment_target = "14.0"
   spec.osx.deployment_target = "11.0"
-  spec.watchos.deployment_target = "5.0"
+  spec.watchos.deployment_target = "6.0"
   spec.tvos.deployment_target = "14.0"
 
   spec.source       = { :git => "https://github.com/417-72KI/#{spec.name}.git", :tag => "#{spec.version}" }
   spec.source_files  = 'Sources/StubNetworkKit/**/*.swift'
-  spec.swift_versions = ['5.3', '5.4', '5.5', '5.6']
+  spec.swift_versions = ['5.4', '5.5', '5.6']
 
   spec.frameworks     = 'Foundation'
 end
