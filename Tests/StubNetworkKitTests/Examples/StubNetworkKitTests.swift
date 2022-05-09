@@ -161,7 +161,7 @@ final class StubNetworkKitTests: XCTestCase {
             guard $0.url?.query == "q=1" else {
                 return .error(.unexpectedRequest($0))
             }
-            return .json(fromFile: "Fixtures/sample", in: .module)
+            return .json(fromFile: "_Fixtures/sample", in: .module)
         }
 
         let (data, response) = try await defaultStubSession.data(from: url)
@@ -194,7 +194,7 @@ final class StubNetworkKitTests: XCTestCase {
             .host("bar")
             .path("/baz")
             .method(.get)
-            .responseData(withFilePath: "Fixtures/sample", extension: "json", in: .module)
+            .responseData(withFilePath: "_Fixtures/sample", extension: "json", in: .module)
 
         let (data, response) = try await defaultStubSession.data(from: url)
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)

@@ -43,7 +43,7 @@ let testTarget: [Target] = isRelease ? [] : [
     .testTarget(
         name: "StubNetworkKitTests",
         dependencies: ["StubNetworkKit"] + testTargetDependencies,
-        resources: [.copy("Fixtures")]
+        resources: [.copy("_Fixtures")]
     )
 ]
 
