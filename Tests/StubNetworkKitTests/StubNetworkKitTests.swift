@@ -15,6 +15,7 @@ import APIKit
 import Moya
 #endif
 
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 final class StubNetworkKitTests: XCTestCase {
     override func setUp() {
         StubNetworking.option = .init(printDebugLog: true,
@@ -292,6 +293,7 @@ final class StubNetworkKitTests: XCTestCase {
     #endif
 }
 
+@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 private extension StubNetworkKitTests {
     struct Sample: Decodable, Equatable {
         var foo: String
