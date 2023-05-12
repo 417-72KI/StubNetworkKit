@@ -54,7 +54,7 @@ let package = Package(
             targets: ["StubNetworkKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.0"),
+        .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.1"),
     ] + testDependencies,
     targets: [
         .target(
