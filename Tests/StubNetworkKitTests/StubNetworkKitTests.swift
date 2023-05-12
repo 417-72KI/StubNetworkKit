@@ -26,24 +26,19 @@ final class StubNetworkKitTests: XCTestCase {
     }
 
     /// Example function for basic implementation
-    func testDefaultStubSession_basic() throws {
+    func testDefaultStubSession_basic() async throws {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
             .responseData("Hello world!".data(using: .utf8)!)
 
-        let e = expectation(description: "URLSession")
-        defaultStubSession.dataTask(with: url) { data, response, error in
-            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
-            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
-            XCTAssertNil(error)
-            e.fulfill()
-        }.resume()
-        waitForExpectations(timeout: 5)
+        let (data, response) = try await defaultStubSession.data(from: url)
+        XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
+        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
 
     /// Example function for basic implementation
-    func testDefaultStubSession_basic_customResponse() throws {
+    func testDefaultStubSession_basic_customResponse() async throws {
         let url = URL(string: "foo://bar/baz?q=1")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz")) {
@@ -53,18 +48,13 @@ final class StubNetworkKitTests: XCTestCase {
             return .data("Hello world!".data(using: .utf8)!)
         }
 
-        let e = expectation(description: "URLSession")
-        defaultStubSession.dataTask(with: url) { data, response, error in
-            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
-            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
-            XCTAssertNil(error)
-            e.fulfill()
-        }.resume()
-        waitForExpectations(timeout: 5)
+        let (data, response) = try await defaultStubSession.data(from: url)
+        XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
+        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
 
     /// Example function for using Result Builder implementation
-    func testDefaultStubSession_resultBuilder() throws {
+    func testDefaultStubSession_resultBuilder() async throws {
         let url = URL(string: "foo://bar/baz")!
 
         stub {
@@ -74,18 +64,13 @@ final class StubNetworkKitTests: XCTestCase {
             Method.isGet()
         }.responseData("Hello world!".data(using: .utf8)!)
 
-        let e = expectation(description: "URLSession")
-        defaultStubSession.dataTask(with: url) { data, response, error in
-            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
-            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
-            XCTAssertNil(error)
-            e.fulfill()
-        }.resume()
-        waitForExpectations(timeout: 5)
+        let (data, response) = try await defaultStubSession.data(from: url)
+        XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
+        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
 
     /// Example function for using Result Builder implementation
-    func testDefaultStubSession_resultBuilder_customResponse() throws {
+    func testDefaultStubSession_resultBuilder_customResponse() async throws {
         let url = URL(string: "foo://bar/baz?q=1")!
 
         stub {
@@ -100,34 +85,24 @@ final class StubNetworkKitTests: XCTestCase {
             return .data("Hello world!".data(using: .utf8)!)
         }
 
-        let e = expectation(description: "URLSession")
-        defaultStubSession.dataTask(with: url) { data, response, error in
-            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
-            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
-            XCTAssertNil(error)
-            e.fulfill()
-        }.resume()
-        waitForExpectations(timeout: 5)
+        let (data, response) = try await defaultStubSession.data(from: url)
+        XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
+        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
 
     /// Example function for using single function implementation
-    func testDefaultStubSession_singleFunction() throws {
+    func testDefaultStubSession_singleFunction() async throws {
         let url = URL(string: "foo://bar/baz")!
         stub(url: "foo://bar/baz", method: .get)
             .responseData("Hello world!".data(using: .utf8)!)
 
-        let e = expectation(description: "URLSession")
-        defaultStubSession.dataTask(with: url) { data, response, error in
-            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
-            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
-            XCTAssertNil(error)
-            e.fulfill()
-        }.resume()
-        waitForExpectations(timeout: 5)
+        let (data, response) = try await defaultStubSession.data(from: url)
+        XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
+        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
 
     /// Example function for using function-chain implementation
-    func testDefaultStubSession_functionChaining() throws {
+    func testDefaultStubSession_functionChaining() async throws {
         let url = URL(string: "foo://bar/baz")!
         stub()
             .scheme("foo")
@@ -136,18 +111,13 @@ final class StubNetworkKitTests: XCTestCase {
             .method(.get)
             .responseData("Hello world!".data(using: .utf8)!)
 
-        let e = expectation(description: "URLSession")
-        defaultStubSession.dataTask(with: url) { data, response, error in
-            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
-            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
-            XCTAssertNil(error)
-            e.fulfill()
-        }.resume()
-        waitForExpectations(timeout: 5)
+        let (data, response) = try await defaultStubSession.data(from: url)
+        XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
+        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
 
     /// Example function for using fixture response.
-    func testDefaultStubSession_fixture() throws {
+    func testDefaultStubSession_fixture() async throws {
         let url = URL(string: "foo://bar/baz?q=1")!
         stub {
             Scheme.is("foo")
@@ -161,18 +131,11 @@ final class StubNetworkKitTests: XCTestCase {
             return .json(fromFile: "Fixtures/sample", in: .module)
         }
 
-        var data: Data?
-        let e = expectation(description: "URLSession_fixture")
-        defaultStubSession.dataTask(with: url) { d, res, err in
-            data = d
-            XCTAssertEqual((res as? HTTPURLResponse)?.statusCode, 200)
-            XCTAssertNil(err)
-            e.fulfill()
-        }.resume()
-        waitForExpectations(timeout: 5)
+        let (data, response) = try await defaultStubSession.data(from: url)
+        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
 
         let actual = try JSONDecoder()
-            .decode(Sample.self, from: XCTUnwrap(data))
+            .decode(Sample.self, from: data)
         XCTAssertEqual(actual, .init(foo: "hoge",
                                      bar: 42,
                                      baz: true,
@@ -191,7 +154,7 @@ final class StubNetworkKitTests: XCTestCase {
     }
 
     /// Example function for using function-chain implementation and fixture response.
-    func testDefaultStubSession_functionChaining_fixture() throws {
+    func testDefaultStubSession_functionChaining_fixture() async throws {
         let url = URL(string: "foo://bar/baz")!
         stub()
             .scheme("foo")
@@ -200,18 +163,11 @@ final class StubNetworkKitTests: XCTestCase {
             .method(.get)
             .responseData(withFilePath: "Fixtures/sample", extension: "json", in: .module)
 
-        var data: Data?
-        let e = expectation(description: "URLSession_functionChaining_fixture")
-        defaultStubSession.dataTask(with: url) { d, res, err in
-            data = d
-            XCTAssertEqual((res as? HTTPURLResponse)?.statusCode, 200)
-            XCTAssertNil(err)
-            e.fulfill()
-        }.resume()
-        waitForExpectations(timeout: 5)
+        let (data, response) = try await defaultStubSession.data(from: url)
+        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
 
         let actual = try JSONDecoder()
-            .decode(Sample.self, from: XCTUnwrap(data))
+            .decode(Sample.self, from: data)
         XCTAssertEqual(actual, .init(foo: "hoge",
                                      bar: 42,
                                      baz: true,
@@ -231,29 +187,10 @@ final class StubNetworkKitTests: XCTestCase {
     // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
     #if !os(watchOS)
     /// Example function for intercepting `URLSession.shared` requests
-    func testSharedSession() throws {
+    func testSharedSession() async throws {
         registerStubForSharedSession()
         defer { unregisterStubForSharedSession() }
 
-        let url = URL(string: "foo://bar/baz")!
-
-        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
-            .responseData("Hello world!".data(using: .utf8)!)
-
-        let e = expectation(description: "URLSession")
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            XCTAssertEqual(data.flatMap({ String(data: $0, encoding: .utf8) }), "Hello world!")
-            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
-            XCTAssertNil(error)
-            e.fulfill()
-        }.resume()
-        waitForExpectations(timeout: 5)
-    }
-    #endif
-
-    #if compiler(>=5.6) && canImport(_Concurrency)
-    @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
-    func testDefaultStubSessionWithConcurrency() async throws {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
@@ -263,28 +200,11 @@ final class StubNetworkKitTests: XCTestCase {
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
-
-    #if !os(watchOS)
-    @available(macOS 12.0, iOS 15.0, tvOS 15.0, *)
-    func testSharedSessionWithConcurrency() async throws {
-        registerStubForSharedSession()
-        defer { unregisterStubForSharedSession() }
-
-        let url = URL(string: "foo://bar/baz")!
-
-        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
-            .responseData("Hello world!".data(using: .utf8)!)
-
-        let (data, response) = try await URLSession.shared.data(from: url)
-        XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
-        XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
-    }
-    #endif
     #endif
 
     // MARK: - Alamofire
     #if canImport(Alamofire)
-    func testAlamofire() throws {
+    func testAlamofire() async throws {
         let config = URLSessionConfiguration.af.ephemeral
         registerStub(to: config)
         let session = Session(configuration: config)
@@ -294,40 +214,13 @@ final class StubNetworkKitTests: XCTestCase {
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
             .responseData("Hello world!".data(using: .utf8)!)
 
-        var result: AFDataResponse<String>!
-        let e = expectation(description: "Alamofire")
-        session.request(url)
-            .responseString {
-                result = $0
-                e.fulfill()
-            }.resume()
-        waitForExpectations(timeout: 5)
-
-        XCTAssertEqual(result?.value, "Hello world!")
-        XCTAssertEqual(result?.response?.statusCode, 200)
-        XCTAssertNil(result?.error)
-    }
-
-    #if compiler(>=5.6) && canImport(_Concurrency)
-    func testAlamofireWithConcurrency() async throws {
-        let config = URLSessionConfiguration.af.ephemeral
-        registerStub(to: config)
-        let session = Session(configuration: config)
-
-        let url = URL(string: "foo://bar/baz")!
-
-        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
-            .responseData("Hello world!".data(using: .utf8)!)
-
-        let request = session.request(url)
-        let result = await request
+        let result = await session.request(url)
             .serializingString()
             .response
         XCTAssertEqual(result.value, "Hello world!")
         XCTAssertEqual(result.response?.statusCode, 200)
         XCTAssertNil(result.error)
     }
-    #endif
     #endif
 
     // MARK: - APIKit
@@ -348,7 +241,7 @@ final class StubNetworkKitTests: XCTestCase {
         }
     }
 
-    func testAPIKit() throws {
+    func testAPIKit() async throws {
         let config = URLSessionConfiguration.ephemeral
         registerStub(to: config)
         let adapter = URLSessionAdapter(configuration: config)
@@ -359,17 +252,8 @@ final class StubNetworkKitTests: XCTestCase {
             Path.is("/baz")
         }.responseJson(["status": 200])
 
-        var result: Result<FakeRequest.Response, SessionTaskError>!
-        let e = expectation(description: "APIKit")
-        Session(adapter: adapter)
-            .send(FakeRequest()) {
-                result = $0
-                e.fulfill()
-            }?
-            .resume()
-        waitForExpectations(timeout: 5)
-
-        let response = try XCTUnwrap(result).get()
+        let response = try await Session(adapter: adapter)
+            .response(for: FakeRequest())
         XCTAssertEqual(response.status, 200)
     }
     #endif
@@ -384,7 +268,7 @@ final class StubNetworkKitTests: XCTestCase {
         var headers: [String : String]? { [:] }
     }
 
-    func testMoya() throws {
+    func testMoya() async throws {
         let config = URLSessionConfiguration.af.default
         registerStub(to: config)
         let session = Session(configuration: config)
@@ -393,15 +277,15 @@ final class StubNetworkKitTests: XCTestCase {
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
             .responseData("Hello world!".data(using: .utf8)!)
 
-        var result: Result<Response, MoyaError>!
-        let e = expectation(description: "Moya")
-        provider.request(.init()) {
-            result = $0
-            e.fulfill()
+        let response = try await withCheckedThrowingContinuation { continuation in
+            provider.request(.init()) {
+                do {
+                    continuation.resume(returning: try $0.get())
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
         }
-        waitForExpectations(timeout: 5)
-
-        let response = try XCTUnwrap(result).get()
         XCTAssertEqual(String(data: response.data, encoding: .utf8), "Hello world!")
         XCTAssertEqual(response.statusCode, 200)
     }
