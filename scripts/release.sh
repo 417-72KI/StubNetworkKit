@@ -59,7 +59,7 @@ TV_OS_VERSION="$(cat Package.swift | grep '.tvOS(.v' | sed -E "s/ *\.tvOS\(\.v([
 if [[ "$TV_OS_VERSION" != *"."* ]]; then
     TV_OS_VERSION="${TV_OS_VERSION}.0"
 fi
-WATCH_OS_VERSION="$(cat Package.swift | grep '.watchOS(.v' | gsed -r "s/\s*\.watchOS\(\.v([0-9_]*)\),?/\1/g" | gsed -r "s/_/./g")"
+WATCH_OS_VERSION="$(cat Package.swift | grep '.watchOS(.v' | sed -E "s/\s*\.watchOS\(\.v([0-9_]*)\),?/\1/g" | sed -E "s/_/./g")"
 if [[ "$WATCH_OS_VERSION" != *"."* ]]; then
     WATCH_OS_VERSION="${WATCH_OS_VERSION}.0"
 fi
