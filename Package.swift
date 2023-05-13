@@ -21,7 +21,6 @@ let testDependencies: [Package.Dependency] = {
     if isObjcAvailable {
         dependencies += [
             .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.3.0"),
-            .package(url: "https://github.com/Moya/Moya.git", from: "15.0.0"),
         ]
     }
     return dependencies
@@ -34,7 +33,6 @@ let testTargetDependencies: [Target.Dependency] = {
     if isObjcAvailable {
         dependencies += [
             "APIKit",
-            "Moya",
         ]
     }
     return dependencies

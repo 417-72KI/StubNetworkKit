@@ -11,9 +11,6 @@ import Alamofire
 #if canImport(APIKit)
 import APIKit
 #endif
-#if canImport(Moya)
-import Moya
-#endif
 
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 final class StubNetworkKitTests: XCTestCase {
@@ -256,39 +253,6 @@ final class StubNetworkKitTests: XCTestCase {
         let response = try await Session(adapter: adapter)
             .response(for: FakeRequest())
         XCTAssertEqual(response.status, 200)
-    }
-    #endif
-
-    // MARK: - Moya
-    #if canImport(Moya)
-    private struct FakeService: TargetType {
-        var baseURL: URL { URL(string: "foo://bar")! }
-        var path: String { "/baz" }
-        var method: Moya.Method { .get }
-        var task: Task { .requestPlain }
-        var headers: [String : String]? { [:] }
-    }
-
-    func testMoya() async throws {
-        let config = URLSessionConfiguration.af.default
-        registerStub(to: config)
-        let session = Session(configuration: config)
-        let provider = MoyaProvider<FakeService>(session: session)
-
-        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
-            .responseData("Hello world!".data(using: .utf8)!)
-
-        let response = try await withCheckedThrowingContinuation { continuation in
-            provider.request(.init()) {
-                do {
-                    continuation.resume(returning: try $0.get())
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-        XCTAssertEqual(String(data: response.data, encoding: .utf8), "Hello world!")
-        XCTAssertEqual(response.statusCode, 200)
     }
     #endif
 }
