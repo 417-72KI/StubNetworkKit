@@ -5,6 +5,12 @@ import PackageDescription
 
 let package = Package(
     name: "StubNetworkKitSample",
+    platforms: [
+        .macOS(.v12),
+        .iOS(.v15),
+        .watchOS(.v8),
+        .tvOS(.v15)
+    ],
     products: [
         .library(
             name: "AlamofireSample",
@@ -19,13 +25,14 @@ let package = Package(
         .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.4.0"),
     ],
     targets: [
+        .target(name: "Shared"),
         .target(
             name: "AlamofireSample",
-            dependencies: ["Alamofire"]
+            dependencies: ["Shared", "Alamofire"]
         ),
         .target(
             name: "APIKitSample",
-            dependencies: ["APIKit"]
+            dependencies: ["Shared", "APIKit"]
         ),
         .testTarget(
             name: "AlamofireSampleTests",
