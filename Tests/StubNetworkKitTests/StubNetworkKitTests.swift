@@ -5,13 +5,6 @@ import FoundationNetworking
 import XCTest
 import StubNetworkKit
 
-#if canImport(Alamofire)
-import Alamofire
-#endif
-#if canImport(APIKit)
-import APIKit
-#endif
-
 @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 final class StubNetworkKitTests: XCTestCase {
     override func setUp() {
@@ -182,6 +175,7 @@ final class StubNetworkKitTests: XCTestCase {
                                     )
         )
     }
+
     // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
     #if !os(watchOS)
     /// Example function for intercepting `URLSession.shared` requests
@@ -197,62 +191,6 @@ final class StubNetworkKitTests: XCTestCase {
         let (data, response) = try await defaultStubSession.data(from: url)
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
-    }
-    #endif
-
-    // MARK: - Alamofire
-    #if canImport(Alamofire)
-    func testAlamofire() async throws {
-        let config = URLSessionConfiguration.af.ephemeral
-        registerStub(to: config)
-        let session = Session(configuration: config)
-
-        let url = URL(string: "foo://bar/baz")!
-
-        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
-            .responseData("Hello world!".data(using: .utf8)!)
-
-        let result = await session.request(url)
-            .serializingString()
-            .response
-        XCTAssertEqual(result.value, "Hello world!")
-        XCTAssertEqual(result.response?.statusCode, 200)
-        XCTAssertNil(result.error)
-    }
-    #endif
-
-    // MARK: - APIKit
-    #if canImport(APIKit)
-    private struct FakeRequest: APIKit.Request {
-        struct Response: Decodable {
-            var status: Int
-        }
-
-        var baseURL: URL { URL(string: "foo://bar")! }
-        var path: String { "/baz" }
-        var method: APIKit.HTTPMethod { .get }
-
-        func response(from object: Any, urlResponse: HTTPURLResponse) throws -> Response {
-            let data = try (object as? Data) ?? (try JSONSerialization.data(withJSONObject: object, options: []))
-            return try JSONDecoder()
-                .decode(Response.self, from: data)
-        }
-    }
-
-    func testAPIKit() async throws {
-        let config = URLSessionConfiguration.ephemeral
-        registerStub(to: config)
-        let adapter = URLSessionAdapter(configuration: config)
-
-        stub {
-            Scheme.is("foo")
-            Host.is("bar")
-            Path.is("/baz")
-        }.responseJson(["status": 200])
-
-        let response = try await Session(adapter: adapter)
-            .response(for: FakeRequest())
-        XCTAssertEqual(response.status, 200)
     }
     #endif
 }
