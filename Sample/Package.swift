@@ -39,14 +39,16 @@ let package = Package(
             dependencies: [
                 "AlamofireSample",
                 "StubNetworkKit",
-            ]
+            ],
+            resources: [.copy("Fixtures")]
         ),
         .testTarget(
             name: "APIKitSampleTests",
             dependencies: [
                 "APIKitSample",
                 "StubNetworkKit",
-            ]
+            ],
+            resources: [.copy("Fixtures")]
         ),
     ]
 )

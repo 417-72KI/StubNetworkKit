@@ -1,12 +1,31 @@
 import XCTest
+import StubNetworkKit
+import Alamofire
+
 @testable import AlamofireSample
 
 final class AlamofireSampleTests: XCTestCase {
-    func testExample() throws {
-        // XCTest Documenation
-        // https://developer.apple.com/documentation/xctest
+    func testFetch() async throws {
+        let config = URLSessionConfiguration.af.ephemeral
+        registerStub(to: config)
 
-        // Defining Test Cases and Test Methods
-        // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
+        stub {
+            Scheme.is("https")
+            Host.is("foo.bar")
+            Path.is("/baz")
+        }.responseData(withFilePath: "Fixtures/sample",
+                       extension: "json",
+                       in: .module)
+
+        let sample = AlamofireSample(Session(configuration: config))
+        let result = try await sample.fetch()
+        XCTAssertEqual(result.foo, "hoge")
+        XCTAssertEqual(result.bar, 42)
+        XCTAssertTrue(result.baz)
+        let child = result.qux
+        XCTAssertEqual(child.quux, "fuga")
+        XCTAssertEqual(child.corge, 3.14, accuracy: 0.01)
+        XCTAssertFalse(child.grault)
+        XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
 }

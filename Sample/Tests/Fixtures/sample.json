@@ -1,0 +1,15 @@
+{
+    "foo": "hoge",
+    "bar": 42,
+    "baz": true,
+    "qux": {
+        "quux": "fuga",
+        "corge": 3.14,
+        "grault": false,
+        "garply": [
+            "spam",
+            "ham",
+            "eggs"
+        ]
+    }
+}

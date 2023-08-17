@@ -1,17 +1,17 @@
 import Foundation
 
 public struct SampleEntity: Decodable {
-    var foo: String
-    var bar: Int
-    var baz: Bool
-    var qux: Child
+    public var foo: String
+    public var bar: Int
+    public var baz: Bool
+    public var qux: Child
 }
 
 public extension SampleEntity {
     struct Child: Decodable {
-        var quux: String
-        var corge: Double
-        var grault: Bool
-        var garply: [String]
+        public var quux: String
+        public var corge: Double
+        public var grault: Bool
+        public var garply: [String]
     }
 }
