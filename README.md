@@ -33,7 +33,7 @@ If you are using `URLSession.shared` only, you can call `registerStubForSharedSe
 
 Otherwise, you should inject `URLSessionConfiguration` instance that stub is registered.
 
-Sample codes with using `Alamofire` or `APIKit` exist as test-cases in [StubNetworkKitTests.swift](https://github.com/417-72KI/StubNetworkKit/blob/main/Tests/StubNetworkKitTests/StubNetworkKitTests.swift).
+Sample codes with using `Alamofire` or `APIKit` exist in [Sample](https://github.com/417-72KI/StubNetworkKit/tree/main/Tests/StubNetworkKitTests/Sample).
 
 ## Example
 ### Basic
@@ -97,4 +97,4 @@ stub()
 ```
 
 ### More examples
-If you are looking for more examples, look at [StubNetworkKitTests.swift](https://github.com/417-72KI/StubNetworkKit/blob/main/Tests/StubNetworkKitTests/StubNetworkKitTests.swift).
+If you are looking for more examples, look at [StubNetworkKitTests](https://github.com/417-72KI/StubNetworkKit/blob/main/Tests/StubNetworkKitTests).
