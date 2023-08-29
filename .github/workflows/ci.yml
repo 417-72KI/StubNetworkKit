@@ -25,8 +25,8 @@ jobs:
       - name: Extract matrix
         id: matrix
         run: |
-          echo "::set-output name=latest-xcode::$(cat .github/matrix.json | jq -rc '.xcode_version | max')"
-          echo "::set-output name=matrix::$(cat .github/matrix.json | jq -rc .)"
+          echo "latest-xcode=$(cat .github/matrix.json | jq -rc '.xcode_version | max')" >> $GITHUB_OUTPUT
+          echo "matrix=$(cat .github/matrix.json | jq -rc .)" >> $GITHUB_OUTPUT
   test-linux:
     name: Test(Linux)
     needs: generate-matrix
@@ -74,7 +74,7 @@ jobs:
       - name: Detect destination
         id: destination
         run: |
-          echo "::set-output name=value::$(./.github/scripts/detect-destination.sh ${{ matrix.platform }})"
+          echo "value=$(./.github/scripts/detect-destination.sh ${{ matrix.platform }})" >> $GITHUB_OUTPUT
       - name: Test
         run: |
           swift package clean
