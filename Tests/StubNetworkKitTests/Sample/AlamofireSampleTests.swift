@@ -1,3 +1,4 @@
+#if canImport(Alamofire)
 import XCTest
 import StubNetworkKit
 import Alamofire
@@ -46,3 +47,4 @@ extension AlamofireSample {
             .get()
     }
 }
+#endif

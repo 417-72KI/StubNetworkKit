@@ -1,3 +1,4 @@
+#if canImport(APIKit)
 import XCTest
 import StubNetworkKit
 import APIKit
@@ -56,3 +57,4 @@ struct SampleRequest: Request {
             .decode(Response.self, from: data)
     }
 }
+#endif
