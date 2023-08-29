@@ -2,8 +2,6 @@ import XCTest
 import StubNetworkKit
 import Alamofire
 
-@testable import AlamofireSample
-
 final class AlamofireSampleTests: XCTestCase {
     func testFetch() async throws {
         let config = URLSessionConfiguration.af.ephemeral
@@ -27,5 +25,24 @@ final class AlamofireSampleTests: XCTestCase {
         XCTAssertEqual(child.corge, 3.14, accuracy: 0.01)
         XCTAssertFalse(child.grault)
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
+    }
+}
+
+private final class AlamofireSample {
+    private let session: Session
+
+    init(_ session: Session = .default) {
+        self.session = session
+    }
+}
+
+extension AlamofireSample {
+    func fetch() async throws -> SampleEntity {
+        let url = URL(string: "https://foo.bar/baz")!
+        return try await session.request(url)
+            .serializingDecodable(SampleEntity.self)
+            .response
+            .result
+            .get()
     }
 }
