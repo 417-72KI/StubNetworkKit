@@ -7,9 +7,9 @@ let isRelease = false
 
 let isObjcAvailable: Bool = {
     #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
-        return true
+    return true
     #else
-        return false
+    return false
     #endif
 }()
 
@@ -17,6 +17,7 @@ let testDependencies: [Package.Dependency] = {
     if isRelease { return [] }
     var dependencies: [Package.Dependency] = [
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.6.0"),
+        .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.1"),
     ]
     if isObjcAvailable {
         dependencies += [
@@ -28,6 +29,7 @@ let testDependencies: [Package.Dependency] = {
 let testTargetDependencies: [Target.Dependency] = {
     if isRelease { return [] }
     var dependencies: [Target.Dependency] = [
+        "SwiftParamTest",
         "Alamofire",
     ]
     if isObjcAvailable {
@@ -37,6 +39,13 @@ let testTargetDependencies: [Target.Dependency] = {
     }
     return dependencies
 }()
+let testTarget: [Target] = isRelease ? [] : [
+    .testTarget(
+        name: "StubNetworkKitTests",
+        dependencies: ["StubNetworkKit"] + testTargetDependencies,
+        resources: [.copy("Fixtures")]
+    )
+]
 
 let package = Package(
     name: "StubNetworkKit",
@@ -51,21 +60,11 @@ let package = Package(
             name: "StubNetworkKit",
             targets: ["StubNetworkKit"]),
     ],
-    dependencies: [
-        .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.1"),
-    ] + testDependencies,
+    dependencies: testDependencies,
     targets: [
         .target(
             name: "StubNetworkKit",
             dependencies: []
         ),
-        .testTarget(
-            name: "StubNetworkKitTests",
-            dependencies: [
-                "StubNetworkKit",
-                "SwiftParamTest",
-            ] + testTargetDependencies,
-            resources: [.copy("Fixtures")]
-        ),
-    ]
+    ] + testTarget
 )
