@@ -26,7 +26,7 @@ final class APIKitSampleTests: XCTestCase {
             Host.is("foo.bar")
             Path.is("/baz/qux")
             Method.isGet()
-        }.responseData(withFilePath: "Fixtures/sample",
+        }.responseData(withFilePath: "_Fixtures/sample",
                        extension: "json",
                        in: .module)
 
@@ -50,7 +50,7 @@ final class APIKitSampleTests: XCTestCase {
             Path.is("/baz/qux")
             Method.isPost()
             Body.isJson(["hoge": "fuga"])
-        }.responseData(withFilePath: "Fixtures/sample",
+        }.responseData(withFilePath: "_Fixtures/sample",
                        extension: "json",
                        in: .module)
 
@@ -81,7 +81,7 @@ final class APIKitSampleTests: XCTestCase {
                 "hoge": "fuga".data(using: .utf8)!,
                 "piyo": "hogera".data(using: .utf8)!,
             ])
-        }.responseData(withFilePath: "Fixtures/sample",
+        }.responseData(withFilePath: "_Fixtures/sample",
                        extension: "json",
                        in: .module)
 

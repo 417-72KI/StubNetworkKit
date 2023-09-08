@@ -25,7 +25,7 @@ final class AlamofireSampleTests: XCTestCase {
             Host.is("foo.bar")
             Path.is("/baz")
             Method.isGet()
-        }.responseData(withFilePath: "Fixtures/sample",
+        }.responseData(withFilePath: "_Fixtures/sample",
                        extension: "json",
                        in: .module)
 
@@ -48,7 +48,7 @@ final class AlamofireSampleTests: XCTestCase {
             Host.is("foo.bar")
             Path.is("/baz")
             Method.isPost()
-        }.responseData(withFilePath: "Fixtures/sample",
+        }.responseData(withFilePath: "_Fixtures/sample",
                        extension: "json",
                        in: .module)
 
@@ -79,7 +79,7 @@ final class AlamofireSampleTests: XCTestCase {
                 "hoge": "fuga".data(using: .utf8)!,
                 "piyo": "hogera".data(using: .utf8)!,
             ])
-        }.responseData(withFilePath: "Fixtures/sample",
+        }.responseData(withFilePath: "_Fixtures/sample",
                        extension: "json",
                        in: .module)
 
