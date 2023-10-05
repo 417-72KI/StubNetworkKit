@@ -50,21 +50,23 @@ let testTarget: [Target] = isRelease ? [] : [
 let package = Package(
     name: "StubNetworkKit",
     platforms: [
-        .macOS(.v11),
-        .iOS(.v14),
-        .watchOS(.v6),
-        .tvOS(.v14)
+        .macOS(.v12),
+        .iOS(.v15),
+        .watchOS(.v8),
+        .tvOS(.v15)
     ],
     products: [
         .library(
             name: "StubNetworkKit",
             targets: ["StubNetworkKit"]),
     ],
-    dependencies: testDependencies,
+    dependencies: [
+        .package(url: "https://github.com/417-72KI/MultipartFormDataParser.git", from: "2.1.1")
+    ] + testDependencies,
     targets: [
         .target(
             name: "StubNetworkKit",
-            dependencies: []
+            dependencies: ["MultipartFormDataParser"]
         ),
     ] + testTarget
 )

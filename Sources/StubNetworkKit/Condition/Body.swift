@@ -2,6 +2,7 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+import MultipartFormDataParser
 
 public enum Body: Equatable {}
 
@@ -11,7 +12,10 @@ public extension Body {
                      line: UInt = #line) -> some StubCondition {
         _Body.isData(body, file: file, line: line)
     }
+}
 
+// MARK: - JSON
+public extension Body {
     static func isJson(_ jsonObject: [AnyHashable: Any],
                        file: StaticString = #file,
                        line: UInt = #line) -> some StubCondition {
@@ -23,7 +27,10 @@ public extension Body {
                        line: UInt = #line) -> some StubCondition {
         _Body.isJsonArray(jsonArray)
     }
+}
 
+// MARK: - Form
+public extension Body {
     static func isForm(_ queryItems: [URLQueryItem], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Body.isForm(queryItems, file: file, line: line)
     }
@@ -37,12 +44,20 @@ public extension Body {
     }
 }
 
+// MARK: - multipart/form-data
+public extension Body {
+    static func isMultipartForm(_ items: [String: Data], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
+        _Body.isMultipartForm(items, file: file, line: line)
+    }
+}
+
 // MARK: -
 enum _Body: StubCondition {
     case isData(Data, file: StaticString = #file, line: UInt = #line)
     case isJsonObject([AnyHashable: Any], file: StaticString = #file, line: UInt = #line)
     case isJsonArray([Any], file: StaticString = #file, line: UInt = #line)
     case isForm([URLQueryItem], file: StaticString = #file, line: UInt = #line)
+    case isMultipartForm([String: Data], file: StaticString = #file, line: UInt = #line)
 }
 
 extension _Body {
@@ -74,6 +89,8 @@ extension _Body {
             }, jsonArray, file: file, line: line)
         case let .isForm(queryItems, file, line):
             return stubMatcher({ $0.formBody?.sorted(by: \.name) }, queryItems.sorted(by: \.name), file: file, line: line)
+        case let .isMultipartForm(items, file, line):
+            return stubMatcher({ $0.multipartFormBody }, items, file: file, line: line)
         }
     }
 }
@@ -91,6 +108,8 @@ extension _Body {
                 .isEqual(to: rJson)
         case let (.isForm(lItems, _, _), .isForm(rItems, _, _)):
             return lItems.sorted(by: \.name) == rItems.sorted(by: \.name)
+        case let (.isMultipartForm(lItems, _, _), .isMultipartForm(rItems, _, _)):
+            return lItems == rItems
         default: return false
         }
     }
@@ -105,5 +124,11 @@ private extension URLRequest {
         var comps = URLComponents()
         comps.percentEncodedQuery = query
         return comps.queryItems
+    }
+
+    var multipartFormBody: [String: Data]? {
+        guard let data = try? MultipartFormData.parse(from: self) else { return nil }
+        let tuples = data.elements.map { ($0.name, $0.data) }
+        return Dictionary(uniqueKeysWithValues: tuples)
     }
 }

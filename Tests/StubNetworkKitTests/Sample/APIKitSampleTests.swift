@@ -37,17 +37,20 @@ final class APIKitSampleTests: XCTestCase {
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
 
-    func testForm() async throws {
+    func testMultipartForm() async throws {
         stub {
             Scheme.is("https")
             Host.is("foo.bar")
-            Path.is("/baz")
-            Body.isForm(["hoge": "fuga", "piyo": "hogera"])
+            Path.is("/baz/qux")
+            Body.isMultipartForm([
+                "hoge": "fuga".data(using: .utf8)!,
+                "piyo": "hogera".data(using: .utf8)!,
+            ])
         }.responseData(withFilePath: "Fixtures/sample",
                        extension: "json",
                        in: .module)
 
-        let result = try await client.fetch()
+        let result = try await client.form()
         XCTAssertEqual(result.foo, "hoge")
         XCTAssertEqual(result.bar, 42)
         XCTAssertTrue(result.baz)
@@ -70,6 +73,10 @@ private final class APIKitSample {
 extension APIKitSample {
     func fetch() async throws -> SampleEntity {
         try await session.response(for: SampleRequest())
+    }
+
+    func form() async throws -> SampleEntity {
+        try await session.response(for: SampleFormRequest())
     }
 }
 

@@ -36,12 +36,15 @@ final class AlamofireSampleTests: XCTestCase {
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
 
-    func testForm() async throws {
+    func testMultipartForm() async throws {
         stub {
             Scheme.is("https")
             Host.is("foo.bar")
             Path.is("/baz")
-            Body.isForm(["hoge": "fuga", "piyo": "hogera"])
+            Body.isMultipartForm([
+                "hoge": "fuga".data(using: .utf8)!,
+                "piyo": "hogera".data(using: .utf8)!,
+            ])
         }.responseData(withFilePath: "Fixtures/sample",
                        extension: "json",
                        in: .module)
