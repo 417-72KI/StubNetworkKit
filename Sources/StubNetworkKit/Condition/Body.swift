@@ -45,9 +45,34 @@ public extension Body {
 }
 
 // MARK: - multipart/form-data
+public struct MultipartFormElement: Hashable {
+    public internal(set) var data: Data
+    public internal(set) var fileName: String?
+    public internal(set) var mimeType: String?
+}
+
+extension MultipartFormElement {
+    public static func ==(_ lhs: Self, _ rhs: Self) -> Bool {
+        guard lhs.data == rhs.data else { return false }
+        if let fileName = lhs.fileName,
+           fileName != rhs.fileName {
+            return false
+        }
+        if let mimeType = lhs.mimeType,
+           mimeType != rhs.mimeType {
+            return false
+        }
+        return true
+    }
+}
+
 public extension Body {
-    static func isMultipartForm(_ items: [String: Data], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
+    static func isMultipartForm(_ items: [String: MultipartFormElement], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Body.isMultipartForm(items, file: file, line: line)
+    }
+
+    static func isMultipartForm(_ items: [String: Data], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
+        _Body.isMultipartForm(items.mapValues { .init(data: $0) }, file: file, line: line)
     }
 }
 
@@ -57,7 +82,7 @@ enum _Body: StubCondition {
     case isJsonObject([AnyHashable: Any], file: StaticString = #file, line: UInt = #line)
     case isJsonArray([Any], file: StaticString = #file, line: UInt = #line)
     case isForm([URLQueryItem], file: StaticString = #file, line: UInt = #line)
-    case isMultipartForm([String: Data], file: StaticString = #file, line: UInt = #line)
+    case isMultipartForm([String: MultipartFormElement], file: StaticString = #file, line: UInt = #line)
 }
 
 extension _Body {
@@ -108,8 +133,12 @@ extension _Body {
                 .isEqual(to: rJson)
         case let (.isForm(lItems, _, _), .isForm(rItems, _, _)):
             return lItems.sorted(by: \.name) == rItems.sorted(by: \.name)
-        case let (.isMultipartForm(lItems, _, _), .isMultipartForm(rItems, _, _)):
-            return lItems == rItems
+        case let (.isMultipartForm(lItems, _, _), .isMultipartForm(rItems, _, _)) where lItems.keys.sorted() == rItems.keys.sorted():
+            return lItems.keys.allSatisfy {
+                lItems[$0]?.data == rItems[$0]?.data
+                && (lItems[$0]?.fileName == nil || lItems[$0]?.fileName == rItems[$0]?.fileName)
+                && (lItems[$0]?.mimeType == nil || lItems[$0]?.mimeType == rItems[$0]?.mimeType)
+            }
         default: return false
         }
     }
@@ -126,9 +155,10 @@ private extension URLRequest {
         return comps.queryItems
     }
 
-    var multipartFormBody: [String: Data]? {
+    var multipartFormBody: [String: MultipartFormElement]? {
         guard let data = try? MultipartFormData.parse(from: self) else { return nil }
-        let tuples = data.elements.map { ($0.name, $0.data) }
+        let tuples = data.elements
+            .map { ($0.name, MultipartFormElement(data: $0.data, fileName: $0.fileName, mimeType: $0.mimeType)) }
         return Dictionary(uniqueKeysWithValues: tuples)
     }
 }
