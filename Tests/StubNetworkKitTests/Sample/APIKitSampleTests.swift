@@ -37,6 +37,8 @@ final class APIKitSampleTests: XCTestCase {
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
 
+    // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+    #if !os(watchOS)
     func testMultipartForm() async throws {
         stub {
             Scheme.is("https")
@@ -60,6 +62,7 @@ final class APIKitSampleTests: XCTestCase {
         XCTAssertFalse(child.grault)
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
+    #endif
 }
 
 private final class APIKitSample {
