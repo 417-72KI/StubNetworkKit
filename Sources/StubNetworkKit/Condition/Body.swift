@@ -2,6 +2,7 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+import MultipartFormDataParser
 
 public enum Body: Equatable {}
 
@@ -11,7 +12,10 @@ public extension Body {
                      line: UInt = #line) -> some StubCondition {
         _Body.isData(body, file: file, line: line)
     }
+}
 
+// MARK: - JSON
+public extension Body {
     static func isJson(_ jsonObject: [AnyHashable: Any],
                        file: StaticString = #file,
                        line: UInt = #line) -> some StubCondition {
@@ -23,7 +27,10 @@ public extension Body {
                        line: UInt = #line) -> some StubCondition {
         _Body.isJsonArray(jsonArray)
     }
+}
 
+// MARK: - Form
+public extension Body {
     static func isForm(_ queryItems: [URLQueryItem], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Body.isForm(queryItems, file: file, line: line)
     }
@@ -37,12 +44,45 @@ public extension Body {
     }
 }
 
+// MARK: - multipart/form-data
+public struct MultipartFormElement: Hashable {
+    public internal(set) var data: Data
+    public internal(set) var fileName: String?
+    public internal(set) var mimeType: String?
+}
+
+extension MultipartFormElement {
+    public static func ==(_ lhs: Self, _ rhs: Self) -> Bool {
+        guard lhs.data == rhs.data else { return false }
+        if let fileName = lhs.fileName,
+           fileName != rhs.fileName {
+            return false
+        }
+        if let mimeType = lhs.mimeType,
+           mimeType != rhs.mimeType {
+            return false
+        }
+        return true
+    }
+}
+
+public extension Body {
+    static func isMultipartForm(_ items: [String: MultipartFormElement], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
+        _Body.isMultipartForm(items, file: file, line: line)
+    }
+
+    static func isMultipartForm(_ items: [String: Data], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
+        _Body.isMultipartForm(items.mapValues { .init(data: $0) }, file: file, line: line)
+    }
+}
+
 // MARK: -
 enum _Body: StubCondition {
     case isData(Data, file: StaticString = #file, line: UInt = #line)
     case isJsonObject([AnyHashable: Any], file: StaticString = #file, line: UInt = #line)
     case isJsonArray([Any], file: StaticString = #file, line: UInt = #line)
     case isForm([URLQueryItem], file: StaticString = #file, line: UInt = #line)
+    case isMultipartForm([String: MultipartFormElement], file: StaticString = #file, line: UInt = #line)
 }
 
 extension _Body {
@@ -74,6 +114,8 @@ extension _Body {
             }, jsonArray, file: file, line: line)
         case let .isForm(queryItems, file, line):
             return stubMatcher({ $0.formBody?.sorted(by: \.name) }, queryItems.sorted(by: \.name), file: file, line: line)
+        case let .isMultipartForm(items, file, line):
+            return stubMatcher({ $0.multipartFormBody }, items, file: file, line: line)
         }
     }
 }
@@ -91,6 +133,12 @@ extension _Body {
                 .isEqual(to: rJson)
         case let (.isForm(lItems, _, _), .isForm(rItems, _, _)):
             return lItems.sorted(by: \.name) == rItems.sorted(by: \.name)
+        case let (.isMultipartForm(lItems, _, _), .isMultipartForm(rItems, _, _)) where lItems.keys.sorted() == rItems.keys.sorted():
+            return lItems.keys.allSatisfy {
+                lItems[$0]?.data == rItems[$0]?.data
+                && (lItems[$0]?.fileName == nil || lItems[$0]?.fileName == rItems[$0]?.fileName)
+                && (lItems[$0]?.mimeType == nil || lItems[$0]?.mimeType == rItems[$0]?.mimeType)
+            }
         default: return false
         }
     }
@@ -105,5 +153,12 @@ private extension URLRequest {
         var comps = URLComponents()
         comps.percentEncodedQuery = query
         return comps.queryItems
+    }
+
+    var multipartFormBody: [String: MultipartFormElement]? {
+        guard let data = try? MultipartFormData.parse(from: self) else { return nil }
+        let tuples = data.elements
+            .map { ($0.name, MultipartFormElement(data: $0.data, fileName: $0.fileName, mimeType: $0.mimeType)) }
+        return Dictionary(uniqueKeysWithValues: tuples)
     }
 }
