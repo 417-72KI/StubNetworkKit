@@ -36,9 +36,13 @@ final class AlamofireSampleTests: XCTestCase {
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
 
-    // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
-    #if !os(watchOS)
     func testMultipartForm() async throws {
+        #if os(watchOS) || os(Linux)
+        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+        // FIXME: There is no way to get body stream with `URLSessionUploadTask` in Linux.
+        try XCTSkipIf(true, "Unsupported platform for test.")
+        #endif
+
         stub {
             Scheme.is("https")
             Host.is("foo.bar")
@@ -61,7 +65,6 @@ final class AlamofireSampleTests: XCTestCase {
         XCTAssertFalse(child.grault)
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
-    #endif
 }
 
 private final class AlamofireSample {
