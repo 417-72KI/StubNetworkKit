@@ -267,6 +267,7 @@ public extension Stub {
 }
 
 // MARK: Body
+@available(watchOS, unavailable, message: "Intercepting POST request is not available in watchOS")
 public extension Stub {
     @discardableResult
     func body(_ body: Data,
