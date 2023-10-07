@@ -16,7 +16,7 @@ let isObjcAvailable: Bool = {
 let testDependencies: [Package.Dependency] = {
     if isRelease { return [] }
     var dependencies: [Package.Dependency] = [
-        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.6.0"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.8.0"),
         .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.1"),
     ]
     if isObjcAvailable {
