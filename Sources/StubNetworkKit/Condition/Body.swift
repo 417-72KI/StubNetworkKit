@@ -6,6 +6,7 @@ import MultipartFormDataParser
 
 public enum Body: Equatable {}
 
+@available(watchOS, unavailable, message: "Intercepting POST request is not available in watchOS")
 public extension Body {
     static func `is`(_ body: Data,
                      file: StaticString = #file,
@@ -15,6 +16,7 @@ public extension Body {
 }
 
 // MARK: - JSON
+@available(watchOS, unavailable, message: "Intercepting POST request is not available in watchOS")
 public extension Body {
     static func isJson(_ jsonObject: [AnyHashable: Any],
                        file: StaticString = #file,
@@ -30,6 +32,7 @@ public extension Body {
 }
 
 // MARK: - Form
+@available(watchOS, unavailable, message: "Intercepting POST request is not available in watchOS")
 public extension Body {
     static func isForm(_ queryItems: [URLQueryItem], file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Body.isForm(queryItems, file: file, line: line)

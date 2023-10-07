@@ -30,18 +30,27 @@ public extension Method {
     static func isGet(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isGet(file: file, line: line)
     }
+
+    @available(watchOS, unavailable, message: "Intercepting POST request is not available in watchOS")
     static func isPost(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isPost(file: file, line: line)
     }
+
+    @available(watchOS, unavailable, message: "Intercepting PUT request is not available in watchOS")
     static func isPut(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isPut(file: file, line: line)
     }
+
+    @available(watchOS, unavailable, message: "Intercepting PATCH request is not available in watchOS")
     static func isPatch(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isPatch(file: file, line: line)
     }
+
+    @available(watchOS, unavailable, message: "Intercepting DELETE request is not available in watchOS")
     static func isDelete(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isDelete(file: file, line: line)
     }
+
     static func isHead(file: StaticString = #file, line: UInt = #line) -> some StubCondition {
         _Method.isHead(file: file, line: line)
     }

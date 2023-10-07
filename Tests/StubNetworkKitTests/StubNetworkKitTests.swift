@@ -5,7 +5,6 @@ import FoundationNetworking
 import XCTest
 import StubNetworkKit
 
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 final class StubNetworkKitTests: XCTestCase {
     override func setUp() {
         StubNetworking.option = .init(printDebugLog: true,
@@ -28,13 +27,10 @@ final class StubNetworkKitTests: XCTestCase {
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
 
+    #if !os(watchOS)
     /// Example function for basic implementation
+    @available(watchOS, unavailable)
     func testDefaultStubSession_basic_post() async throws {
-        #if os(watchOS)
-        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
-        try XCTSkipIf(true, "Unsupported platform for test.")
-        #endif
-
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz") && Method.isPost() && Body.isJson(["key": "world"]))
@@ -48,6 +44,7 @@ final class StubNetworkKitTests: XCTestCase {
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
+    #endif
 
     /// Example function for basic implementation
     func testDefaultStubSession_basic_customResponse() async throws {
@@ -81,13 +78,10 @@ final class StubNetworkKitTests: XCTestCase {
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
 
+    #if !os(watchOS)
     /// Example function for using Result Builder implementation
+    @available(watchOS, unavailable)
     func testDefaultStubSession_resultBuilder_post() async throws {
-        #if os(watchOS)
-        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
-        try XCTSkipIf(true, "Unsupported platform for test.")
-        #endif
-
         let url = URL(string: "foo://bar/baz")!
 
         stub {
@@ -106,7 +100,7 @@ final class StubNetworkKitTests: XCTestCase {
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
-
+    #endif
 
     /// Example function for using Result Builder implementation
     func testDefaultStubSession_resultBuilder_customResponse() async throws {
@@ -224,9 +218,8 @@ final class StubNetworkKitTests: XCTestCase {
         )
     }
 
-    // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
-    #if !os(watchOS)
     /// Example function for intercepting `URLSession.shared` requests
+    @available(watchOS 9, *)
     func testSharedSession() async throws {
         registerStubForSharedSession()
         defer { unregisterStubForSharedSession() }
@@ -240,10 +233,8 @@ final class StubNetworkKitTests: XCTestCase {
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
-    #endif
 }
 
-@available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
 private extension StubNetworkKitTests {
     struct Sample: Decodable, Equatable {
         var foo: String

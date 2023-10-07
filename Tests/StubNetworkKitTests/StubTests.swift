@@ -44,6 +44,7 @@ final class StubTests: XCTestCase {
             expect(URL(string: "https://foo.bar/baz")! ==> false)
         }
 
+        #if !os(watchOS)
         let condition2 = stub()
             .scheme("https")
             .host("foo.bar")
@@ -61,6 +62,6 @@ final class StubTests: XCTestCase {
             expect(URL(string: "https://foo.bar/baz?q=1&empty=&flag")! ==> false)
             expect(URL(string: "https://foo.bar/baz")! ==> false)
         }
-
+        #endif
     }
 }

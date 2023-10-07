@@ -39,14 +39,14 @@ public func registerStub(to configuration: URLSessionConfiguration) {
     configuration.protocolClasses = [StubURLProtocol.self]
 }
 
-// FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+// NOTE: Testing on watchOS(~8), `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
 /// Handle all requests via `URLSession.shared`
-@available(watchOS, unavailable, message: "Intercepting `URLSession.shared` is unavailable in watchOS.")
+@available(watchOS, introduced: 9, message: "Intercepting `URLSession.shared` is unavailable in watchOS(~8).")
 public func registerStubForSharedSession() {
     assert(URLProtocol.registerClass(StubURLProtocol.self))
 }
 
-@available(watchOS, unavailable, message: "Intercepting `URLSession.shared` is unavailable in watchOS.")
+@available(watchOS, introduced: 9, message: "Intercepting `URLSession.shared` is unavailable in watchOS(~8).")
 public func unregisterStubForSharedSession() {
     URLProtocol.unregisterClass(StubURLProtocol.self)
 }
