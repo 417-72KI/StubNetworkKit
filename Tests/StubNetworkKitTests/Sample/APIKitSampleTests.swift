@@ -41,6 +41,7 @@ final class APIKitSampleTests: XCTestCase {
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
 
+    #if !os(watchOS)
     @available(watchOS, unavailable)
     func testPost() async throws {
         stub {
@@ -94,6 +95,7 @@ final class APIKitSampleTests: XCTestCase {
         XCTAssertFalse(child.grault)
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
+    #endif
 }
 
 private final class APIKitSample {

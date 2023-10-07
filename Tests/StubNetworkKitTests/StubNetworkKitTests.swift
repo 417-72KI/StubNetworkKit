@@ -27,6 +27,7 @@ final class StubNetworkKitTests: XCTestCase {
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
 
+    #if !os(watchOS)
     /// Example function for basic implementation
     @available(watchOS, unavailable)
     func testDefaultStubSession_basic_post() async throws {
@@ -43,6 +44,7 @@ final class StubNetworkKitTests: XCTestCase {
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
+    #endif
 
     /// Example function for basic implementation
     func testDefaultStubSession_basic_customResponse() async throws {
@@ -76,6 +78,7 @@ final class StubNetworkKitTests: XCTestCase {
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
 
+    #if !os(watchOS)
     /// Example function for using Result Builder implementation
     @available(watchOS, unavailable)
     func testDefaultStubSession_resultBuilder_post() async throws {
@@ -97,7 +100,7 @@ final class StubNetworkKitTests: XCTestCase {
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
         XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
     }
-
+    #endif
 
     /// Example function for using Result Builder implementation
     func testDefaultStubSession_resultBuilder_customResponse() async throws {

@@ -40,6 +40,7 @@ final class AlamofireSampleTests: XCTestCase {
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
 
+    #if !os(watchOS)
     @available(watchOS, unavailable)
     func testPost() async throws {
         stub {
@@ -92,6 +93,7 @@ final class AlamofireSampleTests: XCTestCase {
         XCTAssertFalse(child.grault)
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
+    #endif
 }
 
 private final class AlamofireSample {

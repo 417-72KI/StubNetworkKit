@@ -5,6 +5,7 @@ import FoundationNetworking
 import XCTest
 import StubNetworkKit
 
+#if !os(watchOS)
 @available(watchOS, unavailable)
 final class BodyTests: XCTestCase {
     private let url = URL(string: "https://localhost/foo/bar")!
@@ -93,3 +94,4 @@ final class BodyTests: XCTestCase {
         XCTAssertEqual((response.1 as? HTTPURLResponse)?.statusCode, 200)
     }
 }
+#endif
