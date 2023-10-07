@@ -3,9 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public class StubNetworking {
-    private init() {}
-
+public enum StubNetworking {
     public static var option = defaultOption
 }
 
