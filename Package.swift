@@ -21,7 +21,7 @@ let testDependencies: [Package.Dependency] = {
     ]
     if isObjcAvailable {
         dependencies += [
-            .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.3.0"),
+            .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.4.0"),
         ]
     }
     return dependencies
