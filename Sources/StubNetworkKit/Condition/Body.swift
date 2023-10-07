@@ -99,17 +99,17 @@ extension _Body {
     var matcher: StubMatcher {
         switch self {
         case let .isData(body, file, line):
-            return stubMatcher({ $0.httpBody }, body, file: file, line: line)
+            return stubMatcher({ $0.requestBody }, body, file: file, line: line)
         case let .isJsonObject(jsonObject, file, line):
             return stubMatcher({
-                guard let httpBody = $0.httpBody,
-                      let jsonBody = try? JSONSerialization.jsonObject(with: httpBody) as? [AnyHashable: Any] else { return nil }
+                guard let requestBody = $0.requestBody,
+                      let jsonBody = try? JSONSerialization.jsonObject(with: requestBody) as? [AnyHashable: Any] else { return nil }
                 return jsonBody
             }, jsonObject, file: file, line: line)
         case let .isJsonArray(jsonArray, file, line):
             return stubMatcher({
-                guard let httpBody = $0.httpBody,
-                      let jsonBody = try? JSONSerialization.jsonObject(with: httpBody) as? [Any] else { return nil }
+                guard let requestBody = $0.requestBody,
+                      let jsonBody = try? JSONSerialization.jsonObject(with: requestBody) as? [Any] else { return nil }
                 return jsonBody
             }, jsonArray, file: file, line: line)
         case let .isForm(queryItems, file, line):
@@ -148,7 +148,7 @@ extension _Body {
 private extension URLRequest {
     var formBody: [URLQueryItem]? {
         guard case "application/x-www-form-urlencoded" = value(forHTTPHeaderField: "Content-Type") else { return nil }
-        guard let query = httpBody
+        guard let query = requestBody
             .flatMap({ String(data: $0, encoding: .utf8) }) else { return nil }
         var comps = URLComponents()
         comps.percentEncodedQuery = query
@@ -160,5 +160,22 @@ private extension URLRequest {
         let tuples = data.elements
             .map { ($0.name, MultipartFormElement(data: $0.data, fileName: $0.fileName, mimeType: $0.mimeType)) }
         return Dictionary(uniqueKeysWithValues: tuples)
+    }
+}
+
+private extension URLRequest {
+    var requestBody: Data? {
+        if let httpBody { return httpBody }
+        guard let stream = httpBodyStream else { return nil }
+        stream.open()
+        defer { stream.close() }
+        var data = Data()
+        while stream.hasBytesAvailable {
+            var buffer = [UInt8](repeating: 0, count: 512)
+            let readCount = stream.read(&buffer, maxLength: buffer.count)
+            guard readCount > 0 else { break }
+            data.append(buffer, count: readCount)
+        }
+        return data
     }
 }
