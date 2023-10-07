@@ -11,8 +11,8 @@ final class StubTests: XCTestCase {
             traceTable: .markdown,
             saveTableToAttachement: .markdown
         )
-        StubNetworking.option = .init(printDebugLog: true,
-                                      debugConditions: true)
+        StubNetworking.option(printDebugLog: true,
+                              debugConditions: true)
     }
 
     func testStub() throws {

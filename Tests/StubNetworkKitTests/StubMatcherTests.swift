@@ -10,8 +10,8 @@ final class StubMatcherTests: XCTestCase {
     override func setUp() {
         ParameterizedTest.option = .init(traceTable: .markdown,
                                          saveTableToAttachement: .markdown)
-        StubNetworking.option = .init(printDebugLog: true,
-                                      debugConditions: false)
+        StubNetworking.option(printDebugLog: true,
+                              debugConditions: false)
     }
 
     func testMethod() throws {

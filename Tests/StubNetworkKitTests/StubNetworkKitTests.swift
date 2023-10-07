@@ -7,8 +7,8 @@ import StubNetworkKit
 
 final class StubNetworkKitTests: XCTestCase {
     override func setUp() {
-        StubNetworking.option = .init(printDebugLog: true,
-                                      debugConditions: true)
+        StubNetworking.option(printDebugLog: true,
+                              debugConditions: true)
     }
 
     override func tearDown() {
