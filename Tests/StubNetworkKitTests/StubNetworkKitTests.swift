@@ -30,12 +30,18 @@ final class StubNetworkKitTests: XCTestCase {
 
     /// Example function for basic implementation
     func testDefaultStubSession_basic_post() async throws {
+        #if os(watchOS)
+        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+        try XCTSkipIf(true, "Unsupported platform for test.")
+        #endif
+
         let url = URL(string: "foo://bar/baz")!
 
-        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz") && Body.isJson(["key": "world"]))
+        stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz") && Method.isPost() && Body.isJson(["key": "world"]))
             .responseData("Hello world!".data(using: .utf8)!)
 
         var request = URLRequest(url: url)
+        request.httpMethod = "POST"
         request.httpBody = #"{"key": "world"}"#.data(using: .utf8)
 
         let (data, response) = try await defaultStubSession.data(for: request)
@@ -77,16 +83,23 @@ final class StubNetworkKitTests: XCTestCase {
 
     /// Example function for using Result Builder implementation
     func testDefaultStubSession_resultBuilder_post() async throws {
+        #if os(watchOS)
+        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+        try XCTSkipIf(true, "Unsupported platform for test.")
+        #endif
+
         let url = URL(string: "foo://bar/baz")!
 
         stub {
             Scheme.is("foo")
             Host.is("bar")
             Path.is("/baz")
+            Method.isPost()
             Body.isJson(["key": "world"])
         }.responseData("Hello world!".data(using: .utf8)!)
 
         var request = URLRequest(url: url)
+        request.httpMethod = "POST"
         request.httpBody = #"{"key": "world"}"#.data(using: .utf8)
 
         let (data, response) = try await defaultStubSession.data(for: request)

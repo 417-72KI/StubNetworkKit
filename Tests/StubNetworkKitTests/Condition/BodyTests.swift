@@ -19,11 +19,17 @@ final class BodyTests: XCTestCase {
     }
 
     func testIs() async throws {
+        #if os(watchOS)
+        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+        try XCTSkipIf(true, "Unsupported platform for test.")
+        #endif
+
         let data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         stub(Body.is(data))
             .responseJson(["status": 200])
 
         var request = URLRequest(url: url)
+        request.httpMethod = "POST"
         request.httpBody = data
 
         let response = try await defaultStubSession.data(for: request)
@@ -32,10 +38,16 @@ final class BodyTests: XCTestCase {
     }
 
     func testIsJson() async throws {
+        #if os(watchOS)
+        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+        try XCTSkipIf(true, "Unsupported platform for test.")
+        #endif
+
         stub(Body.isJson(["foo": "bar", "baz": 0]))
             .responseJson(["status": 200])
 
         var request = URLRequest(url: url)
+        request.httpMethod = "POST"
         request.httpBody = #"{"foo": "bar", "baz": 0}"#.data(using: .utf8)
 
         let response = try await defaultStubSession.data(for: request)
@@ -45,10 +57,16 @@ final class BodyTests: XCTestCase {
 
 
     func testIsForm() async throws {
+        #if os(watchOS)
+        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+        try XCTSkipIf(true, "Unsupported platform for test.")
+        #endif
+
         stub(Body.isForm(["foo": "bar", "baz": "0", "qux": " "]))
             .responseJson(["status": 200])
 
         var request = URLRequest(url: url)
+        request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = #"foo=bar&baz=0&qux=%20"#.data(using: .utf8)
 
@@ -63,12 +81,14 @@ final class BodyTests: XCTestCase {
         // FIXME: There is no way to get body stream with `URLSessionUploadTask` in Linux.
         try XCTSkipIf(true, "Unsupported platform for test.")
         #endif
+
         stub(Body.isMultipartForm([
             "foo": "bar".data(using: .utf8)!,
             "baz": Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
         ])).responseJson(["status": 200])
 
         var request = URLRequest(url: url)
+        request.httpMethod = "POST"
         let boundary = UUID().uuidString
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         request.httpBody = [
