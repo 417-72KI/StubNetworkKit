@@ -28,12 +28,8 @@ final class StubNetworkKitTests: XCTestCase {
     }
 
     /// Example function for basic implementation
+    @available(watchOS, unavailable)
     func testDefaultStubSession_basic_post() async throws {
-        #if os(watchOS)
-        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
-        try XCTSkipIf(true, "Unsupported platform for test.")
-        #endif
-
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz") && Method.isPost() && Body.isJson(["key": "world"]))
@@ -81,12 +77,8 @@ final class StubNetworkKitTests: XCTestCase {
     }
 
     /// Example function for using Result Builder implementation
+    @available(watchOS, unavailable)
     func testDefaultStubSession_resultBuilder_post() async throws {
-        #if os(watchOS)
-        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
-        try XCTSkipIf(true, "Unsupported platform for test.")
-        #endif
-
         let url = URL(string: "foo://bar/baz")!
 
         stub {

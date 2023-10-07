@@ -5,9 +5,9 @@ import FoundationNetworking
 import XCTest
 import StubNetworkKit
 
+@available(watchOS, unavailable)
 final class BodyTests: XCTestCase {
     private let url = URL(string: "https://localhost/foo/bar")!
-
 
     override func setUpWithError() throws {
         StubNetworking.option = .init(printDebugLog: true,
@@ -19,11 +19,6 @@ final class BodyTests: XCTestCase {
     }
 
     func testIs() async throws {
-        #if os(watchOS)
-        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
-        try XCTSkipIf(true, "Unsupported platform for test.")
-        #endif
-
         let data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         stub(Body.is(data))
             .responseJson(["status": 200])
@@ -38,11 +33,6 @@ final class BodyTests: XCTestCase {
     }
 
     func testIsJson() async throws {
-        #if os(watchOS)
-        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
-        try XCTSkipIf(true, "Unsupported platform for test.")
-        #endif
-
         stub(Body.isJson(["foo": "bar", "baz": 0]))
             .responseJson(["status": 200])
 
@@ -57,11 +47,6 @@ final class BodyTests: XCTestCase {
 
 
     func testIsForm() async throws {
-        #if os(watchOS)
-        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
-        try XCTSkipIf(true, "Unsupported platform for test.")
-        #endif
-
         stub(Body.isForm(["foo": "bar", "baz": "0", "qux": " "]))
             .responseJson(["status": 200])
 
@@ -76,8 +61,7 @@ final class BodyTests: XCTestCase {
     }
 
     func testIsMultipartForm() async throws {
-        #if os(watchOS) || os(Linux)
-        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+        #if os(Linux)
         // FIXME: There is no way to get body stream with `URLSessionUploadTask` in Linux.
         try XCTSkipIf(true, "Unsupported platform for test.")
         #endif

@@ -41,12 +41,8 @@ final class APIKitSampleTests: XCTestCase {
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
 
+    @available(watchOS, unavailable)
     func testPost() async throws {
-        #if os(watchOS)
-        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
-        try XCTSkipIf(true, "Unsupported platform for test.")
-        #endif
-
         stub {
             Scheme.is("https")
             Host.is("foo.bar")
@@ -68,9 +64,9 @@ final class APIKitSampleTests: XCTestCase {
         XCTAssertEqual(child.garply, ["spam", "ham", "eggs"])
     }
 
+    @available(watchOS, unavailable)
     func testMultipartForm() async throws {
-        #if os(watchOS) || os(Linux)
-        // FIXME: When testing on watchOS, `StubURLProtocol.startLoading` isn't called, although `canInit` has been called.
+        #if os(Linux)
         // FIXME: There is no way to get body stream with `URLSessionUploadTask` in Linux.
         try XCTSkipIf(true, "Unsupported platform for test.")
         #endif

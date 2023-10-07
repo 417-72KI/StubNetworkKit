@@ -28,6 +28,7 @@ final class StubMatcherTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> false)
             expect(createRequest(method: "HEAD") ==> false)
         }
+        #if !os(watchOS)
         assert(to: Method.isPost().matcher) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> true)
@@ -60,6 +61,7 @@ final class StubMatcherTests: XCTestCase {
             expect(createRequest(method: "DELETE") ==> true)
             expect(createRequest(method: "HEAD") ==> false)
         }
+        #endif
         assert(to: Method.isHead().matcher) {
             expect(createRequest(method: "GET") ==> false)
             expect(createRequest(method: "POST") ==> false)
@@ -322,6 +324,7 @@ final class StubMatcherTests: XCTestCase {
         }
     }
 
+    @available(watchOS, unavailable)
     func testBodyIs() throws {
         func request(_ body: String?) -> URLRequest {
             var req = URLRequest(url: URL(string: "foo://bar")!)
@@ -338,6 +341,7 @@ final class StubMatcherTests: XCTestCase {
         }
     }
 
+    @available(watchOS, unavailable)
     func testBodyIsJsonObject() throws {
         func request(_ jsonString: String) -> URLRequest {
             var req = URLRequest(url: URL(string: "foo://bar")!)
@@ -363,6 +367,7 @@ final class StubMatcherTests: XCTestCase {
         }
     }
 
+    @available(watchOS, unavailable)
     func testBodyIsJsonArray() throws {
         func request(_ jsonString: String) -> URLRequest {
             var req = URLRequest(url: URL(string: "foo://bar")!)
@@ -386,6 +391,7 @@ final class StubMatcherTests: XCTestCase {
         }
     }
 
+    @available(watchOS, unavailable)
     func testBodyIsForm() throws {
         func request(_ formBody: String, addHeader: Bool = true) -> URLRequest {
             var req = URLRequest(url: URL(string: "foo://bar")!)

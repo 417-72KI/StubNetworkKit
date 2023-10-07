@@ -6,6 +6,7 @@ import StubNetworkKit
 import SwiftParamTest
 
 final class StubCondition_ResultBuilderTests: XCTestCase {
+    @available(watchOS, unavailable)
     func testBuild() throws {
         var req = URLRequest(url: .init(string: "https://foo.bar/baz?q=1&flag")!)
         req.httpMethod = "POST"
@@ -44,12 +45,11 @@ final class StubCondition_ResultBuilderTests: XCTestCase {
         XCTAssertTrue(condition.matcher(req))
     }
 
+    @available(watchOS, unavailable)
     func testBuildEither() throws {
-
         func test(_ method: String) -> Bool {
             var request = URLRequest(url: .init(string: "https://foo.bar/baz?q=1&flag")!)
             request.httpMethod = method
-
             let condition = stubCondition {
                 Scheme.is("https")
                 Host.is("foo.bar")
