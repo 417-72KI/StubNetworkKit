@@ -27,6 +27,7 @@ public extension StubNetworking {
     }
 }
 
+// TODO: Will be `internal` on next major
 public extension StubNetworking {
     struct Option {
         public var printDebugLog: Bool
