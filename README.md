@@ -22,6 +22,11 @@
 ```
 
 ### CocoaPods
+> [!WARNING]
+> 
+> `watchOS` support is unavailable in CocoaPods due to dependency.  
+> If you want to use including `watchOS`, consider migrating to Swift Package Manager.
+
 ```ruby:Podfile
 pod 'StubNetworkKit'
 ```
