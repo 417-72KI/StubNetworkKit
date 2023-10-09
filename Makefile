@@ -16,3 +16,6 @@ test:
 
 release:
 	scripts/release.sh ${PROJECT_NAME} ${ver}
+
+podspec:
+	POD_VERSION=${ver} pod spec lint --allow-warnings
