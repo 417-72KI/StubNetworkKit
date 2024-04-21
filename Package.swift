@@ -61,7 +61,7 @@ let package = Package(
             targets: ["StubNetworkKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/417-72KI/MultipartFormDataParser.git", from: "2.1.2")
+        .package(url: "https://github.com/417-72KI/MultipartFormDataParser.git", from: "2.2.0")
     ] + testDependencies,
     targets: [
         .target(
