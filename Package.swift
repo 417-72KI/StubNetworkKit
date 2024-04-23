@@ -13,40 +13,6 @@ let isObjcAvailable: Bool = {
     #endif
 }()
 
-let testDependencies: [Package.Dependency] = {
-    if isRelease { return [] }
-    var dependencies: [Package.Dependency] = [
-        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.8.0"),
-        .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.1"),
-    ]
-    if isObjcAvailable {
-        dependencies += [
-            .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.4.0"),
-        ]
-    }
-    return dependencies
-}()
-let testTargetDependencies: [Target.Dependency] = {
-    if isRelease { return [] }
-    var dependencies: [Target.Dependency] = [
-        "SwiftParamTest",
-        "Alamofire",
-    ]
-    if isObjcAvailable {
-        dependencies += [
-            "APIKit",
-        ]
-    }
-    return dependencies
-}()
-let testTarget: [Target] = isRelease ? [] : [
-    .testTarget(
-        name: "StubNetworkKitTests",
-        dependencies: ["StubNetworkKit"] + testTargetDependencies,
-        resources: [.copy("_Fixtures")]
-    )
-]
-
 let package = Package(
     name: "StubNetworkKit",
     platforms: [
@@ -62,11 +28,39 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/417-72KI/MultipartFormDataParser.git", from: "2.2.1")
-    ] + testDependencies,
+    ],
     targets: [
         .target(
             name: "StubNetworkKit",
             dependencies: ["MultipartFormDataParser"]
         ),
-    ] + testTarget
+    ]
 )
+
+if !isRelease {
+    package.dependencies.append(contentsOf: [
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.8.0"),
+        .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.1"),
+    ])
+    if isObjcAvailable {
+        package.dependencies.append(contentsOf: [
+            .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.4.0"),
+        ])
+    }
+
+    let testTarget = Target.testTarget(
+        name: "StubNetworkKitTests",
+        dependencies: [
+            "StubNetworkKit",
+            "SwiftParamTest",
+            "Alamofire",
+        ],
+        resources: [.copy("_Fixtures")]
+    )
+    if isObjcAvailable {
+        testTarget.dependencies.append(contentsOf: [
+            "APIKit",
+        ])
+    }
+    package.targets.append(testTarget)
+}
