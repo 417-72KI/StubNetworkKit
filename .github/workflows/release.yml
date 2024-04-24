@@ -4,7 +4,7 @@ on:
     tags: '*'
 jobs:
   podspec:
-    runs-on: macOS-13
+    runs-on: macOS-14
     env:
       POD_VERSION: ${{ github.ref_name }}
     steps:

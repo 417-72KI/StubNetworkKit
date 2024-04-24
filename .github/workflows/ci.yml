@@ -61,7 +61,7 @@ jobs:
   test-macos:
     name: Test(macOS)
     needs: generate-matrix
-    runs-on: macOS-13
+    runs-on: macOS-14
     strategy:
       fail-fast: false
       matrix:
@@ -107,7 +107,7 @@ jobs:
     name: Export xcodebuild test result
     if: success() || failure()
     needs: test-macos
-    runs-on: macOS-13
+    runs-on: macOS-14
     steps:
       - uses: actions/download-artifact@v4
         with:
