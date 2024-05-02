@@ -15,10 +15,17 @@ public extension StubCondition {
 }
 
 // MARK: -
+#if swift(>=5.10)
+/// A singleton object used to represent a stub-condition which always returns `true`.
+nonisolated(unsafe) public let alwaysTrue: some StubCondition = {
+    _AlwaysTrue()
+}()
+#else
 /// A singleton object used to represent a stub-condition which always returns `true`.
 public let alwaysTrue: some StubCondition = {
     _AlwaysTrue()
 }()
+#endif
 
 final class _AlwaysTrue: StubCondition {
     fileprivate init() {}
@@ -29,10 +36,17 @@ extension _AlwaysTrue {
 }
 
 // MARK: -
+#if swift(>=5.10)
+/// A singleton object used to represent a stub-condition which always returns `false`.
+nonisolated(unsafe) public let alwaysFalse: some StubCondition = {
+    _AlwaysFalse()
+}()
+#else
 /// A singleton object used to represent a stub-condition which always returns `false`.
 public let alwaysFalse: some StubCondition = {
     _AlwaysFalse()
 }()
+#endif
 
 final class _AlwaysFalse: StubCondition {
     fileprivate init() {}
