@@ -1,7 +1,7 @@
 struct AnyStubCondition: StubCondition {
-    private let base: StubCondition
+    private let base: any StubCondition
 
-    init(_ base: StubCondition) {
+    init(_ base: any StubCondition) {
         self.base = base
     }
 
