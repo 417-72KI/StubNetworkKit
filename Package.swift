@@ -68,7 +68,7 @@ if !isRelease {
 // MARK: - Upcoming feature flags for Swift 6
 package.targets.forEach {
     $0.swiftSettings = [
-        .forwardTrailingClosures,
+        // .forwardTrailingClosures,
         .existentialAny,
         .bareSlashRegexLiterals,
         .conciseMagicFile,
