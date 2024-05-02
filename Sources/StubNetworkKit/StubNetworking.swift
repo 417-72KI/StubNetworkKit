@@ -4,7 +4,11 @@ import FoundationNetworking
 #endif
 
 public enum StubNetworking {
+    #if swift(>=5.10)
+    nonisolated(unsafe) private(set) static var _option = defaultOption
+    #else
     private(set) static var _option = defaultOption
+    #endif
 }
 
 public extension StubNetworking {
@@ -29,7 +33,7 @@ public extension StubNetworking {
 
 // TODO: Will be `internal` on next major
 public extension StubNetworking {
-    struct Option {
+    struct Option: Sendable {
         public var printDebugLog: Bool
         public var debugConditions: Bool
 
