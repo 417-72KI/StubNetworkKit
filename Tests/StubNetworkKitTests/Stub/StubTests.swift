@@ -65,6 +65,7 @@ struct StubTests {
             #expect(condition.matcher(req) == expected)
         }
 
+        #if !os(watchOS)
         @Test
         func validPostRequest() throws {
             let condition = stub()
@@ -81,7 +82,6 @@ struct StubTests {
             #expect(condition.matcher(req))
         }
 
-        #if !os(watchOS)
         @Test(arguments: [
             ("https://foo.bar/baz?q=1&empty=&flag", "POST"),
             ("https://foo.bar/baz?q=1&empty=&flag", "GET"),
