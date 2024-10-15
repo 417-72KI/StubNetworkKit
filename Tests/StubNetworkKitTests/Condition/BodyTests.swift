@@ -2,24 +2,22 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
-import XCTest
+import Testing
 import StubNetworkKit
 
 #if !os(watchOS)
-@available(watchOS, unavailable)
-final class BodyTests: XCTestCase {
+@Suite
+final class BodyTests {
     private let url = URL(string: "https://localhost/foo/bar")!
 
-    override func setUpWithError() throws {
+    init() throws {
         StubNetworking.option(printDebugLog: true,
                               debugConditions: true)
     }
 
-    override func tearDownWithError() throws {
-        clearStubs()
-    }
+    deinit { clearStubs() }
 
-    func testIs() async throws {
+    @Test func bodyIs() async throws {
         let data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         stub(Body.is(data))
             .responseJson(["status": 200])
@@ -29,11 +27,11 @@ final class BodyTests: XCTestCase {
         request.httpBody = data
 
         let response = try await defaultStubSession.data(for: request)
-        XCTAssertEqual(#"{"status":200}"#, String(data: response.0, encoding: .utf8))
-        XCTAssertEqual((response.1 as? HTTPURLResponse)?.statusCode, 200)
+        #expect(#"{"status":200}"# == String(data: response.0, encoding: .utf8))
+        #expect((response.1 as? HTTPURLResponse)?.statusCode == 200)
     }
 
-    func testIsJson() async throws {
+    @Test func bodyIsJson() async throws {
         stub(Body.isJson(["foo": "bar", "baz": 0]))
             .responseJson(["status": 200])
 
@@ -42,11 +40,11 @@ final class BodyTests: XCTestCase {
         request.httpBody = Data(#"{"foo": "bar", "baz": 0}"#.utf8)
 
         let response = try await defaultStubSession.data(for: request)
-        XCTAssertEqual(#"{"status":200}"#, String(data: response.0, encoding: .utf8))
-        XCTAssertEqual((response.1 as? HTTPURLResponse)?.statusCode, 200)
+        #expect(#"{"status":200}"# == String(data: response.0, encoding: .utf8))
+        #expect((response.1 as? HTTPURLResponse)?.statusCode == 200)
     }
 
-    func testIsForm() async throws {
+    @Test func bodyIsForm() async throws {
         stub(Body.isForm(["foo": "bar", "baz": "0", "qux": " "]))
             .responseJson(["status": 200])
 
@@ -56,14 +54,16 @@ final class BodyTests: XCTestCase {
         request.httpBody = Data(#"foo=bar&baz=0&qux=%20"#.utf8)
 
         let response = try await defaultStubSession.data(for: request)
-        XCTAssertEqual(#"{"status":200}"#, String(data: response.0, encoding: .utf8))
-        XCTAssertEqual((response.1 as? HTTPURLResponse)?.statusCode, 200)
+        #expect(#"{"status":200}"# == String(data: response.0, encoding: .utf8))
+        #expect((response.1 as? HTTPURLResponse)?.statusCode == 200)
     }
 
-    func testIsMultipartForm() async throws {
+    @Test func bodyIsMultipartForm() async throws {
         #if os(Linux)
         // FIXME: There is no way to get body stream with `URLSessionUploadTask` in Linux.
-        try XCTSkipIf(true, "Unsupported platform for test.")
+        return withKnownIssue {
+            Issue.record("Unsupported platform for test.")
+        }
         #endif
 
         stub(Body.isMultipartForm([
@@ -89,8 +89,8 @@ final class BodyTests: XCTestCase {
         ].reduce(Data(), +)
 
         let response = try await defaultStubSession.data(for: request)
-        XCTAssertEqual(#"{"status":200}"#, String(data: response.0, encoding: .utf8))
-        XCTAssertEqual((response.1 as? HTTPURLResponse)?.statusCode, 200)
+        #expect(#"{"status":200}"# == String(data: response.0, encoding: .utf8))
+        #expect((response.1 as? HTTPURLResponse)?.statusCode == 200)
     }
 }
 #endif
