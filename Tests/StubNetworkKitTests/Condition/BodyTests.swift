@@ -15,9 +15,7 @@ final class BodyTests {
                               debugConditions: true)
     }
 
-    deinit { clearStubs() }
-
-    @Test func bodyIs() async throws {
+    @Test func bodyIsData() async throws {
         let data = Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         stub(Body.is(data))
             .responseJson(["status": 200])
@@ -26,36 +24,24 @@ final class BodyTests {
         request.httpMethod = "POST"
         request.httpBody = data
 
-        let response = try await defaultStubSession.data(for: request)
-        #expect(#"{"status":200}"# == String(data: response.0, encoding: .utf8))
-        #expect((response.1 as? HTTPURLResponse)?.statusCode == 200)
+        #expect(Body.is(data).matcher(request))
     }
 
     @Test func bodyIsJson() async throws {
-        stub(Body.isJson(["foo": "bar", "baz": 0]))
-            .responseJson(["status": 200])
-
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = Data(#"{"foo": "bar", "baz": 0}"#.utf8)
 
-        let response = try await defaultStubSession.data(for: request)
-        #expect(#"{"status":200}"# == String(data: response.0, encoding: .utf8))
-        #expect((response.1 as? HTTPURLResponse)?.statusCode == 200)
+        #expect(Body.isJson(["foo": "bar", "baz": 0]).matcher(request))
     }
 
     @Test func bodyIsForm() async throws {
-        stub(Body.isForm(["foo": "bar", "baz": "0", "qux": " "]))
-            .responseJson(["status": 200])
-
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = Data(#"foo=bar&baz=0&qux=%20"#.utf8)
 
-        let response = try await defaultStubSession.data(for: request)
-        #expect(#"{"status":200}"# == String(data: response.0, encoding: .utf8))
-        #expect((response.1 as? HTTPURLResponse)?.statusCode == 200)
+        #expect(Body.isForm(["foo": "bar", "baz": "0", "qux": " "]).matcher(request))
     }
 
     @Test func bodyIsMultipartForm() async throws {
@@ -88,9 +74,10 @@ final class BodyTests {
             Data("--\(boundary)--\r\n".utf8),
         ].reduce(Data(), +)
 
-        let response = try await defaultStubSession.data(for: request)
-        #expect(#"{"status":200}"# == String(data: response.0, encoding: .utf8))
-        #expect((response.1 as? HTTPURLResponse)?.statusCode == 200)
+        #expect(Body.isMultipartForm([
+            "foo": "bar".data(using: .utf8)!,
+            "baz": Data([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+        ]).matcher(request))
     }
 }
 #endif
