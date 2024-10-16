@@ -40,7 +40,7 @@ public extension StubResponse {
 
 // MARK: JSON
 public extension StubResponse {
-    init(jsonObject: [AnyHashable: Any],
+    init(jsonObject: JSONObject,
          statusCode: Int = 200,
          headers appendingHeaders: [String: String]? = nil) {
         do {
@@ -57,7 +57,7 @@ public extension StubResponse {
         }
     }
 
-    init(jsonArray: [Any],
+    init(jsonArray: JSONArray,
          statusCode: Int = 200,
          headers appendingHeaders: [String: String]? = nil) {
         do {
