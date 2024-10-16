@@ -16,10 +16,10 @@ let isObjcAvailable: Bool = {
 let package = Package(
     name: "StubNetworkKit",
     platforms: [
-        .macOS(.v12),
-        .iOS(.v15),
-        .watchOS(.v8),
-        .tvOS(.v15)
+        .macOS(.v13),
+        .iOS(.v16),
+        .watchOS(.v9),
+        .tvOS(.v16)
     ],
     products: [
         .library(
@@ -27,7 +27,7 @@ let package = Package(
             targets: ["StubNetworkKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/417-72KI/MultipartFormDataParser.git", from: "2.2.1")
+        .package(url: "https://github.com/417-72KI/MultipartFormDataParser.git", from: "2.3.1")
     ],
     targets: [
         .target(
@@ -39,7 +39,7 @@ let package = Package(
 
 if !isRelease {
     package.dependencies.append(contentsOf: [
-        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.8.0"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.0"),
         .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.1"),
     ])
     if isObjcAvailable {
