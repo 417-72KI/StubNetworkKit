@@ -20,7 +20,7 @@ public let alwaysTrue: some StubCondition = {
     _AlwaysTrue()
 }()
 
-final class _AlwaysTrue: StubCondition {
+private final class _AlwaysTrue: StubCondition {
     fileprivate init() {}
 }
 
@@ -34,7 +34,7 @@ public let alwaysFalse: some StubCondition = {
     _AlwaysFalse()
 }()
 
-final class _AlwaysFalse: StubCondition {
+private final class _AlwaysFalse: StubCondition {
     fileprivate init() {}
 }
 
