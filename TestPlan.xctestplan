@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "4EB53C34-ABE8-408F-BB5F-E611EF727C64",
+      "name" : "Default",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "maximumTestRepetitions" : 3,
+    "nsZombieEnabled" : true,
+    "repeatInNewRunnerProcess" : true,
+    "testRepetitionMode" : "retryOnFailure",
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "StubNetworkKitTests",
+        "name" : "StubNetworkKitTests"
+      }
+    }
+  ],
+  "version" : 1
+}
