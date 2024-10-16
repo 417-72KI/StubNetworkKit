@@ -18,13 +18,13 @@ public extension Body {
 // MARK: - JSON
 @available(watchOS, unavailable, message: "Intercepting POST request is not available in watchOS")
 public extension Body {
-    static func isJson(_ jsonObject: [AnyHashable: Any],
+    static func isJson(_ jsonObject: JSONObject,
                        file: StaticString = #file,
                        line: UInt = #line) -> some StubCondition {
         _Body.isJsonObject(jsonObject, file: file, line: line)
     }
 
-    static func isJson(_ jsonArray: [Any],
+    static func isJson(_ jsonArray: JSONArray,
                        file: StaticString = #file,
                        line: UInt = #line) -> some StubCondition {
         _Body.isJsonArray(jsonArray)
@@ -48,7 +48,7 @@ public extension Body {
 }
 
 // MARK: - multipart/form-data
-public struct MultipartFormElement: Hashable {
+public struct MultipartFormElement: Hashable, Sendable {
     public internal(set) var data: Data
     public internal(set) var fileName: String?
     public internal(set) var mimeType: String?
@@ -82,8 +82,8 @@ public extension Body {
 // MARK: -
 enum _Body: StubCondition {
     case isData(Data, file: StaticString = #file, line: UInt = #line)
-    case isJsonObject([AnyHashable: Any], file: StaticString = #file, line: UInt = #line)
-    case isJsonArray([Any], file: StaticString = #file, line: UInt = #line)
+    case isJsonObject(JSONObject, file: StaticString = #file, line: UInt = #line)
+    case isJsonArray(JSONArray, file: StaticString = #file, line: UInt = #line)
     case isForm([URLQueryItem], file: StaticString = #file, line: UInt = #line)
     case isMultipartForm([String: MultipartFormElement], file: StaticString = #file, line: UInt = #line)
 }
@@ -106,13 +106,13 @@ extension _Body {
         case let .isJsonObject(jsonObject, file, line):
             return stubMatcher({
                 guard let requestBody = $0.requestBody,
-                      let jsonBody = try? JSONSerialization.jsonObject(with: requestBody) as? [AnyHashable: Any] else { return nil }
+                      let jsonBody = try? JSONSerialization.jsonObject(with: requestBody) as? JSONObject else { return nil }
                 return jsonBody
             }, jsonObject, file: file, line: line)
         case let .isJsonArray(jsonArray, file, line):
             return stubMatcher({
                 guard let requestBody = $0.requestBody,
-                      let jsonBody = try? JSONSerialization.jsonObject(with: requestBody) as? [Any] else { return nil }
+                      let jsonBody = try? JSONSerialization.jsonObject(with: requestBody) as? JSONArray else { return nil }
                 return jsonBody
             }, jsonArray, file: file, line: line)
         case let .isForm(queryItems, file, line):

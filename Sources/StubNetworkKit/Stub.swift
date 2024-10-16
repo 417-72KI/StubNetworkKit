@@ -278,7 +278,7 @@ public extension Stub {
     }
 
     @discardableResult
-    func jsonBody(_ jsonObject: [AnyHashable: Any],
+    func jsonBody(_ jsonObject: JSONObject,
                   file: StaticString = #file,
                   line: UInt = #line) -> Self {
         matcher &&= Body.isJson(jsonObject, file: file, line: line).matcher
@@ -286,7 +286,7 @@ public extension Stub {
     }
 
     @discardableResult
-    func jsonBody(_ jsonArray: [Any],
+    func jsonBody(_ jsonArray: JSONArray,
                   file: StaticString = #file,
                   line: UInt = #line) -> Self {
         matcher &&= Body.isJson(jsonArray, file: file, line: line).matcher
@@ -326,7 +326,7 @@ public extension Stub {
     }
 
     @discardableResult
-    func responseJson(_ jsonObject: [AnyHashable: Any], statusCode: Int = 200) -> Self {
+    func responseJson(_ jsonObject: JSONObject, statusCode: Int = 200) -> Self {
         do {
             let data = try JSONSerialization.data(withJSONObject: jsonObject,
                                                   options: .sortedKeys)
@@ -341,7 +341,7 @@ public extension Stub {
     }
 
     @discardableResult
-    func responseJson(_ jsonArray: [Any], statusCode: Int = 200) -> Self {
+    func responseJson(_ jsonArray: JSONArray, statusCode: Int = 200) -> Self {
         do {
             let data = try JSONSerialization.data(withJSONObject: jsonArray,
                                                   options: .sortedKeys)

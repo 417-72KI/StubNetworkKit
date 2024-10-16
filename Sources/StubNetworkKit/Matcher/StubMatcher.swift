@@ -20,8 +20,8 @@ func stubMatcher<T: Equatable & Sendable>(_ lhs: @escaping @Sendable (URLRequest
     }
 }
 
-func stubMatcher(_ lhs: @escaping @Sendable (URLRequest) -> [AnyHashable: Any]?,
-                 _ rhs: [AnyHashable: Any]?,
+func stubMatcher(_ lhs: @escaping @Sendable (URLRequest) -> JSONObject?,
+                 _ rhs: JSONObject?,
                  file: StaticString = #file,
                  line: UInt = #line) -> StubMatcher {
     {
@@ -48,8 +48,8 @@ func stubMatcher(_ lhs: @escaping @Sendable (URLRequest) -> [AnyHashable: Any]?,
     }
 }
 
-func stubMatcher(_ lhs: @escaping @Sendable (URLRequest) -> [Any]?,
-                 _ rhs: [Any]?,
+func stubMatcher(_ lhs: @escaping @Sendable (URLRequest) -> JSONArray?,
+                 _ rhs: JSONArray?,
                  file: StaticString = #file,
                  line: UInt = #line) -> StubMatcher {
     {
