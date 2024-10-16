@@ -39,6 +39,7 @@ let package = Package(
 
 if isDevelop {
     package.dependencies.append(contentsOf: [
+        .package(url: "https://github.com/apple/swift-testing", exact: "0.3.0"),
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.0"),
         .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.1"),
     ])
@@ -53,6 +54,7 @@ if isDevelop {
         name: "StubNetworkKitTests",
         dependencies: [
             "StubNetworkKit",
+            .product(name: "Testing", package: "swift-testing"),
             "SwiftParamTest",
             "Alamofire",
         ],
