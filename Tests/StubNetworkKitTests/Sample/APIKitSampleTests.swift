@@ -78,8 +78,8 @@ final class APIKitSampleTests: XCTestCase {
             Path.is("/baz/qux")
             Method.isPost()
             Body.isMultipartForm([
-                "hoge": "fuga".data(using: .utf8)!,
-                "piyo": "hogera".data(using: .utf8)!,
+                "hoge": Data("fuga".utf8),
+                "piyo": Data("hogera".utf8),
             ])
         }.responseData(withFilePath: "_Fixtures/sample",
                        extension: "json",
@@ -151,8 +151,8 @@ private struct SampleFormRequest: SampleRequest {
 
     var bodyParameters: (any BodyParameters)? {
         MultipartFormDataBodyParameters(parts: [
-            .init(data: "fuga".data(using: .utf8)!, name: "hoge"),
-            .init(data: "hogera".data(using: .utf8)!, name: "piyo")
+            .init(data: Data("fuga".utf8), name: "hoge"),
+            .init(data: Data("hogera".utf8), name: "piyo"),
         ])
     }
 }

@@ -29,15 +29,13 @@ func expect<R: Equatable>(
     line: UInt = #line
 ) -> Row1<URLRequest, R> {
     var request = URLRequest(url: row.args.head)
-    request.httpMethod = { (method) -> String in
-        switch method {
-        case .get: return "GET"
-        case .post: return "POST"
-        case .put: return "PUT"
-        case .patch: return "PATCH"
-        case .delete: return "DELETE"
-        case .head: return "HEAD"
-        }
-    }(row.args.tail.head)
+    request.httpMethod = switch row.args.tail.head {
+    case .get: "GET"
+    case .post: "POST"
+    case .put: "PUT"
+    case .patch: "PATCH"
+    case .delete: "DELETE"
+    case .head: "HEAD"
+    }
     return expect(request ==> row.expect, file: file, line: line)
 }

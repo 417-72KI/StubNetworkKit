@@ -54,7 +54,7 @@ final class StubTests: XCTestCase {
 
         var request = URLRequest(url: URL(string: "https://foo.bar/baz")!)
         request.httpMethod = "POST"
-        request.httpBody = #"{"q": 1, "lang": "ja", "flag": true}"#.data(using: .utf8)
+        request.httpBody = Data(#"{"q": 1, "lang": "ja", "flag": true}"#.utf8)
 
         assert(to: condition2) {
             expect(request ==> true)

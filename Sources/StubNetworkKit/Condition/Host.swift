@@ -14,12 +14,12 @@ public extension Host {
 }
 
 // MARK: -
-enum _Host: StubCondition {
+private enum _Host: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }
 
 extension _Host {
-    var matcher: StubMatcher{
+    var matcher: StubMatcher {
         switch self {
         case let .is(host, file, line):
             precondition(!host.contains("/"), "The host part of an URL never contains any slash.", file: file, line: line)
@@ -32,7 +32,7 @@ extension _Host {
     static func == (lhs: _Host, rhs: _Host) -> Bool {
         switch (lhs, rhs) {
         case let (.is(lHost, _, _), .is(rHost, _, _)):
-            return lHost == rHost
+            lHost == rHost
         }
     }
 }

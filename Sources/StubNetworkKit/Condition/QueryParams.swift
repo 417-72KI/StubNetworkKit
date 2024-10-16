@@ -42,7 +42,7 @@ extension QueryParams {
 }
 
 // MARK: -
-enum _QueryParams: StubCondition {
+private enum _QueryParams: StubCondition {
     case containsItems([URLQueryItem], file: StaticString = #file, line: UInt = #line)
     case containsKeys([String], file: StaticString = #file, line: UInt = #line)
 }
@@ -54,10 +54,10 @@ extension _QueryParams {
 }
 
 extension _QueryParams {
-    var matcher: StubMatcher{
+    var matcher: StubMatcher {
         switch self {
         case let .containsItems(items, file, line):
-            return stubMatcher({
+            stubMatcher({
                 guard let queryItems = queryItems(from: $0) else { return false }
                 return items.allSatisfy {
                     guard let queryItem = queryItems.first(forName: $0.name) else { return false }
@@ -65,7 +65,7 @@ extension _QueryParams {
                 }
             }, true, file: file, line: line)
         case let .containsKeys(params, file, line):
-            return stubMatcher({
+            stubMatcher({
                 guard let keys = keys(from: $0) else { return false }
                 return params.allSatisfy { keys.contains($0) }
             }, true, file: file, line: line)
@@ -77,10 +77,10 @@ extension _QueryParams {
     static func == (lhs: _QueryParams, rhs: _QueryParams) -> Bool {
         switch (lhs, rhs) {
         case let (.containsItems(lItems, _, _), .containsItems(rItems, _, _)):
-            return lItems.sorted(by: \.name) == rItems.sorted(by: \.name)
+            lItems.sorted(by: \.name) == rItems.sorted(by: \.name)
         case let (.containsKeys(lKeys, _, _), .containsKeys(rKeys, _, _)):
-            return lKeys.sorted() == rKeys.sorted()
-        default: return false
+            lKeys.sorted() == rKeys.sorted()
+        default: false
         }
     }
 }

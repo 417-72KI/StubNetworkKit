@@ -76,8 +76,8 @@ final class AlamofireSampleTests: XCTestCase {
             Path.is("/baz")
             Method.isPost()
             Body.isMultipartForm([
-                "hoge": "fuga".data(using: .utf8)!,
-                "piyo": "hogera".data(using: .utf8)!,
+                "hoge": Data("fuga".utf8),
+                "piyo": Data("hogera".utf8),
             ])
         }.responseData(withFilePath: "_Fixtures/sample",
                        extension: "json",
@@ -124,8 +124,8 @@ extension AlamofireSample {
     func form() async throws -> SampleEntity {
         try await session.upload(
             multipartFormData: { formData in
-                formData.append("fuga".data(using: .utf8)!, withName: "hoge")
-                formData.append("hogera".data(using: .utf8)!, withName: "piyo")
+                formData.append(Data("fuga".utf8), withName: "hoge")
+                formData.append(Data("hogera".utf8), withName: "piyo")
             },
             with: URLRequest(url: URL(string: "https://foo.bar/baz")!, method: .post)
         )

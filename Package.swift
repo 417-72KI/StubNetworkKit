@@ -1,4 +1,4 @@
-// swift-tools-version: 5.8
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -16,10 +16,10 @@ let isObjcAvailable: Bool = {
 let package = Package(
     name: "StubNetworkKit",
     platforms: [
-        .macOS(.v12),
-        .iOS(.v15),
-        .watchOS(.v8),
-        .tvOS(.v15)
+        .macOS(.v13),
+        .iOS(.v16),
+        .watchOS(.v9),
+        .tvOS(.v16)
     ],
     products: [
         .library(
@@ -27,7 +27,7 @@ let package = Package(
             targets: ["StubNetworkKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/417-72KI/MultipartFormDataParser.git", from: "2.2.1")
+        .package(url: "https://github.com/417-72KI/MultipartFormDataParser.git", from: "2.3.1")
     ],
     targets: [
         .target(
@@ -39,11 +39,12 @@ let package = Package(
 
 if !isRelease {
     package.dependencies.append(contentsOf: [
-        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.8.0"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.0"),
         .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.1"),
     ])
     if isObjcAvailable {
         package.dependencies.append(contentsOf: [
+            .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins.git", from: "0.57.0"),
             .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.4.0"),
         ])
     }
@@ -63,6 +64,14 @@ if !isRelease {
         ])
     }
     package.targets.append(testTarget)
+
+    if isObjcAvailable {
+        package.targets.forEach {
+            $0.dependencies.append(contentsOf: [
+                .product(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"),
+            ])
+        }
+    }
 }
 
 // MARK: - Upcoming feature flags for Swift 6
@@ -72,9 +81,9 @@ package.targets.forEach {
         .existentialAny,
         .bareSlashRegexLiterals,
         .conciseMagicFile,
-        // TODO: enable when 5.8 dropped
-        // .importObjcForwardDeclarations,
-        // .disableOutwardActorInference,
+        .importObjcForwardDeclarations,
+        .disableOutwardActorInference,
+        // TODO: enable when 5.9 dropped
         // .deprecateApplicationMain,
         // .isolatedDefaultValues,
         // .globalConcurrency,

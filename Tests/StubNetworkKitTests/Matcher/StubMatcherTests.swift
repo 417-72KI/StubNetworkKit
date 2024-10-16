@@ -236,11 +236,12 @@ final class StubMatcherTests: XCTestCase {
 
     func testQueryParamsContainsParams() throws {
         func actual(_ url: String) -> Bool {
-            let matcher = QueryParams.contains(["q": "1",
-                                                "lang": "ja",
-                                                "empty": "",
-                                                "flag": nil])
-                .matcher
+            let matcher = QueryParams.contains([
+                "q": "1",
+                "lang": "ja",
+                "empty": "",
+                "flag": nil,
+            ]).matcher
             return matcher(URLRequest(url: URL(string: url)!))
         }
 
@@ -331,11 +332,11 @@ final class StubMatcherTests: XCTestCase {
             req.httpBody = body?.data(using: .utf8)
             return req
         }
-        assert(to: Body.is("".data(using: .utf8)!).matcher) {
+        assert(to: Body.is(Data("".utf8)).matcher) {
             expect(request("") ==> true)
             expect(request(nil) ==> false)
         }
-        assert(to: Body.is("foo".data(using: .utf8)!).matcher) {
+        assert(to: Body.is(Data("foo".utf8)).matcher) {
             expect(request("foo") ==> true)
             expect(request("bar") ==> false)
         }
