@@ -16,7 +16,7 @@ final class StubCondition_ResultBuilderTests: XCTestCase {
             Host.is("foo.bar")
             Path.is("/baz")
             Method.isPost()
-            QueryParams.contains(["q":"1", "flag": nil])
+            QueryParams.contains(["q": "1", "flag": nil])
         }
         XCTAssertTrue(condition.matcher(req))
 
@@ -63,7 +63,7 @@ final class StubCondition_ResultBuilderTests: XCTestCase {
                 case "HEAD": Method.isHead()
                 default: alwaysFalse
                 }
-                QueryParams.contains(["q":"1", "flag": nil])
+                QueryParams.contains(["q": "1", "flag": nil])
             }
             return condition.matcher(request)
         }

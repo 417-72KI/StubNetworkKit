@@ -20,7 +20,7 @@ final class StubNetworkKitTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
-            .responseData("Hello world!".data(using: .utf8)!)
+            .responseData(Data("Hello world!".utf8))
 
         let (data, response) = try await defaultStubSession.data(from: url)
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
@@ -34,11 +34,11 @@ final class StubNetworkKitTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz") && Method.isPost() && Body.isJson(["key": "world"]))
-            .responseData("Hello world!".data(using: .utf8)!)
+            .responseData(Data("Hello world!".utf8))
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.httpBody = #"{"key": "world"}"#.data(using: .utf8)
+        request.httpBody = Data(#"{"key": "world"}"#.utf8)
 
         let (data, response) = try await defaultStubSession.data(for: request)
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
@@ -54,7 +54,7 @@ final class StubNetworkKitTests: XCTestCase {
             guard $0.url?.query == "q=1" else {
                 return .error(.unexpectedRequest($0))
             }
-            return .data("Hello world!".data(using: .utf8)!)
+            return .data(Data("Hello world!".utf8))
         }
 
         let (data, response) = try await defaultStubSession.data(from: url)
@@ -71,7 +71,7 @@ final class StubNetworkKitTests: XCTestCase {
             Host.is("bar")
             Path.is("/baz")
             Method.isGet()
-        }.responseData("Hello world!".data(using: .utf8)!)
+        }.responseData(Data("Hello world!".utf8))
 
         let (data, response) = try await defaultStubSession.data(from: url)
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
@@ -90,11 +90,11 @@ final class StubNetworkKitTests: XCTestCase {
             Path.is("/baz")
             Method.isPost()
             Body.isJson(["key": "world"])
-        }.responseData("Hello world!".data(using: .utf8)!)
+        }.responseData(Data("Hello world!".utf8))
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.httpBody = #"{"key": "world"}"#.data(using: .utf8)
+        request.httpBody = Data(#"{"key": "world"}"#.utf8)
 
         let (data, response) = try await defaultStubSession.data(for: request)
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
@@ -115,7 +115,7 @@ final class StubNetworkKitTests: XCTestCase {
             guard $0.url?.query == "q=1" else {
                 return .error(.unexpectedRequest($0))
             }
-            return .data("Hello world!".data(using: .utf8)!)
+            return .data(Data("Hello world!".utf8))
         }
 
         let (data, response) = try await defaultStubSession.data(from: url)
@@ -127,7 +127,7 @@ final class StubNetworkKitTests: XCTestCase {
     func testDefaultStubSession_singleFunction() async throws {
         let url = URL(string: "foo://bar/baz")!
         stub(url: "foo://bar/baz", method: .get)
-            .responseData("Hello world!".data(using: .utf8)!)
+            .responseData(Data("Hello world!".utf8))
 
         let (data, response) = try await defaultStubSession.data(from: url)
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
@@ -142,7 +142,7 @@ final class StubNetworkKitTests: XCTestCase {
             .host("bar")
             .path("/baz")
             .method(.get)
-            .responseData("Hello world!".data(using: .utf8)!)
+            .responseData(Data("Hello world!".utf8))
 
         let (data, response) = try await defaultStubSession.data(from: url)
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
@@ -179,7 +179,7 @@ final class StubNetworkKitTests: XCTestCase {
                                         garply: [
                                             "spam",
                                             "ham",
-                                            "eggs"
+                                            "eggs",
                                         ]
                                      )
                                     )
@@ -211,7 +211,7 @@ final class StubNetworkKitTests: XCTestCase {
                                         garply: [
                                             "spam",
                                             "ham",
-                                            "eggs"
+                                            "eggs",
                                         ]
                                      )
                                     )
@@ -227,7 +227,7 @@ final class StubNetworkKitTests: XCTestCase {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
-            .responseData("Hello world!".data(using: .utf8)!)
+            .responseData(Data("Hello world!".utf8))
 
         let (data, response) = try await defaultStubSession.data(from: url)
         XCTAssertEqual(String(data: data, encoding: .utf8), "Hello world!")
@@ -236,17 +236,19 @@ final class StubNetworkKitTests: XCTestCase {
 }
 
 private extension StubNetworkKitTests {
-    struct Sample: Decodable, Equatable {
+    struct Sample: Decodable, Equatable, Sendable {
         var foo: String
         var bar: Int
         var baz: Bool
         var qux: Qux
+    }
+}
 
-        struct Qux: Decodable, Equatable {
-            var quux: String
-            var corge: Decimal
-            var grault: Bool
-            var garply: [String]
-        }
+private extension StubNetworkKitTests.Sample {
+    struct Qux: Decodable, Equatable, Sendable {
+        var quux: String
+        var corge: Decimal
+        var grault: Bool
+        var garply: [String]
     }
 }
