@@ -57,7 +57,7 @@ jobs:
             ${{ runner.os }}-swift
             ${{ runner.os }}-
       - name: Test
-        run: swift package clean && swift test --enable-test-discovery
+        run: swift package clean && swift test
   test-macos:
     name: Test(macOS)
     needs: generate-matrix
