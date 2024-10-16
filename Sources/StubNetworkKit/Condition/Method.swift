@@ -70,7 +70,7 @@ extension Method {
 }
 
 // MARK: -
-enum _Method: StubCondition {
+private enum _Method: StubCondition {
     case isGet(file: StaticString = #file, line: UInt = #line)
     case isPost(file: StaticString = #file, line: UInt = #line)
     case isPut(file: StaticString = #file, line: UInt = #line)

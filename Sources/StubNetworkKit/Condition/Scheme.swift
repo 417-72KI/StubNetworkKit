@@ -14,7 +14,7 @@ public extension Scheme {
 }
 
 // MARK: -
-enum _Scheme: StubCondition {
+private enum _Scheme: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }
 

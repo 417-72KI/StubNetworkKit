@@ -14,7 +14,7 @@ public extension Extension {
 }
 
 // MARK: -
-enum _PathExtension: StubCondition {
+private enum _PathExtension: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }
 

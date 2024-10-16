@@ -42,7 +42,7 @@ extension QueryParams {
 }
 
 // MARK: -
-enum _QueryParams: StubCondition {
+private enum _QueryParams: StubCondition {
     case containsItems([URLQueryItem], file: StaticString = #file, line: UInt = #line)
     case containsKeys([String], file: StaticString = #file, line: UInt = #line)
 }

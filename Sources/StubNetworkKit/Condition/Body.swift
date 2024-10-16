@@ -80,7 +80,7 @@ public extension Body {
 }
 
 // MARK: -
-enum _Body: StubCondition {
+private enum _Body: StubCondition {
     case isData(Data, file: StaticString = #file, line: UInt = #line)
     case isJsonObject(JSONObject, file: StaticString = #file, line: UInt = #line)
     case isJsonArray(JSONArray, file: StaticString = #file, line: UInt = #line)

@@ -14,7 +14,7 @@ public extension Host {
 }
 
 // MARK: -
-enum _Host: StubCondition {
+private enum _Host: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }
 

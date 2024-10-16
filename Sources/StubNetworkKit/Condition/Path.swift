@@ -33,7 +33,7 @@ public extension Path {
 }
 
 // MARK: -
-enum _Path: StubCondition {
+private enum _Path: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
     case startsWith(String, file: StaticString = #file, line: UInt = #line)
     case endsWith(String, file: StaticString = #file, line: UInt = #line)

@@ -21,7 +21,7 @@ public extension Header {
 }
 
 // MARK: -
-enum _Header: StubCondition {
+private enum _Header: StubCondition {
     case containsFieldName(String, file: StaticString = #file, line: UInt = #line)
     case containsFieldNameWithValue(String, value: String, file: StaticString = #file, line: UInt = #line)
 }
