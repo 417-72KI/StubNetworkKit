@@ -33,7 +33,7 @@ extension _Scheme {
     static func == (lhs: _Scheme, rhs: _Scheme) -> Bool {
         switch (lhs, rhs) {
         case let (.is(lScheme, _, _), .is(rScheme, _, _)):
-            return lScheme == rScheme
+            lScheme == rScheme
         }
     }
 }

@@ -44,14 +44,14 @@ extension _Path {
     var matcher: StubMatcher{
         switch self {
         case let .is(path, file, line):
-            return stubMatcher({ $0.url?.path }, path, file: file, line: line)
+            stubMatcher({ $0.url?.path }, path, file: file, line: line)
         case let .startsWith(path, file, line):
-            return stubMatcher({ $0.url?.path.hasPrefix(path) }, true, file: file, line: line)
+            stubMatcher({ $0.url?.path.hasPrefix(path) }, true, file: file, line: line)
         case let .endsWith(path, file, line):
-            return stubMatcher({ $0.url?.path.hasSuffix(path) }, true, file: file, line: line)
+            stubMatcher({ $0.url?.path.hasSuffix(path) }, true, file: file, line: line)
         case let .matches(pattern, options, file, line):
-            let regex = try! NSRegularExpression(pattern: pattern, options: options)
-            return stubMatcher({
+            stubMatcher({
+                let regex = try! NSRegularExpression(pattern: pattern, options: options)
                 guard let path = $0.url?.path,
                       let _ = regex.firstMatch(in: path, range: .init(location: 0, length: path.utf16.count)) else { return false }
                 return true
@@ -64,14 +64,14 @@ extension _Path {
     static func == (lhs: _Path, rhs: _Path) -> Bool {
         switch (lhs, rhs) {
         case let (.is(lPath, _, _), .is(rPath, _, _)):
-            return lPath == rPath
+            lPath == rPath
         case let (.startsWith(lPath, _, _), .startsWith(rPath, _, _)):
-            return lPath == rPath
+            lPath == rPath
         case let (.endsWith(lPath, _, _), .endsWith(rPath, _, _)):
-            return lPath == rPath
+            lPath == rPath
         case let (.matches(lPattern, _, _, _), .matches(rPattern, _, _, _)):
-            return lPattern == rPattern
-        default: return false
+            lPattern == rPattern
+        default: false
         }
     }
 }

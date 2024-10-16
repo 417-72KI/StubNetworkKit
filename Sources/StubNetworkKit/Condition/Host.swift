@@ -32,7 +32,7 @@ extension _Host {
     static func == (lhs: _Host, rhs: _Host) -> Bool {
         switch (lhs, rhs) {
         case let (.is(lHost, _, _), .is(rHost, _, _)):
-            return lHost == rHost
+            lHost == rHost
         }
     }
 }

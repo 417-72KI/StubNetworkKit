@@ -98,17 +98,13 @@ func dumpCondition(expected: [Any]?,
                    line: UInt = #line) {
     guard StubNetworking.option.debugConditions else { return }
     let file = file.description.split(separator: "/").last!
-    let result: Bool = {
-        switch (expected, actual) {
-        case let (expected?, actual?):
-            return NSArray(array: expected)
-                .isEqual(to: actual)
-        case (nil, nil):
-            return true
-        default:
-            return false
-        }
-    }()
+    let result: Bool = switch (expected, actual) {
+    case let (expected?, actual?):
+        NSArray(array: expected)
+            .isEqual(to: actual)
+    case (nil, nil): true
+    default: false
+    }
     print("\u{001B}[\(result ? 32 : 31)m[\(file):L\(line)] expected: \(String(describing: expected)), actual: \(String(describing: actual))\u{001B}[m")
 }
 
@@ -118,17 +114,13 @@ func dumpCondition(expected: [AnyHashable: Any]?,
                    line: UInt = #line) {
     guard StubNetworking.option.debugConditions else { return }
     let file = file.description.split(separator: "/").last!
-    let result: Bool = {
-        switch (expected, actual) {
-        case let (expected?, actual?):
-            return NSDictionary(dictionary: expected)
-                .isEqual(to: actual)
-        case (nil, nil):
-            return true
-        default:
-            return false
-        }
-    }()
+    let result: Bool = switch (expected, actual) {
+    case let (expected?, actual?):
+        NSDictionary(dictionary: expected)
+            .isEqual(to: actual)
+    case (nil, nil): true
+    default: false
+    }
 
     print("\u{001B}[\(result ? 32 : 31)m[\(file):L\(line)] expected: \(String(describing: expected)), actual: \(String(describing: actual))\u{001B}[m")
 }

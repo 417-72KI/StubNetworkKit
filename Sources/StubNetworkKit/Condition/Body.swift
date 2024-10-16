@@ -102,23 +102,23 @@ extension _Body {
     var matcher: StubMatcher {
         switch self {
         case let .isData(body, file, line):
-            return stubMatcher({ $0.requestBody }, body, file: file, line: line)
+            stubMatcher({ $0.requestBody }, body, file: file, line: line)
         case let .isJsonObject(jsonObject, file, line):
-            return stubMatcher({
+            stubMatcher({
                 guard let requestBody = $0.requestBody,
                       let jsonBody = try? JSONSerialization.jsonObject(with: requestBody) as? JSONObject else { return nil }
                 return jsonBody
             }, jsonObject, file: file, line: line)
         case let .isJsonArray(jsonArray, file, line):
-            return stubMatcher({
+            stubMatcher({
                 guard let requestBody = $0.requestBody,
                       let jsonBody = try? JSONSerialization.jsonObject(with: requestBody) as? JSONArray else { return nil }
                 return jsonBody
             }, jsonArray, file: file, line: line)
         case let .isForm(queryItems, file, line):
-            return stubMatcher({ $0.formBody?.sorted(by: \.name) }, queryItems.sorted(by: \.name), file: file, line: line)
+            stubMatcher({ $0.formBody?.sorted(by: \.name) }, queryItems.sorted(by: \.name), file: file, line: line)
         case let .isMultipartForm(items, file, line):
-            return stubMatcher({ $0.multipartFormBody }, items, file: file, line: line)
+            stubMatcher({ $0.multipartFormBody }, items, file: file, line: line)
         }
     }
 }
@@ -127,22 +127,22 @@ extension _Body {
     static func == (lhs: _Body, rhs: _Body) -> Bool {
         switch (lhs, rhs) {
         case let (.isData(lData, _, _), .isData(rData, _, _)):
-            return lData == rData
+            lData == rData
         case let (.isJsonObject(lJson, _, _), .isJsonObject(rJson, _, _)):
-            return NSDictionary(dictionary: lJson)
+            NSDictionary(dictionary: lJson)
                 .isEqual(to: rJson)
         case let (.isJsonArray(lJson, _, _), .isJsonArray(rJson, _, _)):
-            return NSArray(array: lJson)
+            NSArray(array: lJson)
                 .isEqual(to: rJson)
         case let (.isForm(lItems, _, _), .isForm(rItems, _, _)):
-            return lItems.sorted(by: \.name) == rItems.sorted(by: \.name)
+            lItems.sorted(by: \.name) == rItems.sorted(by: \.name)
         case let (.isMultipartForm(lItems, _, _), .isMultipartForm(rItems, _, _)) where lItems.keys.sorted() == rItems.keys.sorted():
-            return lItems.keys.allSatisfy {
+            lItems.keys.allSatisfy {
                 lItems[$0]?.data == rItems[$0]?.data
                 && (lItems[$0]?.fileName == nil || lItems[$0]?.fileName == rItems[$0]?.fileName)
                 && (lItems[$0]?.mimeType == nil || lItems[$0]?.mimeType == rItems[$0]?.mimeType)
             }
-        default: return false
+        default: false
         }
     }
 }
