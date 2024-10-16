@@ -2,80 +2,60 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
-import XCTest
+import Testing
 import StubNetworkKit
-import SwiftParamTest
 
-final class StubMatcher_OperatorsTests: XCTestCase {
-    private let trueMatcher: StubMatcher = { _ in true }
-    private let falseMatcher: StubMatcher = { _ in false }
-
-    override func setUp() {
-        ParameterizedTest.option = .init(traceTable: .markdown,
-                                         saveTableToAttachement: .markdown)
+@Suite struct StubMatcher_OperatorsTests {
+    init() {
         StubNetworking.option(printDebugLog: true,
                               debugConditions: true)
     }
 
-    func testOr() throws {
-        func or(lhs: @escaping StubMatcher, rhs: @escaping StubMatcher) -> Bool {
-            let req = URLRequest(url: URL(string: "foo://bar")!)
-            return (lhs || rhs)(req)
-        }
-        func orAssign(lhs: @escaping StubMatcher, rhs: @escaping StubMatcher) -> Bool {
-            let req = URLRequest(url: URL(string: "foo://bar")!)
-            var condition = lhs
-            condition ||= rhs
-            return condition(req)
-        }
+    @Test(arguments: [
+        (true, true, true),
+        (false, true, true),
+        (true, false, true),
+        (false, false, false),
+    ])
+    func or(_ lhs: Bool, rhs: Bool, _ expected: Bool) throws {
+        let matcher1: StubMatcher = { _ in lhs }
+        let matcher2: StubMatcher = { _ in rhs }
 
-        assert(to: or) {
-            expect((trueMatcher, trueMatcher) ==> true)
-            expect((falseMatcher, trueMatcher) ==> true)
-            expect((trueMatcher, falseMatcher) ==> true)
-            expect((falseMatcher, falseMatcher) ==> false)
-        }
-        assert(to: orAssign) {
-            expect((trueMatcher, trueMatcher) ==> true)
-            expect((falseMatcher, trueMatcher) ==> true)
-            expect((trueMatcher, falseMatcher) ==> true)
-            expect((falseMatcher, falseMatcher) ==> false)
-        }
-    }
-    func testAnd() throws {
-        func and(lhs: @escaping StubMatcher, rhs: @escaping StubMatcher) -> Bool {
-            let req = URLRequest(url: URL(string: "foo://bar")!)
-            return (lhs && rhs)(req)
-        }
-        func andAssign(lhs: @escaping StubMatcher, rhs: @escaping StubMatcher) -> Bool {
-            let req = URLRequest(url: URL(string: "foo://bar")!)
-            var condition = lhs
-            condition &&= rhs
-            return condition(req)
-        }
+        let req = URLRequest(url: URL(string: "foo://bar")!)
 
-        assert(to: and) {
-            expect((trueMatcher, trueMatcher) ==> true)
-            expect((falseMatcher, trueMatcher) ==> false)
-            expect((trueMatcher, falseMatcher) ==> false)
-            expect((falseMatcher, falseMatcher) ==> false)
-        }
-        assert(to: andAssign) {
-            expect((trueMatcher, trueMatcher) ==> true)
-            expect((falseMatcher, trueMatcher) ==> false)
-            expect((trueMatcher, falseMatcher) ==> false)
-            expect((falseMatcher, falseMatcher) ==> false)
-        }
+        #expect((matcher1 || matcher2)(req) == expected)
+
+        var condition = matcher1
+        condition ||= matcher2
+        #expect(condition(req) == expected)
     }
 
-    func testNot() throws {
-        func not(expr: @escaping StubMatcher) -> Bool {
-            let req = URLRequest(url: URL(string: "foo://bar")!)
-            return (!expr)(req)
-        }
-        assert(to: not) {
-            expect(trueMatcher ==> false)
-            expect(falseMatcher ==> true)
-        }
+    @Test(arguments: [
+        (true, true, true),
+        (false, true, false),
+        (true, false, false),
+        (false, false, false),
+    ])
+    func and(_ lhs: Bool, rhs: Bool, _ expected: Bool) throws {
+        let matcher1: StubMatcher = { _ in lhs }
+        let matcher2: StubMatcher = { _ in rhs }
+
+        let req = URLRequest(url: URL(string: "foo://bar")!)
+
+        #expect((matcher1 && matcher2)(req) == expected)
+
+        var condition = matcher1
+        condition &&= matcher2
+        #expect(condition(req) == expected)
+    }
+
+    @Test(arguments: [
+        (true, false),
+        (false, true),
+    ])
+    func not(_ value: Bool, _ expected: Bool) throws {
+        let matcher: StubMatcher = { _ in value }
+        let req = URLRequest(url: URL(string: "foo://bar")!)
+        #expect((!matcher)(req) == expected)
     }
 }

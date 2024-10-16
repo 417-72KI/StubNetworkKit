@@ -10,7 +10,7 @@ func verifyTests(danger: DangerDSL) throws {
             let content = String(data: try Data(contentsOf: url), encoding: .utf8)!
             let pattern = (
                 url.pathComponents.contains(where: { $0.hasPrefix("_") }),
-                content.split(separator: "\n").contains { $0.hasSuffix(": XCTestCase {") }
+                content.split(separator: "\n").contains { $0.hasSuffix(": XCTestCase {") || $0.contains("@Test") }
             )
             switch pattern {
             case (true, true):

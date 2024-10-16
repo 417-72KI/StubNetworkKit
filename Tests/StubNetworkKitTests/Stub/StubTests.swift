@@ -1,66 +1,107 @@
+import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
-import XCTest
-import StubNetworkKit
-import SwiftParamTest
+import Testing
+@testable import StubNetworkKit
 
-final class StubTests: XCTestCase {
-    override func setUp() {
-        ParameterizedTest.option = ParameterizedTest.Option(
-            traceTable: .markdown,
-            saveTableToAttachement: .markdown
-        )
+@Suite
+struct StubTests {
+    init() {
         StubNetworking.option(printDebugLog: true,
                               debugConditions: true)
     }
 
-    func testStub() throws {
-        assert(to: stub(url: "https://foo.bar/baz")) {
-            expect(URL(string: "https://foo.bar/baz?q=1&empty=&flag")! ==> true)
-            expect(URL(string: "https://foo.bar/baz")! ==> true)
+    @Suite
+    struct Stub {
+        @Test(arguments: [
+            "https://foo.bar/baz?q=1&empty=&flag",
+            "https://foo.bar/baz",
+        ])
+        func simple(_ url: String) throws {
+            let req = URLRequest(url: URL(string: url)!)
+            #expect(stub(url: "https://foo.bar/baz").matcher(req))
         }
 
-        assert(to: stub(url: "https://foo.bar/baz?q=1&empty=&flag")) {
-            expect(URL(string: "https://foo.bar/baz?q=1&empty=&flag")! ==> true)
-            expect(URL(string: "https://foo.bar/baz")! ==> false)
-        }
+        @Test(arguments: [
+            ("https://foo.bar/baz?q=1&empty=&flag", true),
+            ("https://foo.bar/baz", false),
+        ])
+        func containsQuery(_ url: String, _ expected: Bool) throws {
+            let req = URLRequest(url: URL(string: url)!)
+            #expect(stub(url: "https://foo.bar/baz?q=1&empty=&flag").matcher(req) == expected)
+         }
 
-        assert(to: stub(url: "https://foo.bar/baz", method: .post)) {
-            expect((URL(string: "https://foo.bar/baz")!, .get) ==> false)
-            expect((URL(string: "https://foo.bar/baz")!, .post) ==> true)
+        @Test(arguments: [
+            ("GET", false),
+            ("POST", true),
+            ("PUT", false),
+            ("PATCH", false),
+            ("DELETE", false),
+            ("HEAD", false),
+        ])
+        func compareMethod(_ method: String, _ expected: Bool) throws {
+            var req = URLRequest(url: URL(string: "https://foo.bar/baz")!)
+            req.httpMethod = method
+            #expect(stub(url: "https://foo.bar/baz", method: .post).matcher(req) == expected)
         }
     }
 
-    func testStubWithMethodChainBuilders() throws {
-        let condition1 = stub()
-            .scheme("https")
-            .host("foo.bar")
-            .path("/baz")
-            .method(.get)
-            .queryParams(["q": "1", "empty": "", "flag": nil])
-        assert(to: condition1) {
-            expect(URL(string: "https://foo.bar/baz?q=1&empty=&flag")! ==> true)
-            expect(URL(string: "https://foo.bar/baz")! ==> false)
+    @Suite
+    struct StubWithMethodChainBuilders {
+        @Test(arguments: [
+            ("https://foo.bar/baz?q=1&empty=&flag", true),
+            ("https://foo.bar/baz", false),
+        ])
+        func getRequest(_ url: String, _ expected: Bool) throws {
+            let condition = stub()
+                .scheme("https")
+                .host("foo.bar")
+                .path("/baz")
+                .method(.get)
+                .queryParams(["q": "1", "empty": "", "flag": nil])
+
+            let req = URLRequest(url: URL(string: url)!)
+            #expect(condition.matcher(req) == expected)
         }
 
         #if !os(watchOS)
-        let condition2 = stub()
-            .scheme("https")
-            .host("foo.bar")
-            .path("/baz")
-            .method(.post)
-            .jsonBody(["q": 1, "lang": "ja", "flag": true])
+        @Test
+        func validPostRequest() throws {
+            let condition = stub()
+                .scheme("https")
+                .host("foo.bar")
+                .path("/baz")
+                .method(.post)
+                .jsonBody(["q": 1, "lang": "ja", "flag": true])
 
-        var request = URLRequest(url: URL(string: "https://foo.bar/baz")!)
-        request.httpMethod = "POST"
-        request.httpBody = Data(#"{"q": 1, "lang": "ja", "flag": true}"#.utf8)
+            var req = URLRequest(url: URL(string: "https://foo.bar/baz")!)
+            req.httpMethod = "POST"
+            req.httpBody = #"{"q": 1, "lang": "ja", "flag": true}"#.data(using: .utf8)
 
-        assert(to: condition2) {
-            expect(request ==> true)
-            expect((URL(string: "https://foo.bar/baz?q=1&empty=&flag")!, Method.post) ==> false)
-            expect(URL(string: "https://foo.bar/baz?q=1&empty=&flag")! ==> false)
-            expect(URL(string: "https://foo.bar/baz")! ==> false)
+            #expect(condition.matcher(req))
+        }
+
+        @Test(arguments: [
+            ("https://foo.bar/baz?q=1&empty=&flag", "POST"),
+            ("https://foo.bar/baz?q=1&empty=&flag", "GET"),
+            ("https://foo.bar/baz", "GET"),
+        ])
+        func invalidPostRequest(_ url: String, _ method: String) throws {
+            let condition = stub()
+                .scheme("https")
+                .host("foo.bar")
+                .path("/baz")
+                .method(.post)
+                .jsonBody(["q": 1, "lang": "ja", "flag": true])
+
+            var req = URLRequest(url: URL(string: "https://foo.bar/baz")!)
+            req.httpMethod = method
+            if req.httpMethod == "GET" {
+                req.httpBody = Data(#"{"q": 1, "lang": "ja", "flag": true}"#.utf8)
+            }
+
+            #expect(!condition.matcher(req))
         }
         #endif
     }
