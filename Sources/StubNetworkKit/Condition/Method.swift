@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum Method: Equatable {
+public enum Method: Equatable, Sendable {
     case get
     case post
     case put
