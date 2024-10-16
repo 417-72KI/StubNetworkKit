@@ -16,10 +16,10 @@ Pod::Spec.new do |spec|
   spec.author             = { "417-72KI" => "417.72ki@gmail.com" }
   spec.social_media_url   = "https://twitter.com/417_72ki"
 
-  spec.ios.deployment_target     = "15.0"
-  spec.osx.deployment_target     = "12.0"
-  # spec.watchos.deployment_target = "8.0"
-  spec.tvos.deployment_target    = "15.0"
+  spec.ios.deployment_target     = "16.0"
+  spec.osx.deployment_target     = "13.0"
+  # spec.watchos.deployment_target = "9.0"
+  spec.tvos.deployment_target    = "16.0"
 
   spec.source         = { :git => "https://github.com/417-72KI/#{spec.name}.git", :tag => "#{spec.version}" }
   spec.source_files   = 'Sources/StubNetworkKit/**/*.swift'

@@ -1,6 +1,6 @@
 PROJECT_NAME = StubNetworkKit
 
-ver = 0.4.1
+ver = 0.5.0
 
 .SILENT:
 
