@@ -3,7 +3,7 @@
 
 import PackageDescription
 
-let isRelease = false
+let isDevelop = true
 
 let isObjcAvailable: Bool = {
     #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
@@ -37,7 +37,7 @@ let package = Package(
     ]
 )
 
-if !isRelease {
+if isDevelop {
     package.dependencies.append(contentsOf: [
         .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.0"),
         .package(url: "https://github.com/YusukeHosonuma/SwiftParamTest.git", from: "2.2.1"),
