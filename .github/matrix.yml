@@ -31,9 +31,7 @@ macos_runners:
           - platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)
 linux_runner:
   swift_versions:
-    # - "6.4"
-    # - "6.3"
+    - "6.4"
+    - "6.3"
     - "6.2"
     - "6.1"
-    - "6.0"
-    - "5.10"

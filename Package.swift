@@ -1,17 +1,9 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let isDevelop = true
-
-let isObjcAvailable: Bool = {
-    #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
-    return true
-    #else
-    return false
-    #endif
-}()
 
 let package = Package(
     name: "StubNetworkKit",
@@ -27,50 +19,49 @@ let package = Package(
             targets: ["StubNetworkKit"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/417-72KI/MultipartFormDataParser.git", from: "2.3.2")
+        .package(url: "https://github.com/417-72KI/MultipartFormDataParser.git", from: "2.4.0")
     ],
     targets: [
         .target(
             name: "StubNetworkKit",
             dependencies: ["MultipartFormDataParser"]
         ),
-    ]
+        .testTarget(
+            name: "StubNetworkKitTests",
+            dependencies: ["StubNetworkKit"],
+            resources: [.copy("_Fixtures")]
+        )
+    ],
+    swiftLanguageModes: [.v5]
 )
 
 if isDevelop {
     package.dependencies.append(contentsOf: [
-        .package(url: "https://github.com/apple/swift-testing", exact: "0.3.0"),
-        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.10.0"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins.git", from: "0.65.1"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.12.0"),
+        .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.4.0"),
     ])
-    if isObjcAvailable {
-        package.dependencies.append(contentsOf: [
-            .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins.git", from: "0.57.0"),
-            .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.4.0"),
-        ])
-    }
-
-    let testTarget = Target.testTarget(
-        name: "StubNetworkKitTests",
-        dependencies: [
-            "StubNetworkKit",
-            .product(name: "Testing", package: "swift-testing"),
-            "Alamofire",
-        ],
-        resources: [.copy("_Fixtures")]
-    )
-    if isObjcAvailable {
-        testTarget.dependencies.append(contentsOf: [
-            "APIKit",
-        ])
-    }
-    package.targets.append(testTarget)
-
-    if isObjcAvailable {
-        package.targets.forEach {
+    package.targets
+        .filter(\.isTest)
+        .forEach {
             $0.dependencies.append(contentsOf: [
-                .product(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"),
+                .product(
+                    name: "Alamofire",
+                    package: "Alamofire",
+                    condition: .when(platforms: [.macOS, .macCatalyst, .iOS, .tvOS]),
+                ),
+                .product(
+                    name: "APIKit",
+                    package: "APIKit",
+                    condition: .when(platforms: [.macOS, .macCatalyst, .iOS, .tvOS]),
+                ),
             ])
         }
+    package.targets.forEach {
+        if $0.plugins == nil {
+            $0.plugins = []
+        }
+        $0.plugins?.append(.plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"))
     }
 }
 
