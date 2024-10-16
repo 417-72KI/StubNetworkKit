@@ -11,12 +11,8 @@ public enum StubNetworking: Sendable {
     #endif
 }
 
-@available(*, deprecated, message: "Will be removed. Use option(printDebugLog:debugConditions:) instead.")
-public extension StubNetworking {
-    static var option: Option {
-        get { _option }
-        set { _option = newValue }
-    }
+extension StubNetworking {
+    static var option: Option { _option }
 }
 
 public extension StubNetworking {

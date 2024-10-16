@@ -11,8 +11,8 @@ final class BodyTests: XCTestCase {
     private let url = URL(string: "https://localhost/foo/bar")!
 
     override func setUpWithError() throws {
-        StubNetworking.option = .init(printDebugLog: true,
-                                      debugConditions: true)
+        StubNetworking.option(printDebugLog: true,
+                              debugConditions: true)
     }
 
     override func tearDownWithError() throws {
