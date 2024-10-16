@@ -72,9 +72,9 @@ package.targets.forEach {
         .existentialAny,
         .bareSlashRegexLiterals,
         .conciseMagicFile,
-        // TODO: enable when 5.8 dropped
-        // .importObjcForwardDeclarations,
-        // .disableOutwardActorInference,
+        .importObjcForwardDeclarations,
+        .disableOutwardActorInference,
+        // TODO: enable when 5.9 dropped
         // .deprecateApplicationMain,
         // .isolatedDefaultValues,
         // .globalConcurrency,
