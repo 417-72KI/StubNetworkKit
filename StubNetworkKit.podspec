@@ -23,8 +23,8 @@ Pod::Spec.new do |spec|
 
   spec.source         = { :git => "https://github.com/417-72KI/#{spec.name}.git", :tag => "#{spec.version}" }
   spec.source_files   = 'Sources/StubNetworkKit/**/*.swift'
-  spec.swift_versions = ['5.10', '5.8', '5.9']
+  spec.swift_versions = ['5.10', '5.9']
 
   spec.frameworks     = 'Foundation'
-  spec.dependency 'MultipartFormDataParser', '~> 2.2.0'
+  spec.dependency 'MultipartFormDataParser', '~> 2.3.0'
 end
