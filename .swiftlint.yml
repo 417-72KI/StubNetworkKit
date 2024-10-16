@@ -9,6 +9,9 @@ disabled_rules:
   - identifier_name
   - unused_optional_binding
   - vertical_parameter_alignment_on_call # False positive with Multiple trailing closures
+  # TODO: enable in future
+  - function_body_length
+  - type_body_length
 file_length:
   ignore_comment_only_lines: true
 line_length:
@@ -17,6 +20,9 @@ line_length:
   ignores_function_declarations: true
   ignores_comments: true
   ignores_interpolated_strings: true
+type_name:
+  allowed_symbols:
+    - _
 large_tuple:
   warning: 3
   error: 4
