@@ -8,9 +8,9 @@ public typealias StubMatcher = @Sendable (URLRequest) -> Bool
 let alwaysTrueCondition: StubMatcher = { _ in true }
 
 func stubMatcher<T: Equatable & Sendable>(_ lhs: @escaping @Sendable (URLRequest) -> T,
-                               _ rhs: T,
-                               file: StaticString = #file,
-                               line: UInt = #line) -> StubMatcher {
+                                          _ rhs: T,
+                                          file: StaticString = #file,
+                                          line: UInt = #line) -> StubMatcher {
     {
         dumpCondition(expected: rhs,
                       actual: lhs($0),

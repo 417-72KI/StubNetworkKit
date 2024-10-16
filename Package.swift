@@ -44,6 +44,7 @@ if !isRelease {
     ])
     if isObjcAvailable {
         package.dependencies.append(contentsOf: [
+            .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins.git", from: "0.57.0"),
             .package(url: "https://github.com/ishkawa/APIKit.git", from: "5.4.0"),
         ])
     }
@@ -63,6 +64,14 @@ if !isRelease {
         ])
     }
     package.targets.append(testTarget)
+
+    if isObjcAvailable {
+        package.targets.forEach {
+            $0.dependencies.append(contentsOf: [
+                .product(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"),
+            ])
+        }
+    }
 }
 
 // MARK: - Upcoming feature flags for Swift 6

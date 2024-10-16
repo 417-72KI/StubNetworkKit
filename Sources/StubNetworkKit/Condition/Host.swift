@@ -19,7 +19,7 @@ private enum _Host: StubCondition {
 }
 
 extension _Host {
-    var matcher: StubMatcher{
+    var matcher: StubMatcher {
         switch self {
         case let .is(host, file, line):
             precondition(!host.contains("/"), "The host part of an URL never contains any slash.", file: file, line: line)

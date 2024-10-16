@@ -11,7 +11,7 @@ public extension Header {
                          line: UInt = #line) -> some StubCondition {
         _Header.containsFieldName(name, file: file, line: line)
     }
-    
+
     static func contains(_ name: String,
                          withValue value: String,
                          file: StaticString = #file,
@@ -27,7 +27,7 @@ private enum _Header: StubCondition {
 }
 
 extension _Header {
-    var matcher: StubMatcher{
+    var matcher: StubMatcher {
         switch self {
         case let .containsFieldName(field, file, line):
             !stubMatcher({ $0.value(forHTTPHeaderField: field) }, nil, file: file, line: line)

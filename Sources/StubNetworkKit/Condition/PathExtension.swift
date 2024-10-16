@@ -19,7 +19,7 @@ private enum _PathExtension: StubCondition {
 }
 
 extension _PathExtension {
-    var matcher: StubMatcher{
+    var matcher: StubMatcher {
         switch self {
         case let .is(pathExtension, file, line):
             stubMatcher({ $0.url?.pathExtension }, pathExtension, file: file, line: line)

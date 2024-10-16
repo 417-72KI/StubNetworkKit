@@ -55,7 +55,7 @@ public struct MultipartFormElement: Hashable, Sendable {
 }
 
 extension MultipartFormElement {
-    public static func ==(_ lhs: Self, _ rhs: Self) -> Bool {
+    public static func == (_ lhs: Self, _ rhs: Self) -> Bool {
         guard lhs.data == rhs.data else { return false }
         if let fileName = lhs.fileName,
            fileName != rhs.fileName {

@@ -54,7 +54,7 @@ extension _QueryParams {
 }
 
 extension _QueryParams {
-    var matcher: StubMatcher{
+    var matcher: StubMatcher {
         switch self {
         case let .containsItems(items, file, line):
             stubMatcher({

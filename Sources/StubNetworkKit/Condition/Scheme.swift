@@ -19,7 +19,7 @@ private enum _Scheme: StubCondition {
 }
 
 extension _Scheme {
-    var matcher: StubMatcher{
+    var matcher: StubMatcher {
         switch self {
         case let .is(scheme, file, line):
             precondition(!scheme.contains("://"), "The scheme part of an URL never contains '://'.", file: file, line: line)
