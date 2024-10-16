@@ -3,8 +3,8 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public final class Stub {
-    typealias Response = (URLRequest) -> StubResponse
+public final class Stub: @unchecked Sendable {
+    typealias Response = @Sendable (URLRequest) -> StubResponse
 
     /// Matcher to judge if use stub response.
     private(set) var matcher: StubMatcher
@@ -33,7 +33,7 @@ extension Stub {
 /// - Returns: Created stub object.
 @discardableResult
 public func stub(_ matcher: @escaping StubMatcher,
-                 withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
+                 withResponse stubResponse: @escaping @Sendable (URLRequest) -> StubResponse) -> Stub {
     let stub = Stub(matcher: matcher,
                     response: stubResponse)
     StubURLProtocol.register(stub)
@@ -58,7 +58,7 @@ public func stub(_ matcher: @escaping StubMatcher) -> Stub {
 /// - Returns: Created stub object.
 @discardableResult
 public func stub(_ condition: any StubCondition,
-                 withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
+                 withResponse stubResponse: @escaping @Sendable (URLRequest) -> StubResponse) -> Stub {
     let stub = Stub(matcher: condition.matcher,
                     response: stubResponse)
     StubURLProtocol.register(stub)
