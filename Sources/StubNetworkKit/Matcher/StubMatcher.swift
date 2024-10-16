@@ -3,11 +3,11 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public typealias StubMatcher = (URLRequest) -> Bool
+public typealias StubMatcher = @Sendable (URLRequest) -> Bool
 
 let alwaysTrueCondition: StubMatcher = { _ in true }
 
-func stubMatcher<T: Equatable>(_ lhs: @escaping (URLRequest) -> T,
+func stubMatcher<T: Equatable & Sendable>(_ lhs: @escaping @Sendable (URLRequest) -> T,
                                _ rhs: T,
                                file: StaticString = #file,
                                line: UInt = #line) -> StubMatcher {
@@ -20,7 +20,7 @@ func stubMatcher<T: Equatable>(_ lhs: @escaping (URLRequest) -> T,
     }
 }
 
-func stubMatcher(_ lhs: @escaping (URLRequest) -> [AnyHashable: Any]?,
+func stubMatcher(_ lhs: @escaping @Sendable (URLRequest) -> [AnyHashable: Any]?,
                  _ rhs: [AnyHashable: Any]?,
                  file: StaticString = #file,
                  line: UInt = #line) -> StubMatcher {
@@ -48,7 +48,7 @@ func stubMatcher(_ lhs: @escaping (URLRequest) -> [AnyHashable: Any]?,
     }
 }
 
-func stubMatcher(_ lhs: @escaping (URLRequest) -> [Any]?,
+func stubMatcher(_ lhs: @escaping @Sendable (URLRequest) -> [Any]?,
                  _ rhs: [Any]?,
                  file: StaticString = #file,
                  line: UInt = #line) -> StubMatcher {

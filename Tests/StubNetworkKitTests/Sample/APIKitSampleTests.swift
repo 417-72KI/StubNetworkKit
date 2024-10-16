@@ -141,7 +141,7 @@ private struct SampleGetRequest: SampleRequest {
 private struct SamplePostRequest: SampleRequest {
     var method: HTTPMethod { .post }
 
-    var bodyParameters: BodyParameters? {
+    var bodyParameters: (any BodyParameters)? {
         ["hoge": "fuga"] as JSONBodyParameters
     }
 }
@@ -149,7 +149,7 @@ private struct SamplePostRequest: SampleRequest {
 private struct SampleFormRequest: SampleRequest {
     var method: HTTPMethod { .post }
 
-    var bodyParameters: BodyParameters? {
+    var bodyParameters: (any BodyParameters)? {
         MultipartFormDataBodyParameters(parts: [
             .init(data: "fuga".data(using: .utf8)!, name: "hoge"),
             .init(data: "hogera".data(using: .utf8)!, name: "piyo")

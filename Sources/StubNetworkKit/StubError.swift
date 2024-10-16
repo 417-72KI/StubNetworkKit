@@ -7,7 +7,7 @@ public enum StubError: LocalizedError {
     case unexpectedRequest(URLRequest)
     case responseInitializingFailed(URL, Int, [String: String]?)
     case unimplemented
-    case unexpectedError(Error)
+    case unexpectedError(any Error)
 }
 
 extension StubError {

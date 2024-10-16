@@ -57,7 +57,7 @@ jobs:
             ${{ runner.os }}-swift
             ${{ runner.os }}-
       - name: Test
-        run: swift package clean && swift test --enable-test-discovery
+        run: swift package clean && swift test
   test-macos:
     name: Test(macOS)
     needs: generate-matrix
@@ -90,7 +90,7 @@ jobs:
           set -o pipefail && xcrun \
           xcodebuild \
           -enableCodeCoverage YES \
-          -scheme "$(xcrun --sdk macosx xcodebuild -list -json | jq -r '.workspace.schemes[0]' 2>/dev/null)" \
+          -scheme "StubNetworkKit" \
           -destination "${{ steps.destination.outputs.value }}" \
           -clonedSourcePackagesDirPath '.build' \
           -resultBundlePath 'test_output/test.xcresult' \

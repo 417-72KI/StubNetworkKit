@@ -5,7 +5,7 @@ import FoundationNetworking
 
 public enum StubResponse {
     case success(data: Data?, statusCode: Int, headers: [String: String]?)
-    case failure(Error)
+    case failure(any Error)
 }
 
 // MARK: - Success
@@ -77,7 +77,7 @@ public extension StubResponse {
 
 // MARK: - Failure
 public extension StubResponse {
-    init(error: Error) {
+    init(error: any Error) {
         self = .failure(error)
     }
 }

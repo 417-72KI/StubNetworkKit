@@ -4,7 +4,7 @@ import FoundationNetworking
 #endif
 
 /// An opaque type which represents a stub condition.
-public protocol StubCondition {
+public protocol StubCondition: Sendable {
     var matcher: StubMatcher { get }
 }
 
@@ -20,7 +20,7 @@ public let alwaysTrue: some StubCondition = {
     _AlwaysTrue()
 }()
 
-final class _AlwaysTrue: StubCondition {
+private final class _AlwaysTrue: StubCondition {
     fileprivate init() {}
 }
 
@@ -34,7 +34,7 @@ public let alwaysFalse: some StubCondition = {
     _AlwaysFalse()
 }()
 
-final class _AlwaysFalse: StubCondition {
+private final class _AlwaysFalse: StubCondition {
     fileprivate init() {}
 }
 
