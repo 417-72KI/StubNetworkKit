@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public enum StubNetworking {
+public enum StubNetworking: Sendable {
     #if swift(>=5.10)
     nonisolated(unsafe) private(set) static var _option = defaultOption
     #else
