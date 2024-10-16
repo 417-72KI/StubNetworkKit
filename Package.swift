@@ -3,7 +3,7 @@
 
 import PackageDescription
 
-let isDevelop = false
+let isDevelop = true
 
 let isObjcAvailable: Bool = {
     #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
