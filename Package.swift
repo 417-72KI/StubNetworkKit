@@ -83,10 +83,9 @@ package.targets.forEach {
         .conciseMagicFile,
         .importObjcForwardDeclarations,
         .disableOutwardActorInference,
-        // TODO: enable when 5.9 dropped
-        // .deprecateApplicationMain,
-        // .isolatedDefaultValues,
-        // .globalConcurrency,
+        .deprecateApplicationMain,
+        .isolatedDefaultValues,
+        .globalConcurrency,
     ]
 }
 
