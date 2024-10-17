@@ -8,7 +8,7 @@ import StubNetworkKit
 @Suite struct StubMatcherTests {
     init() {
         StubNetworking.option(printDebugLog: true,
-                              debugConditions: false)
+                              debugConditions: true)
     }
 
     @Suite struct MethodIs {
@@ -367,7 +367,7 @@ import StubNetworkKit
         func complexObject(_ jsonString: String, _ expected: Bool) throws {
             var req = URLRequest(url: URL(string: "foo://bar")!)
             req.httpBody = jsonString.data(using: .utf8)
-            #expect(Body.isJson(["foo": "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"]]]).matcher(req) == expected)
+            #expect(Body.isJson(["foo": "bar", "baz": ["qux": true, "quux": ["spam", "ham", "eggs"] as JSONArray] as JSONObject]).matcher(req) == expected)
         }
     }
 
@@ -377,9 +377,9 @@ import StubNetworkKit
             (#"[]"#, true),
             (#"{}"#, false),
         ])
-        func empty(_ json: String, _ expected: Bool) throws {
+        func empty(_ jsonString: String, _ expected: Bool) throws {
             var req = URLRequest(url: URL(string: "foo://bar")!)
-            req.httpBody = json.data(using: .utf8)
+            req.httpBody = jsonString.data(using: .utf8)
             #expect(Body.isJson([]).matcher(req) == expected)
         }
 
@@ -390,19 +390,19 @@ import StubNetworkKit
             (#"["bar", "foo", "baz", 42, "qux", true]"#, false),
             (#"["foo", "bar", "baz", 41, "qux", true]"#, false),
         ])
-        func stringArray(_ json: String, _ expected: Bool) throws {
+        func stringArray(_ jsonString: String, _ expected: Bool) throws {
             var req = URLRequest(url: URL(string: "foo://bar")!)
-            req.httpBody = json.data(using: .utf8)
+            req.httpBody = jsonString.data(using: .utf8)
             #expect(Body.isJson(["foo", "bar", "baz", 42, "qux", true]).matcher(req) == expected)
         }
 
         @Test(arguments: [
             (#"[["foo", "bar", "baz"], {"qux": true, "quux": ["spam", "ham", "eggs"]}]"#, true),
         ])
-        func arrayWithMultipleObjects(_ json: String, _ expected: Bool) throws {
+        func arrayWithMultipleObjects(_ jsonString: String, _ expected: Bool) throws {
             var req = URLRequest(url: URL(string: "foo://bar")!)
-            req.httpBody = json.data(using: .utf8)
-            #expect(Body.isJson([["foo", "bar", "baz"], ["qux": true, "quux": ["spam", "ham", "eggs"]]]).matcher(req) == expected)
+            req.httpBody = jsonString.data(using: .utf8)
+            #expect(Body.isJson([["foo", "bar", "baz"] as JSONArray, ["qux": true, "quux": ["spam", "ham", "eggs"] as JSONArray] as JSONObject]).matcher(req) == expected)
         }
     }
 

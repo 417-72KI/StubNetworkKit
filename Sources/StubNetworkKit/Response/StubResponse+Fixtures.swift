@@ -9,7 +9,7 @@ public extension StubResponse {
                   headers: headers)
     }
 
-    static func json(_ jsonObject: [AnyHashable: Any],
+    static func json(_ jsonObject: JSONObject,
                      statusCode: Int = 200,
                      headers: [String: String]? = nil) -> Self {
         self.init(jsonObject: jsonObject,
@@ -17,7 +17,7 @@ public extension StubResponse {
                   headers: headers)
     }
 
-    static func json(_ jsonArray: [Any],
+    static func json(_ jsonArray: JSONArray,
                      statusCode: Int = 200,
                      headers: [String: String]? = nil) -> Self {
         self.init(jsonArray: jsonArray,
