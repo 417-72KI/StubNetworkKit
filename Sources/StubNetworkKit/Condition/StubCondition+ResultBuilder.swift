@@ -29,7 +29,7 @@ public func stubCondition(@StubConditionBuilder builder: () -> any StubCondition
 
 @discardableResult
 public func stub(@StubConditionBuilder builder: () -> any StubCondition,
-                 withResponse stubResponse: @escaping (URLRequest) -> StubResponse) -> Stub {
+                 withResponse stubResponse: @escaping @Sendable (URLRequest) -> StubResponse) -> Stub {
     stub(stubCondition(builder: builder),
          withResponse: stubResponse)
 }

@@ -92,8 +92,8 @@ func dumpCondition<T: Equatable>(expected: T?,
     print("\u{001B}[\(result ? 32 : 31)m[\(file):L\(line)] expected: \(expected), actual: \(actual)\u{001B}[m")
 }
 
-func dumpCondition(expected: [Any]?,
-                   actual: [Any]?,
+func dumpCondition(expected: JSONArray?,
+                   actual: JSONArray?,
                    file: StaticString = #file,
                    line: UInt = #line) {
     guard StubNetworking.option.debugConditions else { return }
@@ -108,8 +108,8 @@ func dumpCondition(expected: [Any]?,
     print("\u{001B}[\(result ? 32 : 31)m[\(file):L\(line)] expected: \(String(describing: expected)), actual: \(String(describing: actual))\u{001B}[m")
 }
 
-func dumpCondition(expected: [AnyHashable: Any]?,
-                   actual: [AnyHashable: Any]?,
+func dumpCondition(expected: JSONObject?,
+                   actual: JSONObject?,
                    file: StaticString = #file,
                    line: UInt = #line) {
     guard StubNetworking.option.debugConditions else { return }
