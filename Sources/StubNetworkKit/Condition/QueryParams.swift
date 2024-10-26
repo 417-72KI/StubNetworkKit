@@ -42,7 +42,7 @@ extension QueryParams {
 }
 
 // MARK: -
-private enum _QueryParams: StubCondition {
+enum _QueryParams: StubCondition {
     case containsItems([URLQueryItem], file: StaticString = #file, line: UInt = #line)
     case containsKeys([String], file: StaticString = #file, line: UInt = #line)
 }
@@ -98,5 +98,18 @@ private extension _QueryParams {
               file: StaticString = #file,
               line: UInt = #line) -> [String]? {
         queryItems(from: req).flatMap { $0.map(\.name) }
+    }
+}
+
+extension _QueryParams {
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case let .containsItems(items, _, _):
+            hasher.combine("containsItems")
+            hasher.combine(items)
+        case let .containsKeys(keys, _, _):
+            hasher.combine("containsKeys")
+            hasher.combine(keys)
+        }
     }
 }

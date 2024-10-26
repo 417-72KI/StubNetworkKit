@@ -21,7 +21,7 @@ public extension Header {
 }
 
 // MARK: -
-private enum _Header: StubCondition {
+enum _Header: StubCondition {
     case containsFieldName(String, file: StaticString = #file, line: UInt = #line)
     case containsFieldNameWithValue(String, value: String, file: StaticString = #file, line: UInt = #line)
 }
@@ -45,6 +45,20 @@ extension _Header {
         case let (.containsFieldNameWithValue(lField, lValue, _, _), .containsFieldNameWithValue(rField, rValue, _, _)):
             lField == rField && lValue == rValue
         default: false
+        }
+    }
+}
+
+extension _Header {
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case let .containsFieldName(fieldName, _, _):
+            hasher.combine("containsFieldName")
+            hasher.combine(fieldName)
+        case let .containsFieldNameWithValue(fieldName, value, _, _):
+            hasher.combine("containsFieldNameWithValue")
+            hasher.combine(fieldName)
+            hasher.combine(value)
         }
     }
 }

@@ -23,6 +23,9 @@ line_length:
 type_name:
   allowed_symbols:
     - _
+  excluded:
+    - OR
+    - or
 large_tuple:
   warning: 3
   error: 4

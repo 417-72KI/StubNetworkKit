@@ -14,7 +14,7 @@ public extension Host {
 }
 
 // MARK: -
-private enum _Host: StubCondition {
+enum _Host: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }
 
@@ -33,6 +33,16 @@ extension _Host {
         switch (lhs, rhs) {
         case let (.is(lHost, _, _), .is(rHost, _, _)):
             lHost == rHost
+        }
+    }
+}
+
+extension _Host {
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case let .is(host, _, _):
+            hasher.combine("is")
+            hasher.combine(host)
         }
     }
 }

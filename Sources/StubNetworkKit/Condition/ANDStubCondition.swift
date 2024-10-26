@@ -1,6 +1,6 @@
-struct ANDStubCondition<T1: StubCondition, T2: StubCondition>: StubCondition {
-    let c1: T1
-    let c2: T2
+struct ANDStubCondition: StubCondition {
+    let c1: AnyStubCondition
+    let c2: AnyStubCondition
 }
 
 extension ANDStubCondition {
@@ -9,10 +9,14 @@ extension ANDStubCondition {
     }
 }
 
-extension ANDStubCondition: Equatable where T1: Equatable, T2: Equatable {
+extension ANDStubCondition {
+    static func == (lhs: ANDStubCondition, rhs: ANDStubCondition) -> Bool {
+        lhs.c1 == rhs.c1 && lhs.c2 == rhs.c2
+        || lhs.c1 == rhs.c2 && lhs.c2 == rhs.c1
+    }
 }
 
 // MARK: -
 public func && <T1: StubCondition, T2: StubCondition>(lhs: T1, rhs: T2) -> some StubCondition {
-    ANDStubCondition(c1: lhs, c2: rhs)
+    ANDStubCondition(c1: AnyStubCondition(lhs), c2: AnyStubCondition(rhs))
 }

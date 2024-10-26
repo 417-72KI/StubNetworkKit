@@ -70,7 +70,7 @@ extension Method {
 }
 
 // MARK: -
-private enum _Method: StubCondition {
+enum _Method: StubCondition {
     case isGet(file: StaticString = #file, line: UInt = #line)
     case isPost(file: StaticString = #file, line: UInt = #line)
     case isPut(file: StaticString = #file, line: UInt = #line)
@@ -109,6 +109,19 @@ extension _Method {
              (.isHead, .isHead):
             true
         default: false
+        }
+    }
+}
+
+extension _Method {
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case .isGet: hasher.combine("get")
+        case .isPost: hasher.combine("post")
+        case .isPut: hasher.combine("put")
+        case .isPatch: hasher.combine("patch")
+        case .isDelete: hasher.combine("delete")
+        case .isHead: hasher.combine("head")
         }
     }
 }
