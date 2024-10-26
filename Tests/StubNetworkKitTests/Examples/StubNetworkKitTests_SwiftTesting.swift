@@ -239,6 +239,7 @@ private extension StubNetworkKitTests_SwiftTesting {
         var baz: Bool
         var qux: Qux
 
+        // swiftlint:disable:next nesting
         struct Qux: Decodable, Equatable {
             var quux: String
             var corge: Decimal
