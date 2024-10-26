@@ -77,7 +77,7 @@ struct StubTests {
 
             var req = URLRequest(url: URL(string: "https://foo.bar/baz")!)
             req.httpMethod = "POST"
-            req.httpBody = #"{"q": 1, "lang": "ja", "flag": true}"#.data(using: .utf8)
+            req.httpBody = Data(#"{"q": 1, "lang": "ja", "flag": true}"#.utf8)
 
             #expect(condition.matcher(req))
         }

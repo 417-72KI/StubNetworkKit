@@ -19,7 +19,7 @@ final class StubNetworkKitTests_SwiftTesting {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
-            .responseData("Hello world!".data(using: .utf8)!)
+            .responseData(Data("Hello world!".utf8))
 
         let (data, response) = try await defaultStubSession.data(from: url)
         #expect(String(data: data, encoding: .utf8) == "Hello world!")
@@ -32,11 +32,11 @@ final class StubNetworkKitTests_SwiftTesting {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz") && Method.isPost() && Body.isJson(["key": "world"]))
-            .responseData("Hello world!".data(using: .utf8)!)
+            .responseData(Data("Hello world!".utf8))
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.httpBody = #"{"key": "world"}"#.data(using: .utf8)
+        request.httpBody = Data(#"{"key": "world"}"#.utf8)
 
         let (data, response) = try await defaultStubSession.data(for: request)
         #expect(String(data: data, encoding: .utf8) == "Hello world!")
@@ -52,7 +52,7 @@ final class StubNetworkKitTests_SwiftTesting {
             guard $0.url?.query == "q=1" else {
                 return .error(.unexpectedRequest($0))
             }
-            return .data("Hello world!".data(using: .utf8)!)
+            return .data(Data("Hello world!".utf8))
         }
 
         let (data, response) = try await defaultStubSession.data(from: url)
@@ -68,7 +68,7 @@ final class StubNetworkKitTests_SwiftTesting {
             Host.is("bar")
             Path.is("/baz")
             Method.isGet()
-        }.responseData("Hello world!".data(using: .utf8)!)
+        }.responseData(Data("Hello world!".utf8))
 
         let (data, response) = try await defaultStubSession.data(from: url)
         #expect(String(data: data, encoding: .utf8) == "Hello world!")
@@ -86,11 +86,11 @@ final class StubNetworkKitTests_SwiftTesting {
             Path.is("/baz")
             Method.isPost()
             Body.isJson(["key": "world"])
-        }.responseData("Hello world!".data(using: .utf8)!)
+        }.responseData(Data("Hello world!".utf8))
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.httpBody = #"{"key": "world"}"#.data(using: .utf8)
+        request.httpBody = Data(#"{"key": "world"}"#.utf8)
 
         let (data, response) = try await defaultStubSession.data(for: request)
         #expect(String(data: data, encoding: .utf8) == "Hello world!")
@@ -111,7 +111,7 @@ final class StubNetworkKitTests_SwiftTesting {
             guard $0.url?.query == "q=1" else {
                 return .error(.unexpectedRequest($0))
             }
-            return .data("Hello world!".data(using: .utf8)!)
+            return .data(Data("Hello world!".utf8))
         }
 
         let (data, response) = try await defaultStubSession.data(from: url)
@@ -123,7 +123,7 @@ final class StubNetworkKitTests_SwiftTesting {
     @Test func defaultStubSession_singleFunction() async throws {
         let url = URL(string: "foo://bar/baz")!
         stub(url: "foo://bar/baz", method: .get)
-            .responseData("Hello world!".data(using: .utf8)!)
+            .responseData(Data("Hello world!".utf8))
 
         let (data, response) = try await defaultStubSession.data(from: url)
         #expect(String(data: data, encoding: .utf8) == "Hello world!")
@@ -138,7 +138,7 @@ final class StubNetworkKitTests_SwiftTesting {
             .host("bar")
             .path("/baz")
             .method(.get)
-            .responseData("Hello world!".data(using: .utf8)!)
+            .responseData(Data("Hello world!".utf8))
 
         let (data, response) = try await defaultStubSession.data(from: url)
         #expect(String(data: data, encoding: .utf8) == "Hello world!")
@@ -224,7 +224,7 @@ final class StubNetworkKitTests_SwiftTesting {
         let url = URL(string: "foo://bar/baz")!
 
         stub(Scheme.is("foo") && Host.is("bar") && Path.is("/baz"))
-            .responseData("Hello world!".data(using: .utf8)!)
+            .responseData(Data("Hello world!".utf8))
 
         let (data, response) = try await defaultStubSession.data(from: url)
         #expect(String(data: data, encoding: .utf8) == "Hello world!")
