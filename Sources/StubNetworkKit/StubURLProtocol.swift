@@ -7,6 +7,8 @@ import FoundationNetworking
 final class StubURLProtocol: URLProtocol {
     nonisolated(unsafe) private(set) static var stubs: [Stub] = []
 
+    private static let lock = NSLock()
+
     override static func canInit(with request: URLRequest) -> Bool {
         true
     }
@@ -54,10 +56,14 @@ final class StubURLProtocol: URLProtocol {
 
 extension StubURLProtocol {
     static func register(_ stub: Stub) {
+        lock.lock()
+        defer { lock.unlock() }
         stubs.append(stub)
     }
 
     static func reset() {
+        lock.lock()
+        defer { lock.unlock() }
         stubs = []
     }
 }
