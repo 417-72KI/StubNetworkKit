@@ -177,7 +177,7 @@ final class StubNetworkKitTests_SwiftTesting {
                     garply: [
                         "spam",
                         "ham",
-                        "eggs"
+                        "eggs",
                     ]
                 )
             )
@@ -209,7 +209,7 @@ final class StubNetworkKitTests_SwiftTesting {
                                         garply: [
                                             "spam",
                                             "ham",
-                                            "eggs"
+                                            "eggs",
                                         ]
                                      )
                                     )

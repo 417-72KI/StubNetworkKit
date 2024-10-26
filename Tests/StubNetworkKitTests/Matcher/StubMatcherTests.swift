@@ -255,7 +255,7 @@ import StubNetworkKit
         let matcher = QueryParams.contains(["q": "1",
                                             "lang": "ja",
                                             "empty": "",
-                                            "flag": nil])
+                                            "flag": nil,])
             .matcher
         #expect(matcher(URLRequest(url: URL(string: url)!)) == expected)
     }
