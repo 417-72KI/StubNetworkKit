@@ -15,6 +15,10 @@ public extension StubCondition {
 }
 
 extension StubCondition {
+    func callAsFunction(_ request: URLRequest) -> Bool {
+        matcher(request)
+    }
+
     func callAsFunction(_ url: URL) -> Bool {
         matcher(url)
     }

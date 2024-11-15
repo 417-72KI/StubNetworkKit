@@ -1,8 +1,9 @@
+allow_zero_lintable_files: true
 included:
   - Sources
-  - Tests
 excluded:
   - .build
+  - Tests
 disabled_rules:
   - force_try
   - force_unwrapping

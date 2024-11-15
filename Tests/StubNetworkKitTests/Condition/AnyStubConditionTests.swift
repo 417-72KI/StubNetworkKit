@@ -9,10 +9,128 @@ import Testing
 @Suite
 struct AnyStubConditionTests {
 
+    @Test(arguments: [
+        Scheme.is("https"),
+        Host.is("foo.bar"),
+        Path.is("/baz/qux.json"),
+        Extension.is("json"),
+        QueryParams.contains(["q": "quux"]),
+    ] as [any StubCondition])
+    func url(_ condition: any StubCondition) async throws {
+        let condition = AnyStubCondition(condition)
+        #expect(condition(URL(string: "https://foo.bar/baz/qux.json?q=quux")!))
+    }
+
+    @Test(arguments: [
+        ("GET", Method.isGet()),
+        ("POST", Method.isPost()),
+        ("PUT", Method.isPut()),
+        ("PATCH", Method.isPatch()),
+        ("DELETE", Method.isDelete()),
+        ("HEAD", Method.isHead()),
+    ] as [(String, any StubCondition)])
+    func method(_ method: String, _ condition: any StubCondition) async throws {
+        let url = URL(string: "https://foo.bar/baz/qux.json?q=quux")!
+        #expect(AnyStubCondition(Method.isGet())(url))
+
+        let condition = AnyStubCondition(condition)
+
+        let request = URLRequest(url: url, method: method)
+        #expect(condition(request))
+    }
+
     @Test
-    func scheme() async throws {
-        let condition = AnyStubCondition(Scheme.is("https"))
-        #expect(condition(URL(string: "https://foo.bar")!))
+    func header() async throws {
+        let condition = AnyStubCondition(Header.contains("Content-Type", withValue: "application/json"))
+        let url = URL(string: "https://foo.bar/baz/qux.json?q=quux")!
+        #expect(!condition(url))
+
+        let request = URLRequest(url: url, method: "GET", headers: ["Content-Type": "application/json"])
+        #expect(condition(request))
+    }
+
+    @Suite
+    struct body {
+        private let url = URL(string: "https://foo.bar/baz/qux.json?q=quux")!
+
+        @Test @available(watchOS, unavailable)
+        func isData() async throws {
+            let condition = AnyStubCondition(Body.is(Data("foobarbaz".utf8)))
+
+            let request = URLRequest(
+                url: url,
+                method: "POST",
+                body: "foobarbaz".data(using: .utf8)
+            )
+            #expect(condition(request))
+        }
+
+        @Test(arguments: [
+            (#"{"foo": "bar", "baz": 1, "qux": true}"#, ["foo": "bar", "baz": 1, "qux": true]),
+            ("{}", [:]),
+        ] as [(String, JSONObject)])
+        func isJsonObject(_ jsonString: String, _ jsonObject: JSONObject) async throws {
+            let condition = AnyStubCondition(Body.isJson(jsonObject))
+
+            let request = URLRequest(
+                url: url,
+                method: "POST",
+                body: jsonString.data(using: .utf8)
+            )
+            #expect(condition(request), "condition: \(condition)")
+        }
+
+        @Test(arguments: [
+            (#"["foo", "bar"]"#, ["foo", "bar"]),
+            (#"["foo", "bar", 1, true]"#, ["foo", "bar", 1, true]),
+            ("[]", []),
+        ] as [(String, JSONArray)])
+        func isJsonArray(_ jsonString: String, _ jsonArray: JSONArray) async throws {
+            let condition = AnyStubCondition(Body.isJson(jsonArray))
+
+            let request = URLRequest(
+                url: url,
+                method: "POST",
+                body: jsonString.data(using: .utf8)
+            )
+            #expect(condition(request))
+        }
+    }
+
+    @Suite
+    struct Equaltable {
+        var conditions: [any StubCondition] {
+            var conditions: [any StubCondition] = [
+                Scheme.is("https"),
+                Host.is("foo.bar"),
+                Path.is("/foo/bar"),
+                Extension.is("json"),
+                QueryParams.contains(["q": "quux"]),
+                Method.isPost(),
+                Header.contains("Content-Type", withValue: "application/json"),
+            ]
+            #if !os(watchOS)
+            conditions.append(Body.isJson(["foo": "bar", "baz": 1]))
+            #endif
+            return conditions
+        }
+
+        @Test
+        func match() async throws {
+            let c1s = conditions.map(AnyStubCondition.init)
+            let c2s = conditions.map(AnyStubCondition.init)
+            #expect(c1s == c2s)
+        }
+
+        @Test
+        func notMatch() async throws {
+            for (i, c1) in conditions.enumerated() {
+                for j in (i + 1)..<conditions.count {
+                    let c2 = conditions[j]
+                    #expect(AnyStubCondition(c1) != AnyStubCondition(c2))
+                }
+            }
+        }
     }
 
     @Suite
