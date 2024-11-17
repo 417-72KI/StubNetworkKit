@@ -21,14 +21,25 @@ struct AnyStubConditionTests {
         #expect(condition(URL(string: "https://foo.bar/baz/qux.json?q=quux")!))
     }
 
-    @Test(arguments: [
-        ("GET", Method.isGet()),
-        ("POST", Method.isPost()),
-        ("PUT", Method.isPut()),
-        ("PATCH", Method.isPatch()),
-        ("DELETE", Method.isDelete()),
-        ("HEAD", Method.isHead()),
-    ] as [(String, any StubCondition)])
+    private static let methods: [(String, any StubCondition)] = {
+        #if os(watchOS)
+        [
+            ("GET", Method.isGet()),
+            ("HEAD", Method.isHead()),
+        ]
+        #else
+        [
+            ("GET", Method.isGet()),
+            ("POST", Method.isPost()),
+            ("PUT", Method.isPut()),
+            ("PATCH", Method.isPatch()),
+            ("DELETE", Method.isDelete()),
+            ("HEAD", Method.isHead()),
+        ]
+        #endif
+    }()
+
+    @Test(arguments: methods)
     func method(_ method: String, _ condition: any StubCondition) async throws {
         let url = URL(string: "https://foo.bar/baz/qux.json?q=quux")!
         #expect(AnyStubCondition(Method.isGet())(url))
@@ -68,7 +79,7 @@ struct AnyStubConditionTests {
         @Test(arguments: [
             (#"{"foo": "bar", "baz": 1, "qux": true}"#, ["foo": "bar", "baz": 1, "qux": true]),
             ("{}", [:]),
-        ] as [(String, JSONObject)])
+        ] as [(String, JSONObject)]) @available(watchOS, unavailable)
         func isJsonObject(_ jsonString: String, _ jsonObject: JSONObject) async throws {
             let condition = AnyStubCondition(Body.isJson(jsonObject))
 
@@ -84,7 +95,7 @@ struct AnyStubConditionTests {
             (#"["foo", "bar"]"#, ["foo", "bar"]),
             (#"["foo", "bar", 1, true]"#, ["foo", "bar", 1, true]),
             ("[]", []),
-        ] as [(String, JSONArray)])
+        ] as [(String, JSONArray)]) @available(watchOS, unavailable)
         func isJsonArray(_ jsonString: String, _ jsonArray: JSONArray) async throws {
             let condition = AnyStubCondition(Body.isJson(jsonArray))
 
