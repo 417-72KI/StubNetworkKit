@@ -1,8 +1,9 @@
+allow_zero_lintable_files: true
 included:
   - Sources
-  - Tests
 excluded:
   - .build
+  - Tests
 disabled_rules:
   - force_try
   - force_unwrapping
@@ -23,6 +24,9 @@ line_length:
 type_name:
   allowed_symbols:
     - _
+  excluded:
+    - OR
+    - or
 large_tuple:
   warning: 3
   error: 4

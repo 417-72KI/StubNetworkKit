@@ -14,7 +14,7 @@ public extension Scheme {
 }
 
 // MARK: -
-private enum _Scheme: StubCondition {
+enum _Scheme: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }
 
@@ -34,6 +34,16 @@ extension _Scheme {
         switch (lhs, rhs) {
         case let (.is(lScheme, _, _), .is(rScheme, _, _)):
             lScheme == rScheme
+        }
+    }
+}
+
+extension _Scheme {
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case let .is(value, _, _):
+            hasher.combine("is")
+            hasher.combine(value)
         }
     }
 }

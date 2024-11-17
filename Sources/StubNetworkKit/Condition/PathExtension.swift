@@ -14,7 +14,7 @@ public extension Extension {
 }
 
 // MARK: -
-private enum _PathExtension: StubCondition {
+enum _PathExtension: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
 }
 
@@ -32,6 +32,16 @@ extension _PathExtension {
         switch (lhs, rhs) {
         case let (.is(lPathExtension, _, _), .is(rPathExtension, _, _)):
             lPathExtension == rPathExtension
+        }
+    }
+}
+
+extension _PathExtension {
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case let .is(value, _, _):
+            hasher.combine("is")
+            hasher.combine(value)
         }
     }
 }

@@ -33,7 +33,7 @@ public extension Path {
 }
 
 // MARK: -
-private enum _Path: StubCondition {
+enum _Path: StubCondition {
     case `is`(String, file: StaticString = #file, line: UInt = #line)
     case startsWith(String, file: StaticString = #file, line: UInt = #line)
     case endsWith(String, file: StaticString = #file, line: UInt = #line)
@@ -72,6 +72,26 @@ extension _Path {
         case let (.matches(lPattern, _, _, _), .matches(rPattern, _, _, _)):
             lPattern == rPattern
         default: false
+        }
+    }
+}
+
+extension _Path {
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case let .is(string, _, _):
+            hasher.combine("is")
+            hasher.combine(string)
+        case let .startsWith(string, _, _):
+            hasher.combine("startsWith")
+            hasher.combine(string)
+        case let .endsWith(string, _, _):
+            hasher.combine("endsWith")
+            hasher.combine(string)
+        case let .matches(string, options, _, _):
+            hasher.combine("matches")
+            hasher.combine(string)
+            hasher.combine(options.rawValue)
         }
     }
 }

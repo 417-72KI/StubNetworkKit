@@ -80,7 +80,7 @@ public extension Body {
 }
 
 // MARK: -
-private enum _Body: StubCondition {
+enum _Body: StubCondition {
     case isData(Data, file: StaticString = #file, line: UInt = #line)
     case isJsonObject(JSONObject, file: StaticString = #file, line: UInt = #line)
     case isJsonArray(JSONArray, file: StaticString = #file, line: UInt = #line)
@@ -143,6 +143,30 @@ extension _Body {
                 && (lItems[$0]?.mimeType == nil || lItems[$0]?.mimeType == rItems[$0]?.mimeType)
             }
         default: false
+        }
+    }
+}
+
+extension _Body {
+    func hash(into hasher: inout Hasher) {
+        switch self {
+        case let .isData(data, _, _):
+            hasher.combine("isData")
+            hasher.combine(data)
+        case let .isJsonObject(jsonObject, _, _):
+            hasher.combine("isJsonObject")
+            NSDictionary(dictionary: jsonObject)
+                .hash(into: &hasher)
+        case let .isJsonArray(jsonArray, _, _):
+            hasher.combine("isJsonArray")
+            NSArray(array: jsonArray)
+                .hash(into: &hasher)
+        case let .isForm(queryItems, _, _):
+            hasher.combine("isForm")
+            hasher.combine(queryItems.sorted(by: \.name))
+        case let .isMultipartForm(items, _, _):
+            hasher.combine("isMultipartForm")
+            hasher.combine(items)
         }
     }
 }
