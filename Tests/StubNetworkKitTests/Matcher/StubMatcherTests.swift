@@ -252,11 +252,12 @@ import StubNetworkKit
         ("?lang=ja&flag&empty=&q=1", true),
     ])
     func queryParamsContainsParams(_ url: String, _ expected: Bool) throws {
-        let matcher = QueryParams.contains(["q": "1",
-                                            "lang": "ja",
-                                            "empty": "",
-                                            "flag": nil])
-            .matcher
+        let matcher = QueryParams.contains([
+            "q": "1",
+            "lang": "ja",
+            "empty": "",
+            "flag": nil,
+        ]).matcher
         #expect(matcher(URLRequest(url: URL(string: url)!)) == expected)
     }
 

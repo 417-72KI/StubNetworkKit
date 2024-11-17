@@ -88,7 +88,7 @@ stub {
 ### 
 ```swift
 stub(url: "foo://bar/baz", method: .get)
-    .responseData("Hello world!".data(using: .utf8)!)
+    .responseData(Data("Hello world!".utf8))
 ```
 
 ### Function chain
