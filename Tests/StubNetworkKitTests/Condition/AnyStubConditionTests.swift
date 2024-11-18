@@ -60,11 +60,12 @@ struct AnyStubConditionTests {
         #expect(condition(request))
     }
 
+    #if !os(watchOS)
     @Suite
     struct body {
         private let url = URL(string: "https://foo.bar/baz/qux.json?q=quux")!
 
-        @Test @available(watchOS, unavailable)
+        @Test
         func isData() async throws {
             let condition = AnyStubCondition(Body.is(Data("foobarbaz".utf8)))
 
@@ -79,7 +80,7 @@ struct AnyStubConditionTests {
         @Test(arguments: [
             (#"{"foo": "bar", "baz": 1, "qux": true}"#, ["foo": "bar", "baz": 1, "qux": true]),
             ("{}", [:]),
-        ] as [(String, JSONObject)]) @available(watchOS, unavailable)
+        ] as [(String, JSONObject)])
         func isJsonObject(_ jsonString: String, _ jsonObject: JSONObject) async throws {
             let condition = AnyStubCondition(Body.isJson(jsonObject))
 
@@ -95,7 +96,7 @@ struct AnyStubConditionTests {
             (#"["foo", "bar"]"#, ["foo", "bar"]),
             (#"["foo", "bar", 1, true]"#, ["foo", "bar", 1, true]),
             ("[]", []),
-        ] as [(String, JSONArray)]) @available(watchOS, unavailable)
+        ] as [(String, JSONArray)])
         func isJsonArray(_ jsonString: String, _ jsonArray: JSONArray) async throws {
             let condition = AnyStubCondition(Body.isJson(jsonArray))
 
@@ -107,6 +108,7 @@ struct AnyStubConditionTests {
             #expect(condition(request))
         }
     }
+    #endif
 
     @Suite
     struct Equaltable {
@@ -117,11 +119,13 @@ struct AnyStubConditionTests {
                 Path.is("/foo/bar"),
                 Extension.is("json"),
                 QueryParams.contains(["q": "quux"]),
-                Method.isPost(),
                 Header.contains("Content-Type", withValue: "application/json"),
             ]
             #if !os(watchOS)
-            conditions.append(Body.isJson(["foo": "bar", "baz": 1]))
+            conditions.append(contentsOf: [
+                Body.isJson(["foo": "bar", "baz": 1]),
+                Method.isPost(),
+            ] as [any StubCondition])
             #endif
             return conditions
         }
