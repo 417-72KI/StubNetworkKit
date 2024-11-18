@@ -129,11 +129,21 @@ extension _Body {
         case let (.isData(lData, _, _), .isData(rData, _, _)):
             lData == rData
         case let (.isJsonObject(lJson, _, _), .isJsonObject(rJson, _, _)):
+            #if canImport(FoundationNetworking)
+            (try! JSONSerialization.data(withJSONObject: lJson, options: [.sortedKeys, .withoutEscapingSlashes])) ==
+            (try! JSONSerialization.data(withJSONObject: rJson, options: [.sortedKeys, .withoutEscapingSlashes]))
+            #else
             NSDictionary(dictionary: lJson)
                 .isEqual(to: rJson)
+            #endif
         case let (.isJsonArray(lJson, _, _), .isJsonArray(rJson, _, _)):
+            #if canImport(FoundationNetworking)
+            (try! JSONSerialization.data(withJSONObject: lJson, options: [.sortedKeys, .withoutEscapingSlashes])) ==
+            (try! JSONSerialization.data(withJSONObject: rJson, options: [.sortedKeys, .withoutEscapingSlashes]))
+            #else
             NSArray(array: lJson)
                 .isEqual(to: rJson)
+            #endif
         case let (.isForm(lItems, _, _), .isForm(rItems, _, _)):
             lItems.sorted(by: \.name) == rItems.sorted(by: \.name)
         case let (.isMultipartForm(lItems, _, _), .isMultipartForm(rItems, _, _)) where lItems.keys.sorted() == rItems.keys.sorted():
