@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: 417-72KI/danger-swiftlint@be83293124f2c7a628c7610583d3cc67a367c92b # v5.10
+      - uses: 417-72KI/danger-swiftlint@v5.10
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   generate-matrix:
@@ -118,7 +118,7 @@ jobs:
           path: test_output
       - name: Merge xcresult files
         run: xcrun xcresulttool merge test_output/**/*.xcresult --output-path test_output/TestResults.xcresult
-      - uses: kishikawakatsumi/xcresulttool@2b37f116695328d5e503ac8dadca0f1545a51da4 # v1
+      - uses: kishikawakatsumi/xcresulttool@v1
         with:
           path: test_output/TestResults.xcresult
           show-passed-tests: false
