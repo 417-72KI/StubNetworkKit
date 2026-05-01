@@ -4,11 +4,7 @@ import FoundationNetworking
 #endif
 
 public enum StubNetworking: Sendable {
-    #if swift(>=5.10)
     nonisolated(unsafe) private static var _option = defaultOption
-    #else
-    private static var _option = defaultOption
-    #endif
 }
 
 extension StubNetworking {
