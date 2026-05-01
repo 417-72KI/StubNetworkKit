@@ -2,11 +2,10 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
-import os
 
 // based on https://github.com/417-72KI/MultipartFormDataParser/blob/main/Tests/MultipartFormDataParserTests/StubURLProtocol.swift
 final class StubURLProtocol: URLProtocol {
-    private static let stubs = OSAllocatedUnfairLock(initialState: [Stub]())
+    private static let stubs = Lock([Stub]())
 
     override static func canInit(with request: URLRequest) -> Bool {
         true
