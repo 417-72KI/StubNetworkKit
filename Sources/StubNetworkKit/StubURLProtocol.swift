@@ -5,11 +5,7 @@ import FoundationNetworking
 
 // based on https://github.com/417-72KI/MultipartFormDataParser/blob/main/Tests/MultipartFormDataParserTests/StubURLProtocol.swift
 final class StubURLProtocol: URLProtocol {
-    #if swift(>=5.10)
     nonisolated(unsafe) private(set) static var stubs: [Stub] = []
-    #else
-    private(set) static var stubs: [Stub] = []
-    #endif
 
     override static func canInit(with request: URLRequest) -> Bool {
         true
