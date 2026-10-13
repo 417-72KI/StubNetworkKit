@@ -5,7 +5,7 @@ import FoundationNetworking
 
 // based on https://github.com/417-72KI/MultipartFormDataParser/blob/main/Tests/MultipartFormDataParserTests/StubURLProtocol.swift
 final class StubURLProtocol: URLProtocol {
-    nonisolated(unsafe) private(set) static var stubs: [Stub] = []
+    private static let stubs = Lock([Stub]())
 
     override static func canInit(with request: URLRequest) -> Bool {
         true
@@ -54,17 +54,22 @@ final class StubURLProtocol: URLProtocol {
 
 extension StubURLProtocol {
     static func register(_ stub: Stub) {
-        stubs.append(stub)
+        stubs.withLock { stubs in
+            stubs.append(stub)
+        }
     }
 
     static func reset() {
-        stubs = []
+        stubs.withLock {
+            $0 = []
+        }
     }
 }
 
 private extension StubURLProtocol {
     func stub(with request: URLRequest) -> Stub? {
-        Self.stubs
-            .last(where: { $0.matcher(request) })
+        Self.stubs.withLock {
+            $0.last(where: { $0.matcher(request) })
+        }
     }
 }
