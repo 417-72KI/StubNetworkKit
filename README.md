@@ -4,13 +4,11 @@
 [![GitHub release](https://img.shields.io/github/release/417-72KI/StubNetworkKit/all.svg)](https://github.com/417-72KI/StubNetworkKit/releases)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2F417-72KI%2FStubNetworkKit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/417-72KI/StubNetworkKit)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2F417-72KI%2FStubNetworkKit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/417-72KI/StubNetworkKit)
-[![CocoaPods Version](http://img.shields.io/cocoapods/v/StubNetworkKit.svg?style=flat)](http://cocoapods.org/pods/StubNetworkKit)
-[![CocoaPods Platform](http://img.shields.io/cocoapods/p/StubNetworkKit.svg?style=flat)](http://cocoapods.org/pods/StubNetworkKit)
 [![GitHub license](https://img.shields.io/github/license/417-72KI/StubNetworkKit)](https://github.com/417-72KI/StubNetworkKit/blob/main/LICENSE)
 
 **100% pure Swift** library to stub network requests.
 
-**100% pure Swift** means, 
+**100% pure Swift** means,
 - No more Objective-C API
 - Testable also in other than Apple platform (e.g. Linux)
 
@@ -19,16 +17,6 @@
 
 ```swift:Package.swift
 .package(url: "https://github.com/417-72KI/StubNetworkKit.git", from: "0.5.0"),
-```
-
-### CocoaPods
-> [!WARNING]
-> 
-> `watchOS` support is unavailable in CocoaPods due to dependency.  
-> If you want to use including `watchOS`, consider migrating to Swift Package Manager.
-
-```ruby:Podfile
-pod 'StubNetworkKit'
 ```
 
 ## Preparation
@@ -81,11 +69,11 @@ stub {
     guard request.url?.query == "q=1" else {
         return .error(.unexpectedRequest($0))
     }
-    return .json(["message": "Hello world!"]) 
+    return .json(["message": "Hello world!"])
 }
 ```
 
-### 
+###
 ```swift
 stub(url: "foo://bar/baz", method: .get)
     .responseData(Data("Hello world!".utf8))
