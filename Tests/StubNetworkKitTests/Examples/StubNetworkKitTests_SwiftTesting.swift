@@ -12,7 +12,7 @@ final class StubNetworkKitTests_SwiftTesting {
                               debugConditions: true)
     }
 
-    // deinit { clearStubs() }
+    deinit { clearStubs() }
 
     /// Example function for basic implementation
     @Test func defaultStubSession_basic() async throws {
