@@ -9,7 +9,6 @@ disabled_rules:
   - force_unwrapping
   - identifier_name
   - unused_optional_binding
-  - vertical_parameter_alignment_on_call # False positive with Multiple trailing closures
   # TODO: enable in future
   - function_body_length
   - type_body_length
