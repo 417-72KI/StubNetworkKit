@@ -21,13 +21,11 @@ public final class Stub: Sendable {
 
 extension Stub {
     var matcher: StubMatcher {
-        get { matcherLock.withLock { $0 } }
-        set { matcherLock.withLock { $0 = newValue } }
+        matcherLock.withLock { $0 }
     }
 
     var response: Response {
-        get { responseLock.withLock { $0 } }
-        set { responseLock.withLock { $0 = newValue } }
+        responseLock.withLock { $0 }
     }
 }
 
@@ -153,7 +151,9 @@ public extension Stub {
     func scheme(_ scheme: String,
                 file: StaticString = #file,
                 line: UInt = #line) -> Self {
-        matcher &&= Scheme.is(scheme, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Scheme.is(scheme, file: file, line: line).matcher
+        }
         return self
     }
 }
@@ -168,7 +168,9 @@ public extension Stub {
     func host(_ host: String,
               file: StaticString = #file,
               line: UInt = #line) -> Self {
-        matcher &&= Host.is(host, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Host.is(host, file: file, line: line).matcher
+        }
         return self
     }
 }
@@ -183,7 +185,9 @@ public extension Stub {
     func path(_ path: String,
               file: StaticString = #file,
               line: UInt = #line) -> Self {
-        matcher &&= Path.is(path, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Path.is(path, file: file, line: line).matcher
+        }
         return self
     }
 }
@@ -198,7 +202,9 @@ public extension Stub {
     func pathExtension(_ ext: String,
                        file: StaticString = #file,
                        line: UInt = #line) -> Self {
-        matcher &&= Extension.is(ext, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Extension.is(ext, file: file, line: line).matcher
+        }
         return self
     }
 }
@@ -213,7 +219,9 @@ public extension Stub {
     func method(_ method: Method,
                 file: StaticString = #file,
                 line: UInt = #line) -> Self {
-        matcher &&= method.condition(file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= method.condition(file: file, line: line).matcher
+        }
         return self
     }
 }
@@ -228,7 +236,9 @@ public extension Stub {
     func queryParams(_ queryParams: [String: String?],
                      file: StaticString = #file,
                      line: UInt = #line) -> Self {
-        matcher &&= QueryParams.contains(queryParams, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= QueryParams.contains(queryParams, file: file, line: line).matcher
+        }
         return self
     }
 
@@ -240,7 +250,9 @@ public extension Stub {
     func queryItems(_ queryItems: [URLQueryItem],
                     file: StaticString = #file,
                     line: UInt = #line) -> Self {
-        matcher &&= QueryParams.contains(queryItems, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= QueryParams.contains(queryItems, file: file, line: line).matcher
+        }
         return self
     }
 
@@ -254,7 +266,9 @@ public extension Stub {
     func queryParams(_ queryParams: [String],
                      file: StaticString = #file,
                      line: UInt = #line) -> Self {
-        matcher &&= QueryParams.contains(queryParams, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= QueryParams.contains(queryParams, file: file, line: line).matcher
+        }
         return self
     }
 }
@@ -265,7 +279,9 @@ public extension Stub {
     func header(_ name: String,
                 file: StaticString = #file,
                 line: UInt = #line) -> Self {
-        matcher &&= Header.contains(name, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Header.contains(name, file: file, line: line).matcher
+        }
         return self
     }
 
@@ -274,7 +290,9 @@ public extension Stub {
                 value: String,
                 file: StaticString = #file,
                 line: UInt = #line) -> Self {
-        matcher &&= Header.contains(name, withValue: value, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Header.contains(name, withValue: value, file: file, line: line).matcher
+        }
         return self
     }
 }
@@ -286,7 +304,9 @@ public extension Stub {
     func body(_ body: Data,
               file: StaticString = #file,
               line: UInt = #line) -> Self {
-        matcher &&= Body.is(body, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Body.is(body, file: file, line: line).matcher
+        }
         return self
     }
 
@@ -294,7 +314,9 @@ public extension Stub {
     func jsonBody(_ jsonObject: JSONObject,
                   file: StaticString = #file,
                   line: UInt = #line) -> Self {
-        matcher &&= Body.isJson(jsonObject, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Body.isJson(jsonObject, file: file, line: line).matcher
+        }
         return self
     }
 
@@ -302,7 +324,9 @@ public extension Stub {
     func jsonBody(_ jsonArray: JSONArray,
                   file: StaticString = #file,
                   line: UInt = #line) -> Self {
-        matcher &&= Body.isJson(jsonArray, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Body.isJson(jsonArray, file: file, line: line).matcher
+        }
         return self
     }
 
@@ -310,7 +334,9 @@ public extension Stub {
     func formBody(_ queryItems: [URLQueryItem],
                   file: StaticString = #file,
                   line: UInt = #line) -> Self {
-        matcher &&= Body.isForm(queryItems, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Body.isForm(queryItems, file: file, line: line).matcher
+        }
         return self
     }
 
@@ -318,7 +344,9 @@ public extension Stub {
     func formBody(_ queryItems: [String: String?],
                   file: StaticString = #file,
                   line: UInt = #line) -> Self {
-        matcher &&= Body.isForm(queryItems, file: file, line: line).matcher
+        matcherLock.withLock {
+            $0 &&= Body.isForm(queryItems, file: file, line: line).matcher
+        }
         return self
     }
 
@@ -334,7 +362,9 @@ public extension Stub {
 public extension Stub {
     @discardableResult
     func responseData(_ data: Data, statusCode: Int = 200, headers: [String: String]? = nil) -> Self {
-        response = successResponse(data, statusCode: statusCode, headers: headers)
+        responseLock.withLock {
+            $0 = successResponse(data, statusCode: statusCode, headers: headers)
+        }
         return self
     }
 
@@ -343,12 +373,15 @@ public extension Stub {
         do {
             let data = try JSONSerialization.data(withJSONObject: jsonObject,
                                                   options: .sortedKeys)
-            response = successResponse(data,
-                                       statusCode: statusCode,
-                                       headers: ["Content-Type": "application/json"])
-
+            responseLock.withLock {
+                $0 = successResponse(data,
+                                     statusCode: statusCode,
+                                     headers: ["Content-Type": "application/json"])
+            }
         } catch {
-            response = errorResponse(.unexpectedError(error))
+            responseLock.withLock {
+                $0 = errorResponse(.unexpectedError(error))
+            }
         }
         return self
     }
@@ -358,12 +391,15 @@ public extension Stub {
         do {
             let data = try JSONSerialization.data(withJSONObject: jsonArray,
                                                   options: .sortedKeys)
-            response = successResponse(data,
-                    statusCode: statusCode,
-                                       headers: ["Content-Type": "application/json"])
-
+            responseLock.withLock {
+                $0 = successResponse(data,
+                                     statusCode: statusCode,
+                                     headers: ["Content-Type": "application/json"])
+            }
         } catch {
-            response = errorResponse(.unexpectedError(error))
+            responseLock.withLock {
+                $0 = errorResponse(.unexpectedError(error))
+            }
         }
         return self
     }
@@ -378,9 +414,13 @@ public extension Stub {
                                    in: bundle)
         do {
             let data = try Data(contentsOf: url)
-            response = successResponse(data)
+            responseLock.withLock {
+                $0 = successResponse(data)
+            }
         } catch {
-            response = errorResponse(.unexpectedError(error))
+            responseLock.withLock {
+                $0 = errorResponse(.unexpectedError(error))
+            }
         }
         return self
     }
