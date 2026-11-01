@@ -1,6 +1,6 @@
-import Foundation
+public import Foundation
 #if canImport(FoundationNetworking)
-import FoundationNetworking
+public import FoundationNetworking
 #endif
 
 /// An opaque type which represents a stub condition.

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 public extension StubResponse {
     static func data(_ data: Data,
