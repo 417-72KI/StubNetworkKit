@@ -2,19 +2,32 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+import Synchronization
 
-public final class Stub: @unchecked Sendable {
+public final class Stub: Sendable {
     typealias Response = @Sendable (URLRequest) -> StubResponse
 
     /// Matcher to judge if use stub response.
-    private(set) var matcher: StubMatcher
+    private let matcherLock: Mutex<StubMatcher>
     /// Stub response to return.
-    private(set) var response: Response
+    private let responseLock: Mutex<Response>
 
     init(matcher: @escaping StubMatcher = alwaysTrueCondition,
          response: @escaping Response = errorResponse(.unimplemented)) {
-        self.matcher = matcher
-        self.response = response
+        matcherLock = .init(matcher)
+        responseLock = .init(response)
+    }
+}
+
+extension Stub {
+    var matcher: StubMatcher {
+        get { matcherLock.withLock { $0 } }
+        set { matcherLock.withLock { $0 = newValue } }
+    }
+
+    var response: Response {
+        get { responseLock.withLock { $0 } }
+        set { responseLock.withLock { $0 = newValue } }
     }
 }
 
@@ -346,7 +359,7 @@ public extension Stub {
             let data = try JSONSerialization.data(withJSONObject: jsonArray,
                                                   options: .sortedKeys)
             response = successResponse(data,
-                                       statusCode: statusCode,
+                    statusCode: statusCode,
                                        headers: ["Content-Type": "application/json"])
 
         } catch {
