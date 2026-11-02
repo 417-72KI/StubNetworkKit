@@ -11,8 +11,10 @@ final class BodyTests {
     private let url = URL(string: "https://localhost/foo/bar")!
 
     init() throws {
-        StubNetworking.option(printDebugLog: true,
-                              debugConditions: true)
+        StubNetworking.option(
+            printDebugLog: needsDebugLog,
+            debugConditions: needsDebugLog
+        )
     }
 
     @Test func bodyIsData() async throws {

@@ -7,8 +7,10 @@ import StubNetworkKit
 
 @Suite struct StubMatcher_OperatorsTests {
     init() {
-        StubNetworking.option(printDebugLog: true,
-                              debugConditions: true)
+        StubNetworking.option(
+            printDebugLog: needsDebugLog,
+            debugConditions: needsDebugLog
+        )
     }
 
     @Test(arguments: [

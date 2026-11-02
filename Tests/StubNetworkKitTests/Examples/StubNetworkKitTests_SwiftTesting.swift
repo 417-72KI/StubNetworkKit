@@ -8,8 +8,10 @@ import StubNetworkKit
 @Suite(.serialized)
 final class StubNetworkKitTests_SwiftTesting {
     init() {
-        StubNetworking.option(printDebugLog: true,
-                              debugConditions: true)
+        StubNetworking.option(
+            printDebugLog: needsDebugLog,
+            debugConditions: needsDebugLog
+        )
     }
 
     deinit { clearStubs() }
