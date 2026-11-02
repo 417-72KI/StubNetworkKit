@@ -16,7 +16,7 @@
 ### Swift Package Manager(recommended)
 
 ```swift:Package.swift
-.package(url: "https://github.com/417-72KI/StubNetworkKit.git", from: "0.5.0"),
+.package(url: "https://github.com/417-72KI/StubNetworkKit.git", from: "0.6.0"),
 ```
 
 ## Preparation
