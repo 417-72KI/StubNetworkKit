@@ -1,7 +1,7 @@
 #if canImport(APIKit)
 import XCTest
 import StubNetworkKit
-import APIKit
+@preconcurrency import APIKit
 
 final class APIKitSampleTests: XCTestCase {
     private var client: APIKitSample!
