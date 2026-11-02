@@ -5,11 +5,13 @@ import FoundationNetworking
 import Testing
 import StubNetworkKit
 
-@Suite
+@Suite(.serialized)
 final class StubNetworkKitTests_SwiftTesting {
     init() {
-        StubNetworking.option(printDebugLog: true,
-                              debugConditions: true)
+        StubNetworking.option(
+            printDebugLog: needsDebugLog,
+            debugConditions: needsDebugLog
+        )
     }
 
     deinit { clearStubs() }

@@ -2,10 +2,11 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+import Synchronization
 
 // based on https://github.com/417-72KI/MultipartFormDataParser/blob/main/Tests/MultipartFormDataParserTests/StubURLProtocol.swift
 final class StubURLProtocol: URLProtocol {
-    nonisolated(unsafe) private(set) static var stubs: [Stub] = []
+    static let stubs = Mutex<[Stub]>([])
 
     override static func canInit(with request: URLRequest) -> Bool {
         true
@@ -54,17 +55,17 @@ final class StubURLProtocol: URLProtocol {
 
 extension StubURLProtocol {
     static func register(_ stub: Stub) {
-        stubs.append(stub)
+        stubs.withLock { $0.append(stub) }
     }
 
     static func reset() {
-        stubs = []
+        stubs.withLock { $0 = [] }
     }
 }
 
 private extension StubURLProtocol {
     func stub(with request: URLRequest) -> Stub? {
-        Self.stubs
-            .last(where: { $0.matcher(request) })
+        Self.stubs.withLock(\.self)
+            .last { $0.matcher(request) }
     }
 }

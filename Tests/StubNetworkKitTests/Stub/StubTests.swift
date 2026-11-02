@@ -8,8 +8,10 @@ import Testing
 @Suite
 struct StubTests {
     init() {
-        StubNetworking.option(printDebugLog: true,
-                              debugConditions: true)
+        StubNetworking.option(
+            printDebugLog: needsDebugLog,
+            debugConditions: needsDebugLog
+        )
     }
 
     @Suite

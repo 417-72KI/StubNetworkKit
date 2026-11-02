@@ -44,21 +44,21 @@ if [ "$(git fetch --tags && git tag | grep "${TAG}")" != '' ]; then
 fi
 
 sed -i '' -E "s/(\.package\(url: \".*${PROJECT_NAME}\.git\", from: \").*(\"\),?)/\1${TAG}\2/g" README.md
-sed -i '' -E "s/(let isDevelop = )(true|false)/\1false/" Package.swift
+sed -i '' -E "s/(let isDevelop = )(true|false)/\1false/" Package.swift Package@*.swift
 
 COMMIT_OPTION=''
 if [ $DEBUG -ne 0 ]; then
     COMMIT_OPTION='--dry-run'
 fi
 
-git commit $COMMIT_OPTION -m "Bump version to ${TAG}" Package.swift Makefile README.md
+git commit $COMMIT_OPTION -m "Bump version to ${TAG}" Package.swift Package@*.swift Makefile README.md
 if [ $DEBUG -eq 0 ]; then
     git push origin main
     gh release create ${TAG} --target main --title ${TAG} --generate-notes
 fi
 
-sed -i '' -E "s/(let isDevelop = )(true|false)/\1true/" Package.swift
-git commit $COMMIT_OPTION -m 'switch back to develop mode' Package.swift
+sed -i '' -E "s/(let isDevelop = )(true|false)/\1true/" Package.swift Package@*.swift
+git commit $COMMIT_OPTION -m 'switch back to develop mode' Package.swift Package@*.swift
 if [ $DEBUG -eq 0 ]; then
     git push origin main
 fi

@@ -7,8 +7,10 @@ final class AlamofireSampleTests: XCTestCase {
     private var client: AlamofireSample!
 
     override func setUpWithError() throws {
-        StubNetworking.option(printDebugLog: true,
-                              debugConditions: true)
+        StubNetworking.option(
+            printDebugLog: needsDebugLog,
+            debugConditions: needsDebugLog
+        )
 
         let config = URLSessionConfiguration.af.ephemeral
         registerStub(to: config)

@@ -1,14 +1,16 @@
 #if canImport(APIKit)
 import XCTest
 import StubNetworkKit
-import APIKit
+@preconcurrency import APIKit
 
 final class APIKitSampleTests: XCTestCase {
     private var client: APIKitSample!
 
     override func setUpWithError() throws {
-        StubNetworking.option(printDebugLog: true,
-                              debugConditions: true)
+        StubNetworking.option(
+            printDebugLog: needsDebugLog,
+            debugConditions: needsDebugLog
+        )
 
         let config = URLSessionConfiguration.ephemeral
         registerStub(to: config)
