@@ -1,7 +1,7 @@
 // swift-tools-version: 6.1
 import PackageDescription
 
-let isDevelop = false
+let isDevelop = true
 
 let package = Package(
     name: "StubNetworkKit",
