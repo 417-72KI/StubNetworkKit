@@ -5,7 +5,7 @@ set -eu
 PROJECT_NAME=$1
 TAG=$2
 
-DEBUG=0
+DEBUG=${DEBUG:-0}
 
 if ! type "gh" > /dev/null; then
     echo '\e[33m`gh` not found. Install\e[m'
@@ -46,19 +46,22 @@ fi
 sed -i '' -E "s/(\.package\(url: \".*${PROJECT_NAME}\.git\", from: \").*(\"\),?)/\1${TAG}\2/g" README.md
 sed -i '' -E "s/(let isDevelop = )(true|false)/\1false/" Package.swift Package@*.swift
 
-COMMIT_OPTION=''
+COMMIT_OPTION=()
 if [ $DEBUG -ne 0 ]; then
-    COMMIT_OPTION='--dry-run'
+    COMMIT_OPTION+=('--dry-run')
 fi
 
-git commit $COMMIT_OPTION -m "Bump version to ${TAG}" Package.swift Package@*.swift Makefile README.md
+git commit ${COMMIT_OPTION[@]} -m "Bump version to ${TAG}" Package.swift Package@*.swift Makefile README.md
 if [ $DEBUG -eq 0 ]; then
     git push origin main
     gh release create ${TAG} --target main --title ${TAG} --generate-notes
 fi
 
 sed -i '' -E "s/(let isDevelop = )(true|false)/\1true/" Package.swift Package@*.swift
-git commit $COMMIT_OPTION -m 'switch back to develop mode' Package.swift Package@*.swift
 if [ $DEBUG -eq 0 ]; then
+    git commit ${COMMIT_OPTION[@]} -m 'switch back to develop mode' Package.swift Package@*.swift
     git push origin main
+else
+    echo '\e[33mDebug mode: local changes discarded\e[m'
+    git checkout -- README.md Package.swift Package@*.swift
 fi
